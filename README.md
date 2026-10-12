@@ -12,6 +12,7 @@ each page's crossed-out "original price".
 ## Team
 
 - Marvin Chandra
+- Jordan Tjiang
 
 ## Data
 
