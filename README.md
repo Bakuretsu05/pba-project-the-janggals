@@ -15,6 +15,7 @@ each page's crossed-out "original price".
 - Jordan Tjiang
 - Alicia Joely
 - Audrey Priscilla Wijaya
+- Nicholas Albert Aklin
 
 ## Data
 
