@@ -14,10 +14,10 @@ each page's crossed-out "original price".
 - Marvin Chandra
 - Jordan Tjiang
 - Alicia Joely
+- Audrey Priscilla Wijaya
 
 ## Data
 
 Raw data lives in `data/raw/`, which git ignores. Scraped pages are backed up to the team's
 shared Google Drive; BigGo history is copied by hand from biggo.com.tw. Download links will be
 added at Milestone 2.
-- Audrey Priscilla Wijaya
