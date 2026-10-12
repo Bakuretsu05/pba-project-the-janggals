@@ -13,6 +13,7 @@ each page's crossed-out "original price".
 
 - Marvin Chandra
 - Jordan Tjiang
+- Alicia Joely
 
 ## Data
 
