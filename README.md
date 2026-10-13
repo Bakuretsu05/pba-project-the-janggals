@@ -17,8 +17,20 @@ each page's crossed-out "original price".
 - Audrey Priscilla Wijaya
 - Nicholas Albert Aklin
 
+## Repo layout
+
+Each task has its own folder.
+
+| Folder | Owner | Output |
+|---|---|---|
+| [`products/`](products/) | Alicia, Audrey | `products/products.csv`, the ~100 products we track |
+| [`scrapers/momo/`](scrapers/momo/) | Jordan | Daily price snapshots from momo |
+| [`scrapers/pchome/`](scrapers/pchome/) | Albert | Daily price snapshots from PChome |
+| [`scrapers/coupang/`](scrapers/coupang/) | Marvin | Daily price snapshots from Coupang |
+
+The scrapers are built to [`scrapers/data-collection-spec.md`](scrapers/data-collection-spec.md).
+
 ## Data
 
-Raw data lives in `data/raw/`, which git ignores. Scraped pages are backed up to the team's
-shared Google Drive; BigGo history is copied by hand from biggo.com.tw. Download links will be
-added at Milestone 2.
+Scraper output and raw pages stay out of git (`output/` and `raw/` folders are ignored). BigGo
+history is copied by hand from biggo.com.tw. Download links will be added at Milestone 2.
