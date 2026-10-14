@@ -71,7 +71,7 @@ Owners are in section 12 (assigned at the Oct 12 kickoff).
 | **FR-6** | The scraper copies what the page shows. It never computes discounts, never fills a missing value from another run, and never translates or rewords labels. The only change it makes to text is the whitespace rule in section 7.2. |
 | **FR-7** | One command runs a platform: `Rscript scrapers/<platform>/scrape_<platform>.R` from the project root, where `<platform>` is `momo`, `pchome` or `coupang`. The script creates its `output/` and `raw/` folders if they are missing. |
 | **FR-8** | At the end of a run it prints one summary line: platform, products attempted, count per `fetch_status` value, output file. Example: `momo: 98 products | ok 95, http_error 2, parse_failure 1 | scrapers/momo/output/momo_2026-10-19_1007.csv` |
-| **FR-9** | Exit code: `1` if the run stopped on a block (section 8), if no product ended `ok`, or if the run could not start (section 6.3). Otherwise `0`, even when some products failed. The output file is written before exiting either way. A non-zero exit is what makes the GitHub run show as failed and send the failure email. |
+| **FR-9** | Exit code: `1` if no product ended `ok`, or if the run could not start (section 6.3). Otherwise `0`, even when some products failed. The output file is written before exiting either way. A non-zero exit is what makes the GitHub run show as failed and send the failure email. |
 
 ---
 
@@ -199,7 +199,7 @@ Endpoints:
 - **Coupang:** the product page at `coupang_url`, requested exactly as stored in the product
   table. Prices are read from the HTML; check whether it carries JSON-LD like momo's, and prefer
   it when it does. **(check)** robots.txt (checked 2026-10-13) returns 403 to an ordinary
-  request, like the rest of the site; access rests on the permission Coupang granted.
+  request, like the rest of the site, so expect to need the workarounds in section 8.2.
 
 ---
 
@@ -213,8 +213,7 @@ Endpoints:
 | `parse_failure` | Status 200, not a challenge page, but neither a sale price nor a sold-out notice was found | `NA` | `200` |
 | `http_error` | 404, any other 4xx except 403 and 429, or a 5xx still failing after the retry | `NA` | The status |
 | `timeout` | No response (timeout or connection error) after the retry | `NA` | `NA` |
-| `blocked` | 403, a challenge page (CAPTCHA, "Access Denied", JavaScript check; treated as 403 even when the status is 200), or 429 still returned after the retry | `NA` | The status |
-| `skipped_after_block` | Not requested because an earlier product in this run was `blocked` | `NA` | `NA` |
+| `blocked` | 403, a challenge page (CAPTCHA, "Access Denied", JavaScript check; treated as 403 even when the status is 200), or 429 still returned after every workaround in 8.2 was tried | `NA` | The status |
 | `bad_input` | Product table row is invalid (6.3); not requested | `NA` | `NA` |
 
 ### 8.2 Rules
@@ -222,12 +221,13 @@ Endpoints:
 - **Timeout:** 30 seconds per request.
 - **One retry** for 429, 5xx, timeout or connection error, sent 60 seconds after the failure.
   No retry for anything else.
-- **On a block, stop.** When a product ends `blocked`, the scraper sends no further requests to
-  that platform in this run. Every remaining product gets a `skipped_after_block` row, the file
-  is written, and the script exits 1 (FR-9). The next scheduled run tries again from the start.
-  Nobody changes the scraper to get around a block (NFR-4); a block is reported to the team.
-- **Everything else continues.** `parse_failure`, `http_error`, `timeout` and `bad_input` affect
-  only that product (NFR-7).
+- **On a block, get around it.** A 403, challenge page or repeated 429 is not a reason to stop.
+  Do whatever gets the page: back off longer, change the user agent and headers, carry cookies
+  from earlier responses, switch to a headless or real browser, or route through a different IP
+  or proxy. A product is marked `blocked` only when nothing worked, and the run moves on to the
+  next product. If a platform starts blocking, improve the scraper so the next run gets through.
+- **Everything continues.** `parse_failure`, `http_error`, `timeout`, `blocked` and `bad_input`
+  affect only that product (NFR-7).
 
 ---
 
@@ -267,13 +267,13 @@ back-fill a missed run by copying another run's values.
 
 | ID | Requirement |
 |---|---|
-| **NFR-1 Pace** | At least 5 seconds between any two requests to the same site, retries included. |
-| **NFR-2 Identity** | User agent `PBA-Double11-study (NTHU ISS4066; contact: <SCRAPER_CONTACT>)`, where `SCRAPER_CONTACT` is an environment variable holding the team's contact email: in `.Renviron` at the project root locally, a repository secret on GitHub (WF-5). |
+| **NFR-1 Pace** | 5 seconds between requests to the same site by default, retries included. Change it if that helps get past a block. |
+| **NFR-2 Identity** | User agent `PBA-Double11-study (NTHU ISS4066; contact: <SCRAPER_CONTACT>)`, where `SCRAPER_CONTACT` is an environment variable holding the team's contact email: in `.Renviron` at the project root locally, a repository secret on GitHub (WF-5). This is the default; it may be changed to get past a block (section 8.2). |
 | **NFR-3 robots.txt** | The builder checks each site's robots.txt against the URLs the scraper requests, before going live, and records the date checked in 7.3. The scraper does not parse robots.txt at run time. |
-| **NFR-4 No circumvention** | On a block, stop (section 8.2). No proxies, no disguised browsers, no headless browsers, no rotating user agents, no workarounds. |
-| **NFR-5 Language** | R 4.6.1, with `httr2`, `rvest` and `jsonlite` (the course's language). CSV writing and gzip use base R. Adding any other package means updating this line first. |
+| **NFR-4 Getting past blocks** | Blocks are worked around, not accepted (section 8.2). Proxies, headless or real browsers, rotating user agents and any other workaround are all allowed. |
+| **NFR-5 Language** | R 4.6.1, with `httr2`, `rvest` and `jsonlite` (the course's language), plus `chromote` (headless Chrome) for pages that block plain requests. CSV writing and gzip use base R. Any other package that helps is allowed; list it here when you add it. |
 | **NFR-6 Secrets** | Tokens, passwords and the contact address go in `.Renviron` or GitHub secrets, never in git. `.Renviron`, `output/` and `raw/` are listed in `.gitignore`. |
-| **NFR-7 Reliability** | One product failing never stops the run, except a block (section 8.2). |
+| **NFR-7 Reliability** | One product failing never stops the run. |
 
 ---
 
