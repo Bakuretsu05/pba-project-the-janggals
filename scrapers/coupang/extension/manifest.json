@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Coupang snapshots (Double 11 study)",
+  "version": "1.0.0",
+  "description": "Saves the Coupang product pages of the study's product table at each scheduled run time.",
+  "minimum_chrome_version": "120",
+  "permissions": ["alarms", "background", "downloads", "downloads.ui", "power", "scripting", "storage"],
+  "host_permissions": [
+    "https://www.tw.coupang.com/*",
+    "https://raw.githubusercontent.com/*",
+    "https://hc-ping.com/*"
+  ],
+  "background": { "service_worker": "background.js" },
+  "action": { "default_title": "Coupang snapshots", "default_popup": "popup.html" }
+}

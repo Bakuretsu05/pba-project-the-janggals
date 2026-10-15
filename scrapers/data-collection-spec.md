@@ -24,8 +24,9 @@ The data comes from two sources:
 
 1. **Scrapers for momo, PChome and Coupang**: one R script per platform, in that platform's
    folder under `scrapers/`, that writes one row per product per run in the format in section 7.
-2. **A GitHub Actions workflow** that runs all three scrapers on the schedule in section 9, from
-   Oct 19 to Nov 25, with extra runs around 11.11.
+2. **A GitHub Actions workflow** that runs the scrapers on the schedule in section 9, from
+   Oct 19 to Nov 25, with extra runs around 11.11. Coupang refuses GitHub's runners, so its
+   runs happen on the same schedule in a Chrome extension on Marvin's laptop instead (Q7).
 3. **BigGo price history transcribed** into the format in section 11.
 
 Owners are in section 12 (assigned at the Oct 12 kickoff).
@@ -69,7 +70,7 @@ Owners are in section 12 (assigned at the Oct 12 kickoff).
 | **FR-4** | Each run writes a new file: `scrapers/<platform>/output/<platform>_<run date>_<run time>.csv`, e.g. `scrapers/momo/output/momo_2026-11-11_1807.csv`. If that file already exists, the scraper stops with an error before sending any request. Files are never appended to or overwritten. |
 | **FR-5** | Every response body received, whatever its status, is saved gzip-compressed to `scrapers/<platform>/raw/<run date>_<run time>/<platform_item_id>.html.gz` (`.json.gz` for PChome), so a parsing bug can be fixed later by re-parsing old pages. No response, no file. |
 | **FR-6** | The scraper copies what the page shows. It never computes discounts, never fills a missing value from another run, and never translates or rewords labels. The only change it makes to text is the whitespace rule in section 7.2. |
-| **FR-7** | One command runs a platform: `Rscript scrapers/<platform>/scrape_<platform>.R` from the project root, where `<platform>` is `momo`, `pchome` or `coupang`. The script creates its `output/` and `raw/` folders if they are missing. |
+| **FR-7** | One command runs a platform: `Rscript scrapers/<platform>/scrape_<platform>.R` from the project root, where `<platform>` is `momo`, `pchome` or `coupang`. The script creates its `output/` and `raw/` folders if they are missing. **Coupang (Q7):** a Chrome extension loads and saves the pages at each run time, and `Rscript scrapers/coupang/scrape_coupang.R --saved` then writes each saved run's CSV and `raw/` files, with the run date and run time of the moment the extension started. |
 | **FR-8** | At the end of a run it prints one summary line: platform, products attempted, count per `fetch_status` value, output file. Example: `momo: 98 products | ok 95, http_error 2, parse_failure 1 | scrapers/momo/output/momo_2026-10-19_1007.csv` |
 | **FR-9** | Exit code: `1` if no product ended `ok`, or if the run could not start (section 6.3). Otherwise `0`, even when some products failed. The output file is written before exiting either way. A non-zero exit is what makes the GitHub run show as failed and send the failure email. |
 
@@ -174,13 +175,13 @@ updates this table.
 
 | Column | PChome (JSON product feed) | momo (product page HTML) | Coupang (product page HTML) |
 |---|---|---|---|
-| `original_price` | `Price.M` if it differs from `Price.P`, else `NA` | Crossed-out 市價 if shown **(check)** | Crossed-out 原價 if shown **(check)** |
-| `sale_price` | `Price.P` | 促銷價 | Main price **(check)** |
-| `extra_price` | Always `NA` (the feed carries no conditional prices) | 限時折後價 (the JSON-LD `price` also holds this) | Member / coupon / card price **(check)** |
-| `shown_discount_pct`, `promo_tag`, `coupon_note` | Always `NA` | From the page **(check)** | From the page **(check)** |
-| `seller_type` | `platform` | `platform` unless a third-party shop is shown **(check)** | Rocket badge → `platform`; seller name → `marketplace` **(check)** |
-| `in_stock` | `TRUE` if `Qty > 0`, else `FALSE` | `FALSE` if a sold-out notice is shown, else `TRUE` **(check)** | `FALSE` if a sold-out notice is shown, else `TRUE` **(check)** |
-| Challenge-page marker (section 8.1) | n/a (JSON) | **(check)** | **(check)** |
+| `original_price` | `Price.M` if it differs from `Price.P`, else `NA` | Crossed-out 市價 if shown **(check)** | Crossed-out price: the JSON-LD `StrikethroughPrice`, else the struck price in `.price-container`. Per Coupang, the supplier's suggested or official-channel price, else the item's highest Coupang price in 90 days |
+| `sale_price` | `Price.P` | 促銷價 | Headline price (JSON-LD `offers.price`). If a line under it marks the headline as conditional (`$198 首購折扣價`), the crossed-out price instead, provided headline + reduction = crossed-out price; otherwise `NA` and `parse_failure` |
+| `extra_price` | Always `NA` (the feed carries no conditional prices) | 限時折後價 (the JSON-LD `price` also holds this) | Lowest of: a headline marked conditional (label e.g. `首購折扣價`, first purchase) and card prices under 刷卡優惠 (label e.g. `王道卡 特惠價`) |
+| `shown_discount_pct`, `promo_tag`, `coupon_note` | Always `NA` | From the page **(check)** | Product pages show `N折`, never %, so `shown_discount_pct` is `NA` and the badge goes to `promo_tag`. `coupon_note`: the conditional line, `.conditional-benefits`, 刷卡優惠 and 銀行回饋 entries. 11.11 campaign labels not seen yet |
+| `seller_type` | `platform` | `platform` unless a third-party shop is shown **(check)** | `賣家：<name>` (`.seller-info`) → `marketplace`; else the `ROCKET` badge in the price block → `platform` |
+| `in_stock` | `TRUE` if `Qty > 0`, else `FALSE` | `FALSE` if a sold-out notice is shown, else `TRUE` **(check)** | JSON-LD `offers.availability` (`InStock` → `TRUE`); without JSON-LD, `FALSE` if 已售完, 暫時缺貨 or similar is shown. No sold-out page seen yet **(check)**. A wrong link and a delisted item get the same HTTP 200 page, 找不到商品: `parse_failure` |
+| Challenge-page marker (section 8.1) | n/a (JSON) | **(check)** | Akamai: `Access Denied`, or `sec-if-cpt-container` (JavaScript check that reloads itself); Coupang: `id="error403"` (你沒有權限存取此頁面) |
 
 Endpoints:
 
@@ -196,10 +197,16 @@ Endpoints:
   `/ajax/`, and also disallows URLs carrying the tracking parameters `utm_`, `osm=` and
   `recomd_id=`. Links pasted from a browser often carry these, which is why the scraper builds
   its own URL from the `i_code` and never requests the pasted link.
-- **Coupang:** the product page at `coupang_url`, requested exactly as stored in the product
-  table. Prices are read from the HTML; check whether it carries JSON-LD like momo's, and prefer
-  it when it does. **(check)** robots.txt (checked 2026-10-13) returns 403 to an ordinary
-  request, like the rest of the site, so expect to need the workarounds in section 8.2.
+- **Coupang** (tested 2026-10-15): the product page at `coupang_url`, requested exactly as stored
+  in the product table, from a Coupang page in an everyday Chrome, by the Chrome extension in
+  `scrapers/coupang/extension` (`scrapers/coupang/README.md` explains why). Prices are read from
+  the HTML as served: JSON-LD (`offers.price`, the `StrikethroughPrice`, `availability`) and the
+  price block. Akamai answers every plain request (httr2, curl) with 403 whatever the headers,
+  and headless Chrome fails its JavaScript check. From a GitHub-hosted runner every page gets
+  403 even in a Chrome window: Akamai refuses those addresses (Q7). An everyday Chrome on a home
+  connection got 72 of 72 product pages at the 5-second pace. robots.txt (read in a browser
+  2026-10-15) does not disallow `/products/` for `User-Agent: *`; it disallows only some
+  `/next-api/` and `/n-api/` paths.
 
 ---
 
@@ -248,7 +255,7 @@ on the hour. Scheduled runs can still start late; `scraped_at` records the real 
 | ID | Requirement |
 |---|---|
 | **WF-1** | One workflow file, `.github/workflows/scrape.yml`, with the three cron entries above and a manual trigger (`workflow_dispatch`). |
-| **WF-2** | One job per platform (a matrix over `momo`, `pchome`, `coupang`, with `fail-fast: false`), so one platform failing does not cancel the others. Jobs may run in parallel; the pace rule (NFR-1) is per site. |
+| **WF-2** | One job per platform (a matrix over `momo` and `pchome`, with `fail-fast: false`), so one platform failing does not cancel the other. Jobs may run in parallel; the pace rule (NFR-1) is per site. Coupang is not in the workflow: GitHub's runners are refused (Q7). |
 | **WF-3** | Scheduled runs outside Oct 19 – Nov 25 (Taiwan date) do nothing and end green. Manual runs always run, for testing and make-ups. |
 | **WF-4** | R 4.6.1 via `r-lib/actions/setup-r`, packages via `r-lib/actions/setup-r-dependencies` (cached binaries, not source builds). |
 | **WF-5** | `SCRAPER_CONTACT` comes from a repository secret of the same name. |
@@ -268,10 +275,10 @@ back-fill a missed run by copying another run's values.
 | ID | Requirement |
 |---|---|
 | **NFR-1 Pace** | 5 seconds between requests to the same site by default, retries included. Change it if that helps get past a block. |
-| **NFR-2 Identity** | User agent `PBA-Double11-study (NTHU ISS4066; contact: <SCRAPER_CONTACT>)`, where `SCRAPER_CONTACT` is an environment variable holding the team's contact email: in `.Renviron` at the project root locally, a repository secret on GitHub (WF-5). This is the default; it may be changed to get past a block (section 8.2). |
+| **NFR-2 Identity** | User agent `PBA-Double11-study (NTHU ISS4066; contact: <SCRAPER_CONTACT>)`, where `SCRAPER_CONTACT` is an environment variable holding the team's contact email: in `.Renviron` at the project root locally, a repository secret on GitHub (WF-5). This is the default; it may be changed to get past a block (section 8.2). Coupang's pages are requested with the collecting browser's own user agent: Akamai refuses any other. |
 | **NFR-3 robots.txt** | The builder checks each site's robots.txt against the URLs the scraper requests, before going live, and records the date checked in 7.3. The scraper does not parse robots.txt at run time. |
 | **NFR-4 Getting past blocks** | Blocks are worked around, not accepted (section 8.2). Proxies, headless or real browsers, rotating user agents and any other workaround are all allowed. |
-| **NFR-5 Language** | R 4.6.1, with `httr2`, `rvest` and `jsonlite` (the course's language), plus `chromote` (headless Chrome) for pages that block plain requests. CSV writing and gzip use base R. Any other package that helps is allowed; list it here when you add it. |
+| **NFR-5 Language** | R 4.6.1, with `httr2`, `rvest` and `jsonlite` (the course's language), plus `chromote` (headless Chrome) for pages that block plain requests. CSV writing and gzip use base R. Any other package that helps is allowed; list it here when you add it. Added: `processx` (starts Chrome; Coupang) and `xml2` (installed with rvest; Coupang). Coupang's pages are loaded by a Chrome extension written in JavaScript (Q7); R still reads them. |
 | **NFR-6 Secrets** | Tokens, passwords and the contact address go in `.Renviron` or GitHub secrets, never in git. `.Renviron`, `output/` and `raw/` are listed in `.gitignore`. |
 | **NFR-7 Reliability** | One product failing never stops the run. |
 
@@ -309,7 +316,7 @@ Type in **change points only**, one row per price change. R turns these into dai
 | D3 | PChome scraper passing section 13 | Albert | Sat Oct 17 |
 | D4 | momo scraper passing section 13 | Jordan | Sat Oct 17 |
 | D5 | Coupang scraper passing section 13 | Marvin | Sat Oct 17 |
-| D6 | Workflow (section 9) passing section 13, manual run green on all three platforms | Marvin | Sun Oct 18 |
+| D6 | Workflow (section 9) passing section 13, manual run green on momo and PChome; Coupang's extension set up on Marvin's laptop (Q7) | Marvin | Sun Oct 18 |
 | D7 | First scheduled run on all three platforms | all | **Mon Oct 19** |
 | D8 | 2025 BigGo history | | Sun Oct 25 (Milestone 2) |
 | D9 | Extra runs on Nov 10 to 12 | all | Thu Nov 12 |
@@ -348,8 +355,9 @@ Type in **change points only**, one row per price change. R turns these into dai
 | # | Question | Who answers | Status |
 |---|---|---|---|
 | Q1 | Does momo show a crossed-out 市價 on product pages? | momo owner | Open |
-| Q2 | Does Coupang show a crossed-out 原價? What second prices appear? | Coupang owner | Open |
-| Q3 | How do momo and Coupang show third-party sellers? | Platform owners | Open |
+| Q2 | Does Coupang show a crossed-out 原價? What second prices appear? | Coupang owner | **Answered 2026-10-15:** yes, a struck price (supplier's suggested price, else the 90-day high on Coupang). Second prices: a first-purchase price (首購折扣價) built into the headline for visitors not logged in, and card prices (e.g. 王道卡 特惠價); also bank cashback, shown as text. See 7.3 |
+| Q3 | How do momo and Coupang show third-party sellers? | Platform owners | Open for momo. **Coupang (2026-10-15):** a `賣家：<name>` line with a seller rating, and no Rocket badge |
 | Q4 | Does BigGo's history show the 原價 as well as the price? How often does it check prices? | BigGo transcribers | Open |
 | Q5 | Do the scrapers run on GitHub Actions or on a laptop with Task Scheduler? | Team | **Closed 2026-10-13: GitHub Actions** (section 9) |
 | Q6 | Where are snapshots and raw pages kept long term? (The scrapers and workflow live in this repo.) Until decided, outputs live as 90-day workflow artifacts (WF-6), the earliest of which expire around Jan 17; decide before the final report (Dec 20). The repo is public (checked 2026-10-13), so artifact storage has no quota; if it is made private, GitHub Free's 500 MB artifact quota applies and the raw pages may approach it. | Team | Open |
+| Q7 | Coupang refuses GitHub-hosted runners: Akamai answers every request from them with 403 (tested 2026-10-15). Where does the Coupang scraper run? A team member's computer in Taiwan as a self-hosted runner (it must be on at every run time), a paid proxy, or no Coupang snapshots (BigGo history only)? | Team | **Answered 2026-10-15 (Marvin):** on Marvin's laptop, in his everyday Chrome, which Coupang serves normally. A Chrome extension saves the pages at each run time; a Windows scheduled task wakes the laptop for it; each run reports to Healthchecks.io, which emails when a run fails or is missing; `scrape_coupang.R --saved` writes the CSVs. Outputs are copied to the Q6 storage by hand. See `scrapers/coupang/README.md` |
