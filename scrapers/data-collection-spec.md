@@ -179,7 +179,7 @@ updates this table.
 | `extra_price` | Always `NA` (the feed carries no conditional prices) | 限時折後價 (the JSON-LD `price` also holds this) | Lowest of: a headline marked conditional (label e.g. `首購折扣價`, first purchase) and card prices under 刷卡優惠 (label e.g. `王道卡 特惠價`) |
 | `shown_discount_pct`, `promo_tag`, `coupon_note` | Always `NA` | From the page **(check)** | Product pages show `N折`, never %, so `shown_discount_pct` is `NA` and the badge goes to `promo_tag`. `coupon_note`: the conditional line, `.conditional-benefits`, 刷卡優惠 and 銀行回饋 entries. 11.11 campaign labels not seen yet |
 | `seller_type` | `platform` | `platform` unless a third-party shop is shown **(check)** | `賣家：<name>` (`.seller-info`) → `marketplace`; else the `ROCKET` badge in the price block → `platform` |
-| `in_stock` | `TRUE` if `Qty > 0`, else `FALSE` | `FALSE` if a sold-out notice is shown, else `TRUE` **(check)** | JSON-LD `offers.availability` (`InStock` → `TRUE`); without JSON-LD, `FALSE` if 已售完, 暫時缺貨 or similar is shown. No sold-out page seen yet **(check)** |
+| `in_stock` | `TRUE` if `Qty > 0`, else `FALSE` | `FALSE` if a sold-out notice is shown, else `TRUE` **(check)** | JSON-LD `offers.availability` (`InStock` → `TRUE`); without JSON-LD, `FALSE` if 已售完, 暫時缺貨 or similar is shown. No sold-out page seen yet **(check)**. A wrong link and a delisted item get the same HTTP 200 page, 找不到商品: `parse_failure` |
 | Challenge-page marker (section 8.1) | n/a (JSON) | **(check)** | Akamai: `Access Denied`, or `sec-if-cpt-container` (JavaScript check that reloads itself); Coupang: `id="error403"` (你沒有權限存取此頁面) |
 
 Endpoints:
@@ -200,9 +200,10 @@ Endpoints:
   in the product table, in a Chrome window (`scrapers/coupang/README.md` explains why). Prices
   are read from the HTML as served: JSON-LD (`offers.price`, the `StrikethroughPrice`,
   `availability`) and the price block. Akamai answers every plain request (httr2, curl) with 403
-  whatever the headers, and headless Chrome fails its JavaScript check. robots.txt (read in a
-  browser 2026-10-15) does not disallow `/products/` for `User-Agent: *`; it disallows only some
-  `/next-api/` and `/n-api/` paths.
+  whatever the headers, and headless Chrome fails its JavaScript check. From a GitHub-hosted
+  runner every page gets 403 even in a Chrome window: Akamai refuses those addresses (Q7).
+  robots.txt (read in a browser 2026-10-15) does not disallow `/products/` for
+  `User-Agent: *`; it disallows only some `/next-api/` and `/n-api/` paths.
 
 ---
 
@@ -356,3 +357,4 @@ Type in **change points only**, one row per price change. R turns these into dai
 | Q4 | Does BigGo's history show the 原價 as well as the price? How often does it check prices? | BigGo transcribers | Open |
 | Q5 | Do the scrapers run on GitHub Actions or on a laptop with Task Scheduler? | Team | **Closed 2026-10-13: GitHub Actions** (section 9) |
 | Q6 | Where are snapshots and raw pages kept long term? (The scrapers and workflow live in this repo.) Until decided, outputs live as 90-day workflow artifacts (WF-6), the earliest of which expire around Jan 17; decide before the final report (Dec 20). The repo is public (checked 2026-10-13), so artifact storage has no quota; if it is made private, GitHub Free's 500 MB artifact quota applies and the raw pages may approach it. | Team | Open |
+| Q7 | Coupang refuses GitHub-hosted runners: Akamai answers every request from them with 403 (tested 2026-10-15). Where does the Coupang scraper run? A team member's computer in Taiwan as a self-hosted runner (it must be on at every run time), a paid proxy, or no Coupang snapshots (BigGo history only)? | Team | Open |

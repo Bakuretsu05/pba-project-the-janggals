@@ -284,11 +284,17 @@ reset_navigation <- function(br) {
 
 browser_close <- function(br) {
   if (is.null(br)) return(invisible())
-  # A clean shutdown lets Chrome write its cookies to the profile for the next run.
-  try(br$cm$Browser$close(wait_ = FALSE), silent = TRUE)
+  # Our end of the DevTools connection is closed first: if Chrome closes it, the websocket library
+  # prints a harmless but alarming "[error] handle_read_frame" line. Chrome is then asked to quit
+  # as if its window were closed, so it writes its cookies to the profile, and forced if it hangs.
+  try(br$cm$close(), silent = TRUE)
+  if (.Platform$OS.type == "windows") {
+    system2("taskkill", c("/PID", br$proc$get_pid()), stdout = FALSE, stderr = FALSE)
+  } else {
+    br$proc$signal(tools::SIGTERM)
+  }
   try(br$proc$wait(10000), silent = TRUE)
   if (br$proc$is_alive()) br$proc$kill_tree()
-  try(br$cm$close(), silent = TRUE)
   invisible()
 }
 
@@ -362,7 +368,7 @@ last_doc <- function(br) if (length(br$docs) == 0) NULL else br$docs[[length(br$
 PRICE_RE <- "^(NT)?\\$[0-9][0-9,]*$"
 ZHE_RE <- "^[0-9]+(\\.[0-9]+)?折$"
 PCT_RE <- "^-?[0-9]+(\\.[0-9]+)?%$"
-SOLD_OUT_RE <- "已售完|暫時缺貨|已停售|已下架|商品不存在|無法購買"
+SOLD_OUT_RE <- "已售完|暫時缺貨|已停售|已下架|無法購買"
 
 # Access Denied pages, Coupang's own 403 page and Akamai's JavaScript check (8.1: blocked).
 is_block_page <- function(html) {
@@ -387,6 +393,12 @@ text_pieces <- function(node) {
   own <- vapply(els, function(e) paste(xml2::xml_text(xml2::xml_find_all(e, "./text()")), collapse = ""), "")
   data.frame(text = clean_text(own), class = xml2::xml_attr(els, "class", default = ""),
              stringsAsFactors = FALSE)
+}
+
+# The text a visitor sees in `node` (scripts and styles left out), as one string.
+visible_text <- function(node) {
+  if (inherits(node, "xml_missing")) return("")
+  paste(text_pieces(node)$text, collapse = " ")
 }
 
 # The price block: headline price, struck-through price, 折 or % badge, and the line under the
@@ -440,10 +452,13 @@ parse_product_page <- function(html) {
   block <- html_element(doc, ".price-container")
   has_block <- !inherits(block, "xml_missing")
   if (is.null(ld) && !has_block) {
-    if (grepl(SOLD_OUT_RE, clean_text(html_text(html_element(doc, "body"))))) {
-      return(list(found = TRUE, fields = list(in_stock = FALSE), note = "removed or sold-out page"))
-    }
-    return(list(found = FALSE, note = "no product data on the page"))
+    # Coupang answers a wrong link and an item no longer sold with the same page (HTTP 200):
+    # "找不到商品。網址輸入錯誤，或該商品已結束銷售或暫停銷售。" The two cannot be told apart, and
+    # the spec wants a wrong link to show up, so this is a parse_failure with the reason logged.
+    shown <- visible_text(html_element(doc, "body"))
+    note <- if (grepl("找不到商品", shown)) "Coupang shows 找不到商品: a wrong link, or the item is no longer sold"
+            else "no product data on the page"
+    return(list(found = FALSE, note = note))
   }
 
   offers <- ld$offers
@@ -501,7 +516,7 @@ parse_product_page <- function(html) {
   in_stock <- if (nzchar(availability)) {
     availability %in% c("InStock", "LimitedAvailability", "OnlineOnly", "InStoreOnly")
   } else {
-    !grepl(SOLD_OUT_RE, clean_text(html_text(html_element(doc, ".prod-atf-contents"))))
+    !grepl(SOLD_OUT_RE, visible_text(html_element(doc, ".prod-atf-contents")))
   }
 
   fields <- list(

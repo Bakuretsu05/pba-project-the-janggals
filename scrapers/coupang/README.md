@@ -18,7 +18,8 @@ It needs:
 - Google Chrome, and the R packages `chromote`, `rvest` and `jsonlite`
   (`install.packages(c("chromote", "rvest", "jsonlite"))`).
 - A screen. A Chrome window opens and stays open during the run; leave it alone. On a server
-  with no screen (GitHub Actions), run the command under `xvfb-run`.
+  with no screen, run the command under `xvfb-run`.
+- A home internet connection in Taiwan. Coupang refuses GitHub's own runners (see below).
 
 The run writes `output/coupang_<date>_<time>.csv` (one row per product), keeps every page it
 received in `raw/<date>_<time>/`, and ends with the summary line from FR-8. A full run of about
@@ -32,11 +33,17 @@ Coupang is behind Akamai Bot Manager. What was tried on 2026-10-15:
 |---|---|
 | httr2 or curl, any user agent and headers | `403 Access Denied`, every time. Akamai recognises non-browser connections, not just their headers |
 | Headless Chrome (chromote's default), even with a normal Chrome user agent | Akamai's JavaScript check runs, fails, and the page reloads into a 403 |
-| A normal Chrome window, driven by the script | (see "Getting past Akamai" below) |
+| This scraper (a normal Chrome window) on a GitHub-hosted runner | `403 Access Denied` on every page, before any page or check is served: Akamai refuses GitHub's data-centre addresses outright. Backing off and a fresh profile change nothing |
+| This scraper on Marvin's home connection | Not confirmed yet. After the headless tests failed, every fresh session from that address got 403 at once, while an ordinary browser that already had Coupang cookies kept working: the address looks flagged for a while |
 
 Each failed attempt also makes Akamai more suspicious of the IP address for a while, so the
 scraper does not try plain requests first: they only cost requests and make the next ones
 less likely to get through.
+
+**Where it can run.** Not on GitHub-hosted runners. It needs a Taiwanese home connection whose
+address Akamai has not flagged, e.g. a team member's computer registered as a self-hosted
+GitHub Actions runner, or a proxy (`SCRAPER_PROXY`). This is open question Q7 in the spec. Run
+it once by hand from that connection before relying on it.
 
 The script therefore starts a normal Chrome window with its own profile in
 `scrapers/coupang/.chrome-profile/` (git-ignored) and loads each product page there, like a
@@ -76,6 +83,10 @@ comes from. Points worth knowing for the analysis:
   count for `extra_price`, which takes the lowest conditional price shown.
 - **Discount badges** on product pages are `N折`, never a percentage, so `shown_discount_pct` is
   `NA` and the badge goes to `promo_tag` (spec 7.2).
+- **Wrong or dead links.** Coupang answers a wrong link and an item it no longer sells with the
+  same page, with HTTP 200: 找不到商品。網址輸入錯誤，或該商品已結束銷售或暫停銷售。 The two
+  cannot be told apart, so the row is `parse_failure` and the run log says which page it was.
+  An item that is sold out but still listed comes out as `ok` with `in_stock` `FALSE`.
 - Text from separate parts of the page (a card name and its price, a bank and its reward) is
   joined with one space.
 
@@ -87,10 +98,24 @@ kept too, as `<itemId>_1.html.gz`, `<itemId>_2.html.gz`, … in the order they a
 
 ## Tests
 
-These were checked on 2026-10-15:
+`test_products.csv` holds three real products (a plain discount with a card price, a
+first-purchase price, a third-party seller), a link to a product that does not exist, and a
+link without `itemId`:
+
+```
+Rscript scrapers/coupang/scrape_coupang.R scrapers/coupang/test_products.csv
+```
+
+Checked on 2026-10-15:
 
 - A table with a link without `itemId`, a duplicated `product_id` and a non-Coupang link gives
-  three kinds of `bad_input` rows, and the run carries on.
+  `bad_input` rows with the reason in the log, and the run carries on.
 - Without `SCRAPER_CONTACT`, with a column missing or with no table, the run exits 1 and writes
   no file. A second run in the same minute stops and leaves the first file alone.
 - Times are Taiwan time even when the computer's clock is set to UTC.
+- The parser gives the right columns for page markup copied from the three test products.
+- On a GitHub-hosted runner (Linux, under `xvfb-run`) the whole run works as designed (blocked
+  rows, back-off, fresh profile, raw pages saved, exit code 1), but every page is refused.
+
+Not checked yet, because no automated page load has got through: the CSV for the three products
+against what a browser shows, and a sold-out page.
