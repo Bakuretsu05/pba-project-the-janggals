@@ -1,14 +1,14 @@
 # Handoff: Coupang collection, first live test
 
 Written 2026-10-16 on Marvin's personal laptop, for a Claude Code session on Marvin's work laptop.
-**Delete this file before `coupang-scraper` is merged.**
+Everything is on `main`. **Delete this file once the work-laptop test is done.**
 
 ## The task now
 
 The Chrome extension that collects Coupang has never run live. Marvin is testing it on the work
 laptop.
 
-1. **Install.** On the work laptop, Marvin checks out `coupang-scraper`, then loads the extension
+1. **Install.** On the work laptop, Marvin pulls `main` (or clones the repo), then loads the extension
    (a step only Marvin can do): `chrome://extensions` → *Developer mode* → *Load unpacked* → `scrapers\coupang\extension`.
    The Chrome tools can't drive `chrome://` pages. If *Load unpacked* is greyed out, company
    policy blocks it, so the test has to happen on the personal laptop.
@@ -53,7 +53,8 @@ laptop.
 
 ## Where things are
 
-- **Branch.** `coupang-scraper` is pushed, not merged, and has no PR.
+- **Merged into `main`** through PR #1 (merge commit `843c877`, 2026-10-16). The
+  `coupang-scraper` branch is deleted. PR #1 had no description and no review.
   - `1fd9a2d`: the scraper.
   - `933e071`: the GitHub-runner finding and Q7.
   - `67a3a6a`: `--saved` and its tests.
@@ -157,8 +158,11 @@ starts.
    - Check the URL once with `curl -fsS <ping url>`.
 4. **Product table.** The teammate's `products/products.csv` must be on `main` before Oct 19,
    10:07. It is header-only now, so a run would have 0 products.
-5. **Merge.** The team's OK on the spec changes (Q7, FR-7, WF-2, NFR-2, NFR-5, D6), then a code
-   review, then a PR to `main`. Delete this file first.
+5. **The team's OK.** The spec changes (Q7, FR-7, WF-2, NFR-2, NFR-5, D6) reached `main`
+   without review, so Marvin still needs to post a heads-up to the team, on PR #1 or in their
+   chat.
+   - Fixes from the test go on a new branch, through a PR that a teammate reviews. That is the
+     team convention from now on: no commits straight to `main`.
 6. **During the study:** run `Rscript scrapers/coupang/scrape_coupang.R --saved` from the project
    root, then copy `output/` and `raw/` to the team's storage (Q6).
 7. **Not verified yet:**
@@ -181,4 +185,4 @@ starts.
   cookies, and cut it off at about 2–3 KB.
 - **`gh` CLI** is not installed.
 - **Skills worth using:** `claude-in-chrome` for the price comparison (load the Chrome tools in
-  one ToolSearch call), `tdd` for R changes, and `code-review` before the PR.
+  one ToolSearch call), `tdd` for R changes, and `code-review` before each PR.
