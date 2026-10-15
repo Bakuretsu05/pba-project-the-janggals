@@ -3,11 +3,14 @@
 # Writes one snapshot row per product per run, as defined in scrapers/data-collection-spec.md.
 # Run from the project root:
 #
-#   Rscript scrapers/coupang/scrape_coupang.R [product_table.csv]
+#   Rscript scrapers/coupang/scrape_coupang.R --saved [folder]       # runs saved by the extension
+#   Rscript scrapers/coupang/scrape_coupang.R [product_table.csv]    # loads the pages itself
 #
-# Coupang sits behind Akamai Bot Manager, which answers plain HTTP clients (httr2, curl) with 403
-# whatever their headers, so every page is loaded in a real Chrome window driven through
-# chromote. scrapers/coupang/README.md explains this and the other choices made here.
+# Coupang sits behind Akamai Bot Manager, which refuses plain HTTP clients (httr2, curl), headless
+# Chrome, a Chrome window driven through chromote from a flagged address, and every request from
+# GitHub's runners. The study's runs are therefore collected by the Chrome extension in
+# scrapers/coupang/extension, in an everyday Chrome, and --saved turns each saved run into the
+# spec's files. scrapers/coupang/README.md explains this and the other choices made here.
 
 suppressPackageStartupMessages({
   library(chromote)
@@ -67,15 +70,15 @@ join_tags <- function(x) {
 # ---- Input: the product table (section 6) --------------------------------------------------------
 
 read_product_table <- function(path) {
-  if (!file.exists(path)) fail_start("product table not found: ", path)
+  if (!file.exists(path)) stop("product table not found: ", path, call. = FALSE)
   table <- tryCatch(
     read.csv(path, fileEncoding = "UTF-8-BOM", colClasses = "character",
              na.strings = character(), check.names = FALSE),
-    error = function(e) fail_start("cannot read product table ", path, ": ", conditionMessage(e))
+    error = function(e) stop("cannot read product table ", path, ": ", conditionMessage(e), call. = FALSE)
   )
   missing <- setdiff(INPUT_COLUMNS, names(table))
   if (length(missing) > 0) {
-    fail_start("product table ", path, " is missing column(s): ", paste(missing, collapse = ", "))
+    stop("product table ", path, " is missing column(s): ", paste(missing, collapse = ", "), call. = FALSE)
   }
   table
 }
@@ -621,9 +624,141 @@ scrape_product <- function(run, target) {
           fields = if (a$verdict$kind == "ok") a$verdict$fields else list())
 }
 
+# ---- Saved runs ----------------------------------------------------------------------------------
+#
+# The Chrome extension in scrapers/coupang/extension saves each run in a folder named after its
+# run date and run time: the product table it used (products.csv), each response body it got
+# (<itemId>_try<k>.html.gz) and a record of the run (run.json), which it writes last.
+# import_saved_run() turns one such folder into the run's CSV file and raw/ folder, judging each
+# product with the same rules as a run of this script.
+
+STAMP_RE <- "^[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{4}$"
+
+read_gz_text <- function(path) {
+  con <- gzfile(path, "rb")
+  on.exit(close(con))
+  bytes <- raw()
+  repeat {
+    chunk <- readBin(con, "raw", 1e6)
+    if (length(chunk) == 0) break
+    bytes <- c(bytes, chunk)
+  }
+  txt <- rawToChar(bytes)
+  Encoding(txt) <- "UTF-8"
+  txt
+}
+
+# One product's row from the extension's record of it (NULL when it was never requested). Its
+# response bodies are saved under raw/ as save_raw_bodies() names them (FR-5).
+saved_product_row <- function(run_date, target, entry, run_dir, raw_dir) {
+  attempts <- if (is.null(entry)) list() else entry$attempts
+  if (length(attempts) == 0) {
+    # Recorded as not answered, as when this script runs out of time (no request was sent).
+    log_line(target$product_id, ": not requested, the run ended before it")
+    return(new_row(run_date, target, "timeout"))
+  }
+  bodies <- lapply(attempts, function(a) if (is.null(a$file)) NULL else read_gz_text(file.path(run_dir, a$file)))
+  save_raw_bodies(Filter(Negate(is.null), bodies), raw_dir, target$item_id)
+  last <- attempts[[length(attempts)]]
+  status <- if (is.null(last$status)) NA_integer_ else as.integer(last$status)
+  verdict <- judge_page(list(status = status, body = bodies[[length(bodies)]], challenge = FALSE))
+  sent_at <- as.POSIXct(last$sent_ms / 1000, origin = "1970-01-01", tz = "UTC")
+  new_row(run_date, target, verdict$kind, http_status = status, scraped_at = sent_at,
+          fields = if (verdict$kind == "ok") verdict$fields else list())
+}
+
+output_file <- function(out_dir, stamp) file.path(out_dir, sprintf("%s_%s.csv", PLATFORM, stamp))
+
+# Turns one saved run into its CSV file and raw/ folder, and returns its rows. Stops, writing
+# nothing, if the run's CSV already exists (FR-4) or the run never got its product table.
+import_saved_run <- function(run_dir, out_dir = file.path(PLATFORM_DIR, "output"),
+                             raw_root = file.path(PLATFORM_DIR, "raw")) {
+  stamp <- basename(run_dir)
+  run_date <- substr(stamp, 1, 10)
+  out_file <- output_file(out_dir, stamp)
+  if (file.exists(out_file)) stop(out_file, " already exists", call. = FALSE)
+  record <- fromJSON(file.path(run_dir, "run.json"), simplifyVector = FALSE)
+  if (!file.exists(file.path(run_dir, "products.csv"))) {
+    stop("the run did not start: ", record$error %||% "no products.csv", call. = FALSE)
+  }
+  table <- read_product_table(file.path(run_dir, "products.csv"))
+  if (!identical(record$state, "finished")) {
+    log_line(stamp, ": the run ended early (", record$state, "): ", record$error %||% "no reason recorded")
+  }
+  entries <- record$products
+  names(entries) <- vapply(entries, function(e) e$product_id, "")
+
+  dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+  claim_output_file(out_file)
+  targets <- select_products(table)
+  rows <- lapply(seq_len(nrow(targets)), function(i) {
+    target <- targets[i, ]
+    row <- if (!is.na(target$problem)) {
+      log_line("bad input on line ", target$line, " (", target$product_id, "): ", target$problem)
+      new_row(run_date, target, "bad_input")
+    } else {
+      saved_product_row(run_date, target, entries[[target$product_id]], run_dir,
+                        file.path(raw_root, stamp))
+    }
+    write_rows(row, out_file, header = FALSE)
+    row
+  })
+  if (length(rows) > 0) do.call(rbind, rows) else new_row("", list(product_id = "", item_id = NA), "")[0, ]
+}
+
+# Imports every run in `saved_dir` that has no CSV yet, oldest first. Returns the summary line of
+# each run imported (FR-8), a line for each run that could not be, and `ok`: FALSE when a run had
+# no ok row or could not be imported (FR-9).
+import_saved_runs <- function(saved_dir, out_dir = file.path(PLATFORM_DIR, "output"),
+                              raw_root = file.path(PLATFORM_DIR, "raw")) {
+  runs <- sort(list.dirs(saved_dir, recursive = FALSE))
+  runs <- runs[grepl(STAMP_RE, basename(runs)) & !file.exists(output_file(out_dir, basename(runs)))]
+  lines <- character()
+  ok <- TRUE
+  for (run_dir in runs) {
+    stamp <- basename(run_dir)
+    if (!file.exists(file.path(run_dir, "run.json"))) {
+      lines <- c(lines, sprintf("%s: %s is not finished (no run.json yet); left for a later import",
+                                PLATFORM, stamp))
+      next
+    }
+    rows <- tryCatch(import_saved_run(run_dir, out_dir, raw_root), error = function(e) e)
+    if (inherits(rows, "error")) {
+      ok <- FALSE
+      lines <- c(lines, sprintf("%s: %s not imported: %s", PLATFORM, stamp, conditionMessage(rows)))
+    } else {
+      ok <- ok && any(rows$fetch_status == "ok")
+      lines <- c(lines, summary_line(rows, output_file(out_dir, stamp)))
+    }
+  }
+  list(lines = lines, ok = ok)
+}
+
 # ---- Run -----------------------------------------------------------------------------------------
 
+# Where the extension saves its runs: Chrome's download folder, unless COUPANG_SAVED_DIR is set.
+saved_runs_dir <- function() {
+  dir <- Sys.getenv("COUPANG_SAVED_DIR")
+  if (nzchar(dir)) return(dir)
+  home <- Sys.getenv("USERPROFILE")
+  file.path(if (nzchar(home)) home else path.expand("~"), "Downloads", "coupang-snapshots")
+}
+
+# Rscript scrapers/coupang/scrape_coupang.R --saved [folder of saved runs]
+import_main <- function(args) {
+  if (!file.exists(file.path(PLATFORM_DIR, "scrape_coupang.R"))) {
+    fail_start("run it from the project root: Rscript scrapers/coupang/scrape_coupang.R --saved")
+  }
+  saved_dir <- if (length(args) >= 1) args[[1]] else saved_runs_dir()
+  if (!dir.exists(saved_dir)) fail_start("no saved runs found: ", saved_dir, " does not exist")
+  result <- import_saved_runs(saved_dir)
+  if (length(result$lines) == 0) result$lines <- sprintf("%s: nothing new to import in %s", PLATFORM, saved_dir)
+  cat(result$lines, sep = "\n")
+  quit(save = "no", status = if (result$ok) 0 else 1)
+}
+
 main <- function(args = commandArgs(trailingOnly = TRUE)) {
+  if (length(args) >= 1 && identical(args[[1]], "--saved")) return(import_main(args[-1]))
   started <- Sys.time()
   run_date <- tw_format(started, "%Y-%m-%d")
   run_stamp <- paste0(run_date, "_", tw_format(started, "%H%M"))
@@ -634,7 +769,8 @@ main <- function(args = commandArgs(trailingOnly = TRUE)) {
   if (!nzchar(Sys.getenv("SCRAPER_CONTACT"))) {
     fail_start("SCRAPER_CONTACT is not set; add it to .Renviron in the project root (NFR-2)")
   }
-  table <- read_product_table(if (length(args) >= 1) args[[1]] else DEFAULT_PRODUCT_TABLE)
+  table <- tryCatch(read_product_table(if (length(args) >= 1) args[[1]] else DEFAULT_PRODUCT_TABLE),
+                    error = function(e) fail_start(conditionMessage(e)))
   if (Sys.info()[["sysname"]] == "Linux" && !nzchar(Sys.getenv("DISPLAY"))) {
     fail_start("Chrome needs a display; on a server run the scraper under xvfb-run")
   }
