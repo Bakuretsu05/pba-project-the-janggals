@@ -1,0 +1,6 @@
+product_id,brand,model,category,momo_url,pchome_url,coupang_url,biggo_url_momo,biggo_url_pchome,biggo_url_coupang
+TEST-001,Apple,AirPods 4 (MXP63TA/A),3C,,,https://www.tw.coupang.com/products/Apple-%E5%8F%B0%E7%81%A3%E5%85%AC%E5%8F%B8%E8%B2%A8-AirPods-4%E4%BB%A3-%E8%97%8D%E7%89%99%E8%80%B3%E6%A9%9F-613522857558103?itemId=497204175273987&vendorItemId=497204175290369&q=AirPods&searchId=7c1f0e2b9a&sourceType=search&itemsCount=36&searchRank=1&rank=1,,,
+TEST-002,SWEET TOUCH,直覺 專業用洗髮精 茶樹 2L,BEAU,,,https://www.tw.coupang.com/products/238441665118240?itemId=220665340723205&vendorItemId=220663868506114,,,
+TEST-003,CW,磁吸防摔手機殼 S24 Ultra (third-party seller),3C,,,https://www.tw.coupang.com/products/664996224483416?itemId=664996224450656&vendorItemId=664996220289030,,,
+TEST-004,none,wrong link: no such product,3C,,,https://www.tw.coupang.com/products/100000000000001?itemId=100000000000001&vendorItemId=100000000000001,,,
+TEST-005,none,bad input: link without itemId,3C,,,https://www.tw.coupang.com/products/613522857558103?vendorItemId=497204175290369,,,

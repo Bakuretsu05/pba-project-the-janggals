@@ -174,13 +174,13 @@ updates this table.
 
 | Column | PChome (JSON product feed) | momo (product page HTML) | Coupang (product page HTML) |
 |---|---|---|---|
-| `original_price` | `Price.M` if it differs from `Price.P`, else `NA` | Crossed-out 市價 if shown **(check)** | Crossed-out 原價 if shown **(check)** |
-| `sale_price` | `Price.P` | 促銷價 | Main price **(check)** |
-| `extra_price` | Always `NA` (the feed carries no conditional prices) | 限時折後價 (the JSON-LD `price` also holds this) | Member / coupon / card price **(check)** |
-| `shown_discount_pct`, `promo_tag`, `coupon_note` | Always `NA` | From the page **(check)** | From the page **(check)** |
-| `seller_type` | `platform` | `platform` unless a third-party shop is shown **(check)** | Rocket badge → `platform`; seller name → `marketplace` **(check)** |
-| `in_stock` | `TRUE` if `Qty > 0`, else `FALSE` | `FALSE` if a sold-out notice is shown, else `TRUE` **(check)** | `FALSE` if a sold-out notice is shown, else `TRUE` **(check)** |
-| Challenge-page marker (section 8.1) | n/a (JSON) | **(check)** | **(check)** |
+| `original_price` | `Price.M` if it differs from `Price.P`, else `NA` | Crossed-out 市價 if shown **(check)** | Crossed-out price: the JSON-LD `StrikethroughPrice`, else the struck price in `.price-container`. Per Coupang, the supplier's suggested or official-channel price, else the item's highest Coupang price in 90 days |
+| `sale_price` | `Price.P` | 促銷價 | Headline price (JSON-LD `offers.price`). If a line under it marks the headline as conditional (`$198 首購折扣價`), the crossed-out price instead, provided headline + reduction = crossed-out price; otherwise `NA` and `parse_failure` |
+| `extra_price` | Always `NA` (the feed carries no conditional prices) | 限時折後價 (the JSON-LD `price` also holds this) | Lowest of: a headline marked conditional (label e.g. `首購折扣價`, first purchase) and card prices under 刷卡優惠 (label e.g. `王道卡 特惠價`) |
+| `shown_discount_pct`, `promo_tag`, `coupon_note` | Always `NA` | From the page **(check)** | Product pages show `N折`, never %, so `shown_discount_pct` is `NA` and the badge goes to `promo_tag`. `coupon_note`: the conditional line, `.conditional-benefits`, 刷卡優惠 and 銀行回饋 entries. 11.11 campaign labels not seen yet |
+| `seller_type` | `platform` | `platform` unless a third-party shop is shown **(check)** | `賣家：<name>` (`.seller-info`) → `marketplace`; else the `ROCKET` badge in the price block → `platform` |
+| `in_stock` | `TRUE` if `Qty > 0`, else `FALSE` | `FALSE` if a sold-out notice is shown, else `TRUE` **(check)** | JSON-LD `offers.availability` (`InStock` → `TRUE`); without JSON-LD, `FALSE` if 已售完, 暫時缺貨 or similar is shown. No sold-out page seen yet **(check)** |
+| Challenge-page marker (section 8.1) | n/a (JSON) | **(check)** | Akamai: `Access Denied`, or `sec-if-cpt-container` (JavaScript check that reloads itself); Coupang: `id="error403"` (你沒有權限存取此頁面) |
 
 Endpoints:
 
@@ -196,10 +196,13 @@ Endpoints:
   `/ajax/`, and also disallows URLs carrying the tracking parameters `utm_`, `osm=` and
   `recomd_id=`. Links pasted from a browser often carry these, which is why the scraper builds
   its own URL from the `i_code` and never requests the pasted link.
-- **Coupang:** the product page at `coupang_url`, requested exactly as stored in the product
-  table. Prices are read from the HTML; check whether it carries JSON-LD like momo's, and prefer
-  it when it does. **(check)** robots.txt (checked 2026-10-13) returns 403 to an ordinary
-  request, like the rest of the site, so expect to need the workarounds in section 8.2.
+- **Coupang** (tested 2026-10-15): the product page at `coupang_url`, requested exactly as stored
+  in the product table, in a Chrome window (`scrapers/coupang/README.md` explains why). Prices
+  are read from the HTML as served: JSON-LD (`offers.price`, the `StrikethroughPrice`,
+  `availability`) and the price block. Akamai answers every plain request (httr2, curl) with 403
+  whatever the headers, and headless Chrome fails its JavaScript check. robots.txt (read in a
+  browser 2026-10-15) does not disallow `/products/` for `User-Agent: *`; it disallows only some
+  `/next-api/` and `/n-api/` paths.
 
 ---
 
@@ -271,7 +274,7 @@ back-fill a missed run by copying another run's values.
 | **NFR-2 Identity** | User agent `PBA-Double11-study (NTHU ISS4066; contact: <SCRAPER_CONTACT>)`, where `SCRAPER_CONTACT` is an environment variable holding the team's contact email: in `.Renviron` at the project root locally, a repository secret on GitHub (WF-5). This is the default; it may be changed to get past a block (section 8.2). |
 | **NFR-3 robots.txt** | The builder checks each site's robots.txt against the URLs the scraper requests, before going live, and records the date checked in 7.3. The scraper does not parse robots.txt at run time. |
 | **NFR-4 Getting past blocks** | Blocks are worked around, not accepted (section 8.2). Proxies, headless or real browsers, rotating user agents and any other workaround are all allowed. |
-| **NFR-5 Language** | R 4.6.1, with `httr2`, `rvest` and `jsonlite` (the course's language), plus `chromote` (headless Chrome) for pages that block plain requests. CSV writing and gzip use base R. Any other package that helps is allowed; list it here when you add it. |
+| **NFR-5 Language** | R 4.6.1, with `httr2`, `rvest` and `jsonlite` (the course's language), plus `chromote` (headless Chrome) for pages that block plain requests. CSV writing and gzip use base R. Any other package that helps is allowed; list it here when you add it. Added: `processx` (starts Chrome; Coupang) and `xml2` (installed with rvest; Coupang). |
 | **NFR-6 Secrets** | Tokens, passwords and the contact address go in `.Renviron` or GitHub secrets, never in git. `.Renviron`, `output/` and `raw/` are listed in `.gitignore`. |
 | **NFR-7 Reliability** | One product failing never stops the run. |
 
@@ -348,8 +351,8 @@ Type in **change points only**, one row per price change. R turns these into dai
 | # | Question | Who answers | Status |
 |---|---|---|---|
 | Q1 | Does momo show a crossed-out 市價 on product pages? | momo owner | Open |
-| Q2 | Does Coupang show a crossed-out 原價? What second prices appear? | Coupang owner | Open |
-| Q3 | How do momo and Coupang show third-party sellers? | Platform owners | Open |
+| Q2 | Does Coupang show a crossed-out 原價? What second prices appear? | Coupang owner | **Answered 2026-10-15:** yes, a struck price (supplier's suggested price, else the 90-day high on Coupang). Second prices: a first-purchase price (首購折扣價) built into the headline for visitors not logged in, and card prices (e.g. 王道卡 特惠價); also bank cashback, shown as text. See 7.3 |
+| Q3 | How do momo and Coupang show third-party sellers? | Platform owners | Open for momo. **Coupang (2026-10-15):** a `賣家：<name>` line with a seller rating, and no Rocket badge |
 | Q4 | Does BigGo's history show the 原價 as well as the price? How often does it check prices? | BigGo transcribers | Open |
 | Q5 | Do the scrapers run on GitHub Actions or on a laptop with Task Scheduler? | Team | **Closed 2026-10-13: GitHub Actions** (section 9) |
 | Q6 | Where are snapshots and raw pages kept long term? (The scrapers and workflow live in this repo.) Until decided, outputs live as 90-day workflow artifacts (WF-6), the earliest of which expire around Jan 17; decide before the final report (Dec 20). The repo is public (checked 2026-10-13), so artifact storage has no quota; if it is made private, GitHub Free's 500 MB artifact quota applies and the raw pages may approach it. | Team | Open |
