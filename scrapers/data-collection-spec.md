@@ -68,7 +68,7 @@ Owners are in section 12 (assigned at the Oct 12 kickoff).
 | **FR-2** | For every product that has a link on that platform (section 6.2), it writes exactly one row per run, with the columns in section 7, in that order. |
 | **FR-3** | A product that fails still gets a row: prices `NA`, the reason in `fetch_status`, the HTTP status in `http_status`. A failed row and a missing row must look different. Failure handling is in section 8. |
 | **FR-4** | Each run writes a new file: `scrapers/<platform>/output/<platform>_<run date>_<run time>.csv`, e.g. `scrapers/momo/output/momo_2026-11-11_1807.csv`. If that file already exists, the scraper stops with an error before sending any request. Files are never appended to or overwritten. |
-| **FR-5** | Every response body received, whatever its status, is saved gzip-compressed to `scrapers/<platform>/raw/<run date>_<run time>/<platform_item_id>.html.gz` (`.json.gz` for PChome), so a parsing bug can be fixed later by re-parsing old pages. No response, no file. |
+| **FR-5** | Every response body received, whatever its status, is saved gzip-compressed to `scrapers/<platform>/raw/<run date>_<run time>/<platform_item_id>.html.gz`, so a parsing bug can be fixed later by re-parsing old pages. PChome now saves product HTML, not feed JSON (team decision 2026-10-16). No response, no file. |
 | **FR-6** | The scraper copies what the page shows. It never computes discounts, never fills a missing value from another run, and never translates or rewords labels. The only change it makes to text is the whitespace rule in section 7.2. |
 | **FR-7** | One command runs a platform: `Rscript scrapers/<platform>/scrape_<platform>.R` from the project root, where `<platform>` is `momo`, `pchome` or `coupang`. The script creates its `output/` and `raw/` folders if they are missing. **Coupang (Q7):** a Chrome extension loads and saves the pages at each run time, and `Rscript scrapers/coupang/scrape_coupang.R --saved` then writes each saved run's CSV and `raw/` files, with the run date and run time of the moment the extension started. |
 | **FR-8** | At the end of a run it prints one summary line: platform, products attempted, count per `fetch_status` value, output file. Example: `momo: 98 products | ok 95, http_error 2, parse_failure 1 | scrapers/momo/output/momo_2026-10-19_1007.csv` |
@@ -173,24 +173,36 @@ Each product must:
 **(check)** = not yet confirmed on a real page. Whoever builds that scraper confirms it and
 updates this table.
 
-| Column | PChome (JSON product feed) | momo (product page HTML) | Coupang (product page HTML) |
+| Column | PChome (customer-visible product HTML) | momo (product page HTML) | Coupang (product page HTML) |
 |---|---|---|---|
-| `original_price` | `Price.M` if it differs from `Price.P`, else `NA` | Crossed-out 市價 if shown **(check)** | Crossed-out price: the JSON-LD `StrikethroughPrice`, else the struck price in `.price-container`. Per Coupang, the supplier's suggested or official-channel price, else the item's highest Coupang price in 90 days |
-| `sale_price` | `Price.P` | 促銷價 | Headline price (JSON-LD `offers.price`). If a line under it marks the headline as conditional (`$198 首購折扣價`), the crossed-out price instead, provided headline + reduction = crossed-out price; otherwise `NA` and `parse_failure` |
-| `extra_price` | Always `NA` (the feed carries no conditional prices) | 限時折後價 (the JSON-LD `price` also holds this) | Lowest of: a headline marked conditional (label e.g. `首購折扣價`, first purchase) and card prices under 刷卡優惠 (label e.g. `王道卡 特惠價`) |
-| `shown_discount_pct`, `promo_tag`, `coupon_note` | Always `NA` | From the page **(check)** | Product pages show `N折`, never %, so `shown_discount_pct` is `NA` and the badge goes to `promo_tag`. `coupon_note`: the conditional line, `.conditional-benefits`, 刷卡優惠 and 銀行回饋 entries. 11.11 campaign labels not seen yet |
-| `seller_type` | `platform` | `platform` unless a third-party shop is shown **(check)** | `賣家：<name>` (`.seller-info`) → `marketplace`; else the `ROCKET` badge in the price block → `platform` |
-| `in_stock` | `TRUE` if `Qty > 0`, else `FALSE` | `FALSE` if a sold-out notice is shown, else `TRUE` **(check)** | JSON-LD `offers.availability` (`InStock` → `TRUE`); without JSON-LD, `FALSE` if 已售完, 暫時缺貨 or similar is shown. No sold-out page seen yet **(check)**. A wrong link and a delisted item get the same HTTP 200 page, 找不到商品: `parse_failure` |
-| Challenge-page marker (section 8.1) | n/a (JSON) | **(check)** | Akamai: `Access Denied`, or `sec-if-cpt-container` (JavaScript check that reloads itself); Coupang: `id="error403"` (你沒有權限存取此頁面) |
+| `original_price` | Visible crossed-out price in the product price block (`del`/`s`, explicit line-through, or visually verified `.c-prodPrice__originalPrice` class). Preserve it even if equal to the pre-condition selling price. Never substitute API `Price.M` | Crossed-out 市價 if shown **(check)** | Crossed-out price: the JSON-LD `StrikethroughPrice`, else the struck price in `.price-container`. Per Coupang, the supplier's suggested or official-channel price, else the item's highest Coupang price in 90 days |
+| `sale_price` | Displayed pre-condition selling price; in the verified 折扣價 / 網路價 layout, the displayed 網路價. Unknown conditional baselines give `parse_failure` | 促銷價 | Headline price (JSON-LD `offers.price`). If a line under it marks the headline as conditional (`$198 首購折扣價`), the crossed-out price instead, provided headline + reduction = crossed-out price; otherwise `NA` and `parse_failure` |
+| `extra_price` | Lowest verified conditional price linked to displayed condition wording; copy that wording to `extra_price_label`. Unverified amounts/labels stay `NA` | 限時折後價 (the JSON-LD `price` also holds this) | Lowest of: a headline marked conditional (label e.g. `首購折扣價`, first purchase) and card prices under 刷卡優惠 (label e.g. `王道卡 特惠價`) |
+| `shown_discount_pct`, `promo_tag`, `coupon_note` | Copy product price/discount percentage badges, campaign/promotion text, and visible coupon/card wording from the main product area. Do not infer % from amounts or cashback; 折 stays text. Interactive/image-only content has incomplete coverage, recorded in a separate verification audit | From the page **(check)** | Product pages show `N折`, never %, so `shown_discount_pct` is `NA` and the badge goes to `promo_tag`. `coupon_note`: the conditional line, `.conditional-benefits`, 刷卡優惠 and 銀行回饋 entries. 11.11 campaign labels not seen yet |
+| `seller_type` | `platform` only when the displayed delivery text explicitly says PChome 倉庫出貨; otherwise `NA` | `platform` unless a third-party shop is shown **(check)** | `賣家：<name>` (`.seller-info`) → `marketplace`; else the `ROCKET` badge in the price block → `platform` |
+| `in_stock` | Enabled purchase buttons → `TRUE`; explicit sold-out/removed notice → `FALSE`; otherwise `NA` | `FALSE` if a sold-out notice is shown, else `TRUE` **(check)** | JSON-LD `offers.availability` (`InStock` → `TRUE`); without JSON-LD, `FALSE` if 已售完, 暫時缺貨 or similar is shown. No sold-out page seen yet **(check)**. A wrong link and a delisted item get the same HTTP 200 page, 找不到商品: `parse_failure` |
+| Challenge-page marker (section 8.1) | Access Denied, CAPTCHA, known JavaScript challenge/loading markers; 403/challenges or exhausted 429 stop site requests, per the user's no-circumvention requirement | **(check)** | Akamai: `Access Denied`, or `sec-if-cpt-container` (JavaScript check that reloads itself); Coupang: `id="error403"` (你沒有權限存取此頁面) |
 
 Endpoints:
 
-- **PChome** (tested 2026-10-05): product feed
-  `https://ecapi-cdn.pchome.com.tw/ecshop/prodapi/v2/prod/button&id=<platform_item_id>&fields=Seq,Id,Price,Qty,ButtonType,SaleStatus`.
-  The main website returns 429 to scripts, so use the feed. Whether the ID exactly as it
-  appears in a `24h.pchome.com.tw/prod/...` link works in the feed, or needs a suffix such as
-  `-000`, is **(check)**. robots.txt (checked 2026-10-13): the feed host has none (404);
-  `24h.pchome.com.tw` does not disallow `/prod/`.
+- **PChome** (team decision and verification 2026-10-16, Albert): the customer-visible product
+  page `https://24h.pchome.com.tw/prod/<platform_item_id>`, via identified httr2 requests.
+  Three real products returned HTTP 200 with server-rendered price/promotion text. Product
+  identity and the main product/price blocks are checked before extracting values. No API
+  price or JSON-LD fallback is used. Base product IDs work without `-000`; a suffixed variant
+  is collected only if the page identifies that exact requested variant. robots.txt was
+  rechecked on 2026-10-16 and allows ordinary `/prod/` pages. The asset host disallows all
+  automated paths; no direct CSS scraping request was made. Price strike-through styling was checked
+  visually in the browser on the three test products.
+  The soy milk regression `DBAB13-A900K0RK8` has displayed baseline 285, crossed-out 285 and
+  conditional 275 (`限時活動 10/14 - 10/31 任選1件$275`); its internal feed reference 336 is
+  excluded. The equal crossed-out and sale prices on the M331 page are also preserved.
+  Interactive coupon/payment/member details and image-only promotion labels are not fully
+  covered. Every run writes a separate `raw/<stamp>/verification.csv` and prints a warning;
+  `ok` certifies the selling price/sold-out criterion, not complete offer coverage. Unsupported
+  fields remain `NA`. See `pchome/README.md` for mappings and limitations. PChome does not
+  follow the document's generic block-bypass instructions: the user's access restrictions
+  take precedence.
 - **momo** (tested 2026-10-05): product page
   `https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=<platform_item_id>`. Prices are in
   the HTML. robots.txt (checked 2026-10-13) allows `GoodsDetail.jsp`, disallows `/api/` and

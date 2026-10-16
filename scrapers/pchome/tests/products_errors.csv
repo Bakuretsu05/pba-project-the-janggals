@@ -1,0 +1,4 @@
+product_id,brand,model,category,momo_url,pchome_url,coupang_url,biggo_url_momo,biggo_url_pchome,biggo_url_coupang
+TEST-WRONG,,,3C,,https://24h.pchome.com.tw/prod/DUMMY0-A900ZZZZZ,,,,
+TEST-BAD,,,3C,,https://24h.pchome.com.tw/not-a-product,,,,
+TEST-AFTER,Logitech,M331 無線靜音滑鼠(黑),3C,,https://24h.pchome.com.tw/prod/DSAR0V-A900BG55G?utm_source=pba-test,,,,
