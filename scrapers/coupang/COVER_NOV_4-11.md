@@ -1,22 +1,22 @@
 # Covering Coupang, Nov 4–11
 
 Marvin is away from Nov 4 to Nov 11. During that time a teammate collects Coupang on their own
-Windows laptop: from the **Nov 4 10:07** run to the **Nov 11 23:07** run, Taiwan time. Marvin
-takes over again from Nov 12 10:07. [README.md](README.md) explains how the collection works.
+Windows laptop: from the **Nov 4 15:07** run to the **Nov 11 23:07** run, Taiwan time. Marvin
+takes over again from Nov 12 15:07. [README.md](README.md) explains how the collection works.
 Delete this file after Nov 12.
 
 Who | Before | Steps
 ---|---|---
 Teammate | any time before Nov 4 | [1. Set up and test](#1-set-up-and-test-teammate)
-Marvin | Nov 3, after the 10:07 run | [2. Hand over](#2-hand-over-marvin-nov-3)
-Teammate | Nov 4, 00:00–10:00 | [3. Switch on](#3-switch-on-teammate-nov-4)
+Marvin | Nov 3, after the 15:07 run | [2. Hand over](#2-hand-over-marvin-nov-3)
+Teammate | Nov 4, 00:00–15:00 | [3. Switch on](#3-switch-on-teammate-nov-4)
 Teammate | Nov 4–11 | [4. Each day](#4-each-day-teammate)
-Teammate | Nov 12, 00:00–10:00 | [5. Switch off and send the runs](#5-switch-off-and-send-the-runs-teammate-nov-12)
-Marvin | Nov 12, 00:00–10:00 | [6. Take back](#6-take-back-marvin-nov-12)
+Teammate | Nov 12, 00:00–15:00 | [5. Switch off and send the runs](#5-switch-off-and-send-the-runs-teammate-nov-12)
+Marvin | Nov 12, 00:00–15:00 | [6. Take back](#6-take-back-marvin-nov-12)
 
 > **The one rule.** Between Oct 19 and Nov 25, turn the extension on, or load it, **only between
-> 00:00 and 10:00 Taiwan time**. Turned on later in the day, it immediately makes up that day's
-> 10:07 run if this computer has not done it. That duplicates the run on Marvin's laptop.
+> 00:00 and 15:00 Taiwan time**. Turned on later in the day, it immediately makes up that day's
+> 15:07 run if this computer has not done it. That duplicates the run on Marvin's laptop.
 > Turning it off is safe at any time when no run is going.
 
 Only one laptop may be collecting at a time. Otherwise every run is saved twice, under different
@@ -26,7 +26,7 @@ stamps.
 
 You need: Windows, time zone *Taipei*, Google Chrome, a Taiwanese home connection (no VPN), and
 a copy of this repository (`git clone`, or `git pull` on `main`). Pick a time between 00:00 and
-10:00, or any time before Oct 19 10:07.
+15:00, or any time before Oct 19 15:07.
 
 1. **Chrome settings.**
    - `chrome://settings/downloads`: *Ask where to save each file before downloading* is **off**.
@@ -45,13 +45,13 @@ a copy of this repository (`git clone`, or `git pull` on `main`). Pick a time be
    `Downloads\coupang-snapshots-test\<date>_<time>\` should hold `products.csv`, four
    `.html.gz` files and `run.json`. No Save dialog should appear.
    - If the line says `blocked`, Coupang refuses your connection. Tell Marvin before Nov 4.
-4. **Turn the extension off**, before 10:07: on `chrome://extensions`, switch *Coupang snapshots*
+4. **Turn the extension off**, before 15:07: on `chrome://extensions`, switch *Coupang snapshots*
    off. Do not remove it.
 5. Delete `Downloads\coupang-snapshots-test\` and tell Marvin how the test went.
 
 ## 2. Hand over (Marvin, Nov 3)
 
-After the Nov 3 10:07 run has finished:
+After the Nov 3 15:07 run has finished:
 
 1. Switch the extension off on `chrome://extensions`.
 2. Turn off the wake task, in PowerShell:
@@ -62,13 +62,13 @@ After the Nov 3 10:07 run has finished:
 
 ## 3. Switch on (teammate, Nov 4)
 
-Between 00:00 and 10:00 on Nov 4:
+Between 00:00 and 15:00 on Nov 4:
 
 1. **Turn the extension on** on `chrome://extensions`.
 2. **Settings.** Click the extension's icon → *Settings*: paste Marvin's ping URL into
    *Healthchecks.io ping URL*, and the second one, if Marvin sent one, into the second field.
    Click *Save settings*.
-3. **Check the next run.** The popup should say `Next run: 2026-11-04 10:07 (Taiwan time)`. If it
+3. **Check the next run.** The popup should say `Next run: 2026-11-04 15:07 (Taiwan time)`. If it
    says *No more scheduled runs*, quit Chrome completely (⋮ menu → *Exit*), start it again, and
    check again.
 4. **Wake task.** From the root of the repository, in PowerShell:
@@ -77,16 +77,18 @@ Between 00:00 and 10:00 on Nov 4:
    powershell -ExecutionPolicy Bypass -File scrapers\coupang\windows\install_wake_task.ps1
    ```
 
-   It prints the task's next run time. It wakes the laptop one minute before each run and keeps
-   it awake until the run is saved.
+   It prints the task's next run time. One minute before each run it starts Chrome if needed and
+   keeps the laptop awake until the run is saved. It can't be relied on to wake a sleeping
+   laptop.
 
 ## 4. Each day (teammate)
 
-The runs are at **10:07** every day, plus **18:07 and 23:07 on Nov 10 and 11**.
+The runs are at **15:07** every day, plus **18:07 and 23:07 on Nov 10 and 11**.
 
 - At those times the laptop must be **plugged in**, signed in to Windows (a locked screen is
-  fine) and on or asleep, **not shut down**. Waking from sleep hasn't been tested on every
-  laptop, so if you can, leave it awake at run times.
+  fine) and **awake**: not asleep, hibernated or shut down. Marvin's laptop doesn't wake itself
+  from sleep, and yours may not either. To close the lid, first set *closing the lid* to *Do
+  nothing* when plugged in (Control Panel → Power Options).
 - A run takes about 10 minutes. Chrome doesn't need to be open; a minimised window appears and
   closes by itself.
 - **After each run**, open the extension's popup. The newest line under *Recent runs* should be
@@ -99,7 +101,7 @@ The runs are at **10:07** every day, plus **18:07 and 23:07 on Nov 10 and 11**.
 
 ## 5. Switch off and send the runs (teammate, Nov 12)
 
-After the Nov 11 23:07 run has finished (about 23:20), and before Nov 12 10:00:
+After the Nov 11 23:07 run has finished (about 23:20), and before Nov 12 15:00:
 
 1. Remove the extension: `chrome://extensions` → *Coupang snapshots* → *Remove*.
 2. Remove the wake task, in PowerShell:
@@ -109,16 +111,16 @@ After the Nov 11 23:07 run has finished (about 23:20), and before Nov 12 10:00:
 
 ## 6. Take back (Marvin, Nov 12)
 
-Between 00:00 and 10:00 on Nov 12:
+Between 00:00 and 15:00 on Nov 12:
 
-1. Switch the extension on and check the popup says `Next run: 2026-11-12 10:07`. If it says *No
+1. Switch the extension on and check the popup says `Next run: 2026-11-12 15:07`. If it says *No
    more scheduled runs*, exit and restart Chrome.
 2. Turn the wake task back on: `Enable-ScheduledTask -TaskName 'Coupang snapshots wake'`.
 3. In Healthchecks.io, remove the teammate's email integration.
 
 Then, any time:
 
-4. Copy the run folders (`2026-11-04_1007` …, not `wake.log`) from the teammate's zip into your own
+4. Copy the run folders (`2026-11-04_1507` …, not `wake.log`) from the teammate's zip into your own
    `Downloads\coupang-snapshots\`, and run from the project root:
    `Rscript scrapers/coupang/scrape_coupang.R --saved`
 5. Copy `output/` and `raw/` to the team's storage (Q6), and delete this file.

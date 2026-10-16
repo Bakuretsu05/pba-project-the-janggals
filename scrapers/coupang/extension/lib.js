@@ -10,7 +10,7 @@ const PRODUCT_TABLE_URL =
 const SCHEDULE = {
   first: '2026-10-19',
   last: '2026-11-25',
-  daily: ['10:07'],
+  daily: ['15:07'],
   extraDays: ['2026-11-10', '2026-11-11', '2026-11-12'],
   extraTimes: ['18:07', '23:07'],
 };

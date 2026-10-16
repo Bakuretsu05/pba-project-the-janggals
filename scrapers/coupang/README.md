@@ -26,9 +26,9 @@ served normally, so the pages are loaded there, on Marvin's laptop (spec Q7):
    twice, and a run Chrome is still saving is left for later. It exits 1 when a converted run
    has no `ok` row or could not be converted (FR-9). Saved runs somewhere else:
    `--saved <folder>`, or `COUPANG_SAVED_DIR=<folder>` in `.Renviron`.
-3. **A Windows scheduled task** ([`windows/`](windows/)) wakes the laptop one minute before each
-   run time, keeps it awake (screen on) until the run is saved, and starts Chrome if it is not
-   running.
+3. **A Windows scheduled task** ([`windows/`](windows/)) tries to wake the laptop one minute
+   before each run time (not every laptop obeys, see *Power* below), keeps it awake (screen on)
+   until the run is saved, and starts Chrome if it is not running.
 4. **Healthchecks.io** gets a report from every run. It emails when a run fails, and when no
    report has arrived an hour after the run time, which also covers a laptop that was off.
 
@@ -49,12 +49,16 @@ On the laptop that collects (Windows, time zone Taipei, Chrome):
 2. **Wake task.** From the project root:
    `powershell -ExecutionPolicy Bypass -File scrapers\coupang\windows\install_wake_task.ps1`
    (again after moving the project folder).
-3. **Healthchecks.io.** Create a free account and a check with schedule *Cron* `7 10 * * *`,
+3. **Healthchecks.io.** Create a free account and a check with schedule *Cron* `7 15 * * *`,
    time zone `Asia/Taipei`, grace time 1 hour, and paste its ping URL into the extension's
    *Settings*. For the extra runs on Nov 10–12, a second check with cron `7 18,23 10-12 11 *`
    goes into the second field; without it, those runs report to the first check.
-4. **Power.** At run times the laptop must be plugged in (it only wakes itself on mains power),
-   on or asleep but not shut down, and signed in to Windows (a locked screen is fine).
+4. **Power.** At run times the laptop must be plugged in, **awake** and signed in to Windows (a
+   locked screen is fine). Marvin's laptop (Lenovo IdeaPad, Modern Standby) ignores the wake
+   timer, from sleep and from hibernate (tested 2026-10-16), and other laptops may too. So don't
+   put it to sleep before a run; to close the lid, first set *closing the lid* to *Do nothing*
+   when plugged in (Control Panel → Power Options). The wake task still starts Chrome and keeps
+   the laptop awake during the run.
 
 ### Day to day
 
@@ -65,7 +69,7 @@ On the laptop that collects (Windows, time zone Taipei, Chrome):
   itself once they are back on, if that is still the same day.
 - **Converting**: run the `--saved` command above, then copy `output/` and `raw/` to the team's
   storage (Q6).
-- `wake.log`, next to the saved runs, has one line for each time the task woke the laptop.
+- `wake.log`, next to the saved runs, has one line for each time the task ran.
 
 *Test run* in the popup checks that collecting works, at any time, without touching the study's
 runs: it requests the pages of [`extension/test_products.csv`](extension/test_products.csv),

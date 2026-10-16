@@ -244,7 +244,7 @@ Endpoints:
 
 | Period (Taiwan time) | Runs | Cron (UTC) |
 |---|---|---|
-| Oct 19 → Nov 25 | Once a day, 10:07 | `7 2 * * *` |
+| Oct 19 → Nov 25 | Once a day, 15:07 | `7 7 * * *` |
 | **Nov 10, 11, 12** | Two extra runs, 18:07 and 23:07 (flash sales) | `7 10 10-12 11 *` and `7 15 10-12 11 *` |
 
 The runs are seven minutes past the hour because GitHub delays or drops more scheduled runs

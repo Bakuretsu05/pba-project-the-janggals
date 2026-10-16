@@ -18,7 +18,7 @@ $script = Join-Path $PSScriptRoot 'wake_for_run.ps1'
 $action = New-ScheduledTaskAction -Execute 'powershell.exe' `
   -Argument "-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File `"$script`""
 
-$daily = New-ScheduledTaskTrigger -Daily -At '2026-10-19 10:06'
+$daily = New-ScheduledTaskTrigger -Daily -At '2026-10-19 15:06'
 $daily.EndBoundary = '2026-11-25T23:59:00'
 $evening = New-ScheduledTaskTrigger -Daily -At '2026-11-10 18:06'
 $evening.EndBoundary = '2026-11-12T23:59:00'
