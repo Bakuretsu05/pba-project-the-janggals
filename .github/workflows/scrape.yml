@@ -1,0 +1,105 @@
+# Spec section 9: the daily momo and PChome runs. Coupang is collected locally (Q7).
+name: scrape
+
+on:
+  schedule:
+    - cron: "7 7 * * *"       # 15:07 Taiwan, Oct 19 - Nov 25
+    - cron: "7 10 10-12 11 *" # 18:07 Taiwan, Nov 10-12
+    - cron: "7 15 10-12 11 *" # 23:07 Taiwan, Nov 10-12
+  workflow_dispatch:
+    inputs:
+      products:
+        description: Product table to read
+        default: products/products.csv
+  push:
+    branches: [github-actions] # TEMPORARY: deployment test on the 3 PChome test products
+
+permissions:
+  contents: read
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45 # WF-7
+    strategy:
+      fail-fast: false # WF-2
+      matrix:
+        platform: [momo, pchome]
+    env:
+      PLATFORM: ${{ matrix.platform }}
+      PRODUCTS: ${{ github.event_name == 'push' && 'scrapers/pchome/tests/products_test.csv' || inputs.products || 'products/products.csv' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      # WF-3: scheduled runs outside Oct 19 - Nov 25 (Taiwan date) do nothing. Manual runs always run.
+      - name: Decide whether to run
+        id: gate
+        run: |
+          today=$(TZ=Asia/Taipei date +%F)
+          run=true
+          if [ "$GITHUB_EVENT_NAME" = schedule ] && { [[ "$today" < 2026-10-19 ]] || [[ "$today" > 2026-11-25 ]]; }; then
+            echo "Taiwan date $today is outside the collection period; nothing to do."
+            run=false
+          fi
+          if [ ! -f "scrapers/$PLATFORM/scrape_$PLATFORM.R" ]; then
+            echo "::warning::scrapers/$PLATFORM/scrape_$PLATFORM.R does not exist yet; $PLATFORM skipped."
+            run=false
+          fi
+          echo "run=$run" >> "$GITHUB_OUTPUT"
+
+      # WF-4
+      - uses: r-lib/actions/setup-r@v2
+        if: steps.gate.outputs.run == 'true'
+        with:
+          r-version: "4.6.1"
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        if: steps.gate.outputs.run == 'true'
+        with:
+          packages: |
+            any::httr2
+            any::rvest
+            any::xml2
+            any::jsonlite
+            any::chromote
+
+      # WF-5
+      - name: Scrape
+        if: steps.gate.outputs.run == 'true'
+        env:
+          SCRAPER_CONTACT: ${{ secrets.SCRAPER_CONTACT }}
+        run: |
+          if [ -z "$SCRAPER_CONTACT" ]; then
+            echo "::error::Repository secret SCRAPER_CONTACT is not set (WF-5)."
+            exit 1
+          fi
+          Rscript "scrapers/$PLATFORM/scrape_$PLATFORM.R" "$PRODUCTS" 2>&1 | tee scrape.log
+
+      # FR-8's summary line, shown on the run page.
+      - name: Report summary
+        if: always() && steps.gate.outputs.run == 'true'
+        run: |
+          line=$(grep -E "^$PLATFORM: [0-9]+ products" scrape.log || true)
+          echo "::notice title=$PLATFORM::${line:-no summary line (the scraper stopped early)}"
+
+      # WF-6: this run's output file and raw/ folder as one artifact, whatever the exit code.
+      - name: Find this run's files
+        id: files
+        if: always() && steps.gate.outputs.run == 'true'
+        run: |
+          output=$(ls -t "scrapers/$PLATFORM/output/"*.csv 2>/dev/null | head -n 1 || true)
+          if [ -z "$output" ]; then echo "found=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+          stamp=$(basename "$output" .csv)
+          stamp=${stamp#"${PLATFORM}_"}
+          echo "found=true" >> "$GITHUB_OUTPUT"
+          echo "name=${PLATFORM}_$stamp" >> "$GITHUB_OUTPUT"
+          echo "output=$output" >> "$GITHUB_OUTPUT"
+          echo "raw=scrapers/$PLATFORM/raw/$stamp" >> "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.files.outputs.found == 'true'
+        with:
+          name: ${{ steps.files.outputs.name }}
+          path: |
+            ${{ steps.files.outputs.output }}
+            ${{ steps.files.outputs.raw }}
+          retention-days: 90
