@@ -11,8 +11,6 @@ on:
       products:
         description: Product table to read
         default: products/products.csv
-  push:
-    branches: [github-actions] # TEMPORARY: deployment test on the 3 PChome test products
 
 permissions:
   contents: read
@@ -27,7 +25,7 @@ jobs:
         platform: [momo, pchome]
     env:
       PLATFORM: ${{ matrix.platform }}
-      PRODUCTS: ${{ github.event_name == 'push' && 'scrapers/pchome/tests/products_test.csv' || inputs.products || 'products/products.csv' }}
+      PRODUCTS: ${{ inputs.products || 'products/products.csv' }}
     steps:
       - uses: actions/checkout@v5
 
