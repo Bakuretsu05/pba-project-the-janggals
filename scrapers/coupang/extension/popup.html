@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Coupang snapshots</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <h1>Coupang snapshots</h1>
+  <p id="state"></p>
+  <p id="next"></p>
+  <p>
+    <button data-command="run-now">Run now</button>
+    <button data-command="run-test">Test run</button>
+    <span id="message" role="status"></span>
+  </p>
+  <p class="note">A test run requests the pages in the extension's test_products.csv, saves them to
+    Downloads\coupang-snapshots-test and is not reported to Healthchecks.</p>
+
+  <h2>Recent runs</h2>
+  <ol id="history"></ol>
+
+  <details>
+    <summary>Settings</summary>
+    <label>Healthchecks.io ping URL
+      <input id="pingUrl" type="url" placeholder="https://hc-ping.com/...">
+    </label>
+    <label>Ping URL for the 18:07 and 23:07 runs on Nov 10&ndash;12 (optional)
+      <input id="pingUrlExtra" type="url" placeholder="https://hc-ping.com/...">
+    </label>
+    <p><button id="save">Save settings</button></p>
+  </details>
+
+  <script src="lib.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

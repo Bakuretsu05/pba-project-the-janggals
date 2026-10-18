@@ -1,5 +1,7 @@
 # momo recorder verification — 18 October 2026
 
+> Historical prototype report: paths and the 16-column/appending contract below describe the earlier version. The observed snapshot is preserved as `momo_2026-10-18_legacy.csv` in this folder. For the integrated URL-only, 17-column recorder, see [../../VERIFICATION.md](../../VERIFICATION.md).
+
 ## Result
 
 The live recorder successfully captured prices for **all seven confirmed momo products**.
@@ -85,4 +87,3 @@ seller certification. The momo seller “check” in the spec remains open.
 No recurring schedule or shared-Drive raw backup was configured. Each invocation records one
 fresh run. The implementation supports the initial confirmed list now; full 100-product
 coverage and broader study eligibility remain separate follow-up work.
-

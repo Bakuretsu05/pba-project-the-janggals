@@ -1,5 +1,9 @@
-data/raw/
 raw/
+output/
+data/raw/
 .R-library/
 .Renviron
 .Rhistory
+.RData
+.Rproj.user/
+.chrome-profile/

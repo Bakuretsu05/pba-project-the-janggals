@@ -1,14 +1,5 @@
 # pba-project-the-janggals
 
-## momo recorder
-
-The initial momo-only recorder is implemented for seven confirmed single-option products.
-See [run instructions](scraper/README.md), [active input](data/products.csv),
-[remaining 93-product review queue](data/momo-review-queue.json), and
-[verification results](momo-verification.md). The original `Productss.csv` is unchanged.
-
-Run from the repo root: `Rscript scraper/scrape_momo.R`.
-
 Team **The Janggals**, ISS4066 Programming for Business Analytics, NTHU, Fall 2026.
 
 ## Topic
@@ -22,10 +13,30 @@ each page's crossed-out "original price".
 
 - Marvin Chandra
 - Jordan Tjiang
+- Alicia Joely
+- Audrey Priscilla Wijaya
+- Nicholas Albert Aklin
+
+## Repo layout
+
+Each task has its own folder.
+
+| Folder | Owner | Output |
+|---|---|---|
+| [`products/`](products/) | Alicia, Audrey | `products/products.csv`, the ~100 products we track |
+| [`scrapers/momo/`](scrapers/momo/) | Jordan | Daily price snapshots from momo |
+| [`scrapers/pchome/`](scrapers/pchome/) | Albert | Daily price snapshots from PChome |
+| [`scrapers/coupang/`](scrapers/coupang/) | Marvin | Daily price snapshots from Coupang |
+
+The scrapers are built to [`scrapers/data-collection-spec.md`](scrapers/data-collection-spec.md).
+
+## momo recorder
+
+Run `Rscript scrapers/momo/scrape_momo.R` from the project root. The default input is
+`products/products.csv`; a first positional argument selects a test table. See
+[scrapers/momo/README.md](scrapers/momo/README.md) for setup, tests and verification evidence.
 
 ## Data
 
-Daily momo records live in `data/snapshots/`. Raw momo pages live in `raw/momo/`, which git
-ignores; `data/raw/` remains ignored as well. The team must back up raw captures to its shared
-Google Drive; the recorder does not upload them. BigGo history is copied by hand from
-biggo.com.tw. Download links will be added at Milestone 2.
+Scraper output and raw pages stay out of git (`output/` and `raw/` folders are ignored). BigGo
+history is copied by hand from biggo.com.tw. Download links will be added at Milestone 2.
