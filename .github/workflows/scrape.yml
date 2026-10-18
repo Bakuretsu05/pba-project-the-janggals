@@ -29,7 +29,7 @@ jobs:
       PLATFORM: ${{ matrix.platform }}
       PRODUCTS: ${{ github.event_name == 'push' && 'scrapers/pchome/tests/products_test.csv' || inputs.products || 'products/products.csv' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       # WF-3: scheduled runs outside Oct 19 - Nov 25 (Taiwan date) do nothing. Manual runs always run.
       - name: Decide whether to run
