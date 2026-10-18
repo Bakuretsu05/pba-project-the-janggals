@@ -179,9 +179,9 @@ updates this table.
 | `sale_price` | Displayed pre-condition selling price; in the verified 折扣價 / 網路價 layout, the displayed 網路價. Unknown conditional baselines give `parse_failure` | 促銷價 | Headline price (JSON-LD `offers.price`). If a line under it marks the headline as conditional (`$198 首購折扣價`), the crossed-out price instead, provided headline + reduction = crossed-out price; otherwise `NA` and `parse_failure` |
 | `extra_price` | Lowest verified conditional price linked to displayed condition wording; copy that wording to `extra_price_label`. Unverified amounts/labels stay `NA` | 限時折後價 (the JSON-LD `price` also holds this) | Lowest of: a headline marked conditional (label e.g. `首購折扣價`, first purchase) and card prices under 刷卡優惠 (label e.g. `王道卡 特惠價`) |
 | `shown_discount_pct`, `promo_tag`, `coupon_note` | Copy product price/discount percentage badges, campaign/promotion text, and visible coupon/card wording from the main product area. Do not infer % from amounts or cashback; 折 stays text. Interactive/image-only content has incomplete coverage, recorded in a separate verification audit | From the page **(check)** | Product pages show `N折`, never %, so `shown_discount_pct` is `NA` and the badge goes to `promo_tag`. `coupon_note`: the conditional line, `.conditional-benefits`, 刷卡優惠 and 銀行回饋 entries. 11.11 campaign labels not seen yet |
-| `seller_type` | `platform` only when the displayed delivery text explicitly says PChome 倉庫出貨; otherwise `NA` | `platform` unless a third-party shop is shown **(check)** | `賣家：<name>` (`.seller-info`) → `marketplace`; else the `ROCKET` badge in the price block → `platform` |
-| `in_stock` | Enabled purchase buttons → `TRUE`; explicit sold-out/removed notice → `FALSE`; otherwise `NA` | `FALSE` if a sold-out notice is shown, else `TRUE` **(check)** | JSON-LD `offers.availability` (`InStock` → `TRUE`); without JSON-LD, `FALSE` if 已售完, 暫時缺貨 or similar is shown. No sold-out page seen yet **(check)**. A wrong link and a delisted item get the same HTTP 200 page, 找不到商品: `parse_failure` |
-| Challenge-page marker (section 8.1) | Access Denied, CAPTCHA, known JavaScript challenge/loading markers; 403/challenges or exhausted 429 stop site requests, per the user's no-circumvention requirement | **(check)** | Akamai: `Access Denied`, or `sec-if-cpt-container` (JavaScript check that reloads itself); Coupang: `id="error403"` (你沒有權限存取此頁面) |
+| `seller_type` | `platform` (24h product pages are sold by PChome itself) | `platform` unless a third-party shop is shown **(check)** | `賣家：<name>` (`.seller-info`) → `marketplace`; else the `ROCKET` badge in the price block → `platform` |
+| `in_stock` | Enabled purchase buttons → `TRUE`; explicit sold-out/removed notice → `FALSE`; otherwise `TRUE` when a selling price is shown | `FALSE` if a sold-out notice is shown, else `TRUE` **(check)** | JSON-LD `offers.availability` (`InStock` → `TRUE`); without JSON-LD, `FALSE` if 已售完, 暫時缺貨 or similar is shown. No sold-out page seen yet **(check)**. A wrong link and a delisted item get the same HTTP 200 page, 找不到商品: `parse_failure` |
+| Challenge-page marker (section 8.1) | Only on a page without the product block: `sec-if-cpt-container`, `cf-chl-`, `challenge-platform`, or visible text Access Denied, CAPTCHA, verify you are human, 網頁載入中, JavaScript required/check. A page with the product block is never a challenge | **(check)** | Akamai: `Access Denied`, or `sec-if-cpt-container` (JavaScript check that reloads itself); Coupang: `id="error403"` (你沒有權限存取此頁面) |
 
 Endpoints:
 
@@ -200,9 +200,13 @@ Endpoints:
   Interactive coupon/payment/member details and image-only promotion labels are not fully
   covered. Every run writes a separate `raw/<stamp>/verification.csv` and prints a warning;
   `ok` certifies the selling price/sold-out criterion, not complete offer coverage. Unsupported
-  fields remain `NA`. See `pchome/README.md` for mappings and limitations. PChome does not
-  follow the document's generic block-bypass instructions: the user's access restrictions
-  take precedence.
+  fields remain `NA`. See `pchome/README.md` for mappings and limitations. Blocks follow
+  section 8.2: after the one retry, back off and request again with a browser user agent, then
+  load the page in a fresh headless Chrome (`chromote`); after three products in a row end
+  blocked, later products get one request each. On 2026-10-18 (Marvin) a plain httr2 request
+  got HTTP 200 while headless Chrome got 429, so the browser user agent is the useful
+  workaround and headless Chrome is the last resort. Raw files: the body the row was read from
+  is `<platform_item_id>.html.gz`; earlier attempts are `<platform_item_id>__attempt<n>.html.gz`.
 - **momo** (tested 2026-10-05): product page
   `https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=<platform_item_id>`. Prices are in
   the HTML. robots.txt (checked 2026-10-13) allows `GoodsDetail.jsp`, disallows `/api/` and

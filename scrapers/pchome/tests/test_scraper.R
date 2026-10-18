@@ -53,7 +53,8 @@ product_table <- function(urls = item_url, ids = if (length(urls)) paste0("TEST-
   rows$model <- rep("中文測試商品", length(urls))
   rows
 }
-exercise <- function(table = product_table(), responses = list(response()), contact = "tests@example.invalid") {
+exercise <- function(table = product_table(), responses = list(response()), contact = "tests@example.invalid",
+                     browser = NULL) {
   folder <- tempfile("pchome-test-")
   dir.create(folder)
   input <- file.path(folder, "products.csv")
@@ -63,23 +64,31 @@ exercise <- function(table = product_table(), responses = list(response()), cont
   state$sent <- numeric()
   state$waits <- numeric()
   state$calls <- 0L
+  state$agents <- character()
   clock <- function() state$now
   wait <- function(seconds) {
     state$waits <- c(state$waits, seconds)
     state$now <- state$now + seconds
   }
-  transport <- function(url, user_agent) {
+  requested <- unique(na.omit(vapply(table$pchome_url, extract_item_id, character(1))))
+  serve <- function(url, agent) {
     state$calls <- state$calls + 1L
     state$sent <- c(state$sent, as.numeric(state$now))
-    stopifnot(identical(url, product_url(extract_item_id(table$pchome_url[which(
-      vapply(table$pchome_url, function(value) !is.na(extract_item_id(value)), logical(1)))[1]]))))
-    stopifnot(identical(user_agent, paste0("PBA-Double11-study (NTHU ISS4066; contact: ", contact, ")")))
+    state$agents <- c(state$agents, agent)
+    stopifnot(url %in% product_url(requested))
     current <- responses[[min(state$calls, length(responses))]]
     if (inherits(current, "condition")) stop(current)
-    if (is.function(current)) return(current(url, user_agent))
+    if (is.function(current)) return(current(url, agent))
     current
   }
-  result <- run_scraper(input, contact, file.path(folder, "pchome"), transport, clock, wait)
+  transport <- function(url, user_agent) {
+    stopifnot(user_agent %in% c(paste0("PBA-Double11-study (NTHU ISS4066; contact: ", contact, ")"),
+                                BROWSER_USER_AGENT))
+    serve(url, user_agent)
+  }
+  # browser = TRUE stands in for headless Chrome; its loads are recorded as "headless".
+  loader <- if (isTRUE(browser)) function(url) serve(url, "headless")
+  result <- run_scraper(input, contact, file.path(folder, "pchome"), transport, clock, wait, loader)
   list(result = result, state = state, folder = folder, input = input,
        clock = clock, wait = wait, transport = transport)
 }
@@ -176,11 +185,19 @@ test("discount badges are copied, fold badges are not converted, cashback is not
     if (badge == "-23%") stopifnot(parsed$shown_discount_pct == 23) else stopifnot(is.na(parsed$shown_discount_pct))
   }
 })
-test("unknown seller and stock stay NA rather than using API defaults", {
+test("24h pages are sold by PChome and a shown price without a sold-out notice is in stock", {
   body <- sub("PChome 倉庫出貨，24小時到貨", "配送資訊未提供", page_html(), fixed = TRUE)
   body <- sub('<button data-regression="product_button_buyNow">立即購買</button>', '', body, fixed = TRUE)
   parsed <- parse_product_page(charToRaw(enc2utf8(body)), item_id)
-  stopifnot(is.na(parsed$seller_type), is.na(parsed$in_stock))
+  stopifnot(parsed$fetch_status == "ok", parsed$seller_type == "platform", isTRUE(parsed$in_stock))
+})
+test("challenge words in scripts or noscript never block a product page", {
+  body <- sub('<script>', paste0('<noscript>JavaScript is required. 網頁載入中</noscript>',
+    '<script src="/cdn-cgi/challenge-platform/scripts/jsd/main.js"></script><script>grecaptcha;'),
+    page_html(), fixed = TRUE)
+  stopifnot(!is_challenge(charToRaw(enc2utf8(body))),
+            is_challenge(charToRaw("<html><body>Access Denied</body></html>")),
+            is_challenge(charToRaw('<html><div id="sec-if-cpt-container"></div></html>')))
 })
 test("sold-out wording in a gift promotion does not override enabled product purchase buttons", {
   body <- sub('</h1>', '</h1><div data-regression="prod_promoText">贈品已售完</div>', page_html(), fixed = TRUE)
@@ -236,6 +253,10 @@ test("one retry, sixty-second delay and every response saved", {
   run <- exercise(responses = list(response(503L), response()))
   stopifnot(run$state$calls == 2L, diff(run$state$sent) >= 60,
             run$result$data$fetch_status == "ok", length(list.files(run$result$raw_dir, pattern = "gz$")) == 2L)
+  # FR-5: the body the row was read from carries the plain name.
+  stopifnot(identical(read_body(file.path(run$result$raw_dir, paste0(item_id, ".html.gz"))), response()$body),
+            identical(read_body(file.path(run$result$raw_dir, paste0(item_id, "__attempt1.html.gz"))),
+                      response(503L)$body))
   run <- exercise(responses = list(response(503L)))
   stopifnot(run$state$calls == 2L, run$result$data$fetch_status == "http_error",
             is.na(run$result$data$sale_price), run$result$exit_code == 1L)
@@ -257,20 +278,49 @@ test("last failed retry has NA HTTP status even after a 503", {
   stopifnot(run$result$data$fetch_status == "timeout", is.na(run$result$data$http_status),
             length(list.files(run$result$raw_dir, pattern = "gz$")) == 1L)
 })
-test("403 and HTTP 200 challenges stop all further site requests", {
+test("a 403 or challenge is worked around as a browser, then in headless Chrome", {
   for (blocked in list(response(403L), response(body = "<html>Access Denied</html>"))) {
-    run <- exercise(product_table(rep(item_url, 2)), list(blocked))
-    stopifnot(run$state$calls == 1L, all(run$result$data$fetch_status == "blocked"),
-              run$result$data$http_status[1] == 403L, is.na(run$result$data$http_status[2]),
-              is.na(run$result$data$scraped_at[2]), all(is.na(run$result$data$sale_price)))
+    run <- exercise(responses = list(blocked, response()))
+    stopifnot(run$result$data$fetch_status == "ok", run$state$calls == 2L,
+              identical(run$state$agents[2], BROWSER_USER_AGENT), diff(run$state$sent) >= 60)
+    run <- exercise(responses = list(blocked, blocked, response()), browser = TRUE)
+    stopifnot(run$result$data$fetch_status == "ok", identical(run$state$agents[3], "headless"),
+              length(list.files(run$result$raw_dir, pattern = "gz$")) == 3L)
   }
 })
-test("429 respects Retry-After and stops after one unsuccessful retry", {
-  run <- exercise(product_table(rep(item_url, 2)), list(response(429L, retry_after = "90")))
-  stopifnot(run$state$calls == 2L, diff(run$state$sent) >= 90,
-            all(run$result$data$fetch_status == "blocked"))
-  recovered <- exercise(responses = list(response(429L), response()))
-  stopifnot(recovered$result$data$fetch_status == "ok", recovered$state$calls == 2L)
+test("a product blocked by every workaround is blocked, and the run moves on", {
+  other_url <- "https://24h.pchome.com.tw/prod/ZZZZZZ-A12345678"
+  serve <- function(url, agent) if (grepl(item_id, url, fixed = TRUE)) response(403L) else
+    response(body = page_html(id = "ZZZZZZ-A12345678"))
+  run <- exercise(product_table(c(item_url, other_url)), list(serve), browser = TRUE)
+  stopifnot(identical(run$result$data$fetch_status, c("blocked", "ok")),
+            run$result$data$http_status[1] == 403L, !is.na(run$result$data$scraped_at[1]),
+            run$state$calls == 4L, run$result$exit_code == 0L)
+})
+test("after three products in a row end blocked, later products get one request", {
+  ids <- paste0("ABCDE", 1:5, "-A12345678")
+  run <- exercise(product_table(paste0("https://24h.pchome.com.tw/prod/", ids)),
+                  list(response(429L)), browser = TRUE)
+  stopifnot(all(run$result$data$fetch_status == "blocked"), run$state$calls == 3 * 4 + 2,
+            all(run$result$data$http_status == 429L))
+})
+test("Retry-After is honoured up to its cap", {
+  run <- exercise(responses = list(response(429L, retry_after = "90"), response()))
+  stopifnot(run$result$data$fetch_status == "ok", run$state$calls == 2L, diff(run$state$sent) >= 90)
+  run <- exercise(responses = list(response(429L, retry_after = "86400"), response()))
+  stopifnot(run$result$data$fetch_status == "ok", max(run$state$waits) == MAX_RETRY_AFTER_SECONDS)
+})
+test("summary line lists only the statuses that occurred", {
+  rows <- data.frame(fetch_status = c("ok", "ok", "blocked"))
+  stopifnot(identical(summary_line(rows, "out.csv"), "pchome: 3 products | ok 2, blocked 1 | out.csv"))
+})
+test("an interrupted run that saved nothing frees its minute", {
+  run <- exercise()
+  platform_dir <- file.path(run$folder, "again")
+  expect_error(run_scraper(run$input, "tests@example.invalid", platform_dir,
+                           function(url, user_agent) stop("connection failed"), run$clock,
+                           function(seconds) stop("interrupted"), NULL), "interrupted")
+  stopifnot(length(list.files(file.path(platform_dir, "raw"))) == 0L)
 })
 test("same-minute collision preserves CSV and raw bytes and sends no requests", {
   run <- exercise()

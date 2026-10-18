@@ -5,6 +5,13 @@ OUTPUT_COLUMNS <- c("date", "scraped_at", "platform", "product_id", "platform_it
                     "shown_discount_pct", "promo_tag", "coupon_note", "seller_type", "in_stock",
                     "http_status", "source", "fetch_status")
 FETCH_STATUSES <- c("ok", "parse_failure", "http_error", "timeout", "blocked", "bad_input")
+PACE_SECONDS <- 5               # NFR-1: gap between requests, retries included
+RETRY_WAIT_SECONDS <- 60        # 8.2: wait before the one retry, and before each block workaround
+MAX_RETRY_AFTER_SECONDS <- 300  # a longer Retry-After is capped so a run stays inside WF-7
+MAX_BLOCKED_STREAK <- 3         # after this many products in a row end blocked, skip the long workarounds
+# 8.2 / NFR-2: the identity used when the study user agent is blocked.
+BROWSER_USER_AGENT <- paste("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+                            "(KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36")
 
 tw_format <- function(time, pattern) format(time, pattern, tz = "Asia/Taipei")
 
@@ -127,8 +134,9 @@ parse_product_page <- function(body, item_id) {
     (is.na(rvest::html_attr(stock_buttons, "aria-disabled")) |
        rvest::html_attr(stock_buttons, "aria-disabled") != "true")
   sold_out <- grepl("已售完|暫時缺貨|售完補貨|已下架|到貨通知我", node_text(scope))
-  in_stock <- if (any(enabled)) TRUE else if (sold_out) FALSE else NA
-  if (is.na(sale) && !identical(in_stock, FALSE)) return(failure("No verified selling price or sold-out notice"))
+  # 7.1: an ok row is TRUE or FALSE. A shown price without a sold-out notice is for sale.
+  in_stock <- if (any(enabled)) TRUE else if (sold_out) FALSE else !is.na(sale)
+  if (is.na(sale) && in_stock) return(failure("No verified selling price or sold-out notice"))
   tag_nodes <- rvest::html_elements(scope, paste(
     ".o-prodMainName__colorPrimary300, [data-regression='prod_discount'] .c-label__text,",
     "[data-regression='prod_discount'] .c-discountEvent__link, .c-prodPriceTips .c-colorTag__text,",
@@ -149,20 +157,29 @@ parse_product_page <- function(body, item_id) {
   list(fetch_status = "ok", sale_price = sale, original_price = original,
        extra_price = extra, extra_price_label = extra_label, shown_discount_pct = percentage,
        promo_tag = join_text(tag_text), coupon_note = join_text(c(discount_text, coupon_text)),
-       seller_type = if (isTRUE(grepl("PChome 倉庫出貨", node_text(rvest::html_element(scope,
-         "[data-regression='prod_info_ship']")), fixed = TRUE))) "platform" else NA_character_,
-       in_stock = in_stock, verification_note = paste(notes, collapse = "; "))
+       # 7.3: 24h product pages are sold by PChome itself.
+       seller_type = "platform", in_stock = in_stock,
+       verification_note = paste(notes, collapse = "; "))
 }
 
+# 8.1: a page with the product block is never a challenge, so markers in its scripts (CAPTCHA
+# widgets, Cloudflare's challenge-platform script) or a noscript notice cannot end a good row.
 is_challenge <- function(body) {
+  document <- tryCatch(rvest::read_html(body, encoding = "UTF-8"), error = function(error) NULL)
+  if (!is.null(document) &&
+      length(rvest::html_elements(document, "[data-regression='prod_info']"))) return(FALSE)
   text <- tryCatch(rawToChar(body), error = function(error) "")
-  grepl("captcha|access denied|sec-if-cpt-container|cf-chl-|challenge-platform|verify you are human|網頁載入中|javascript.{0,30}(required|check)",
-        text, ignore.case = TRUE, perl = TRUE)
+  if (grepl("sec-if-cpt-container|cf-chl-|challenge-platform", text, perl = TRUE)) return(TRUE)
+  if (is.null(document)) return(FALSE)
+  xml2::xml_remove(rvest::html_elements(document, "script, style, template"))
+  grepl("captcha|access denied|verify you are human|網頁載入中|javascript.{0,30}(required|check)",
+        node_text(xml2::xml_root(document)), ignore.case = TRUE, perl = TRUE)
 }
 
 http_get <- function(url, user_agent) {
   request <- httr2::request(url)
   request <- httr2::req_user_agent(request, user_agent)
+  request <- httr2::req_headers(request, `Accept-Language` = "zh-TW,zh;q=0.9")
   request <- httr2::req_timeout(request, 30)
   request <- httr2::req_options(request, followlocation = FALSE)
   request <- httr2::req_error(request, is_error = function(response) FALSE)
@@ -171,20 +188,30 @@ http_get <- function(url, user_agent) {
        retry_after = httr2::resp_header(response, "retry-after"))
 }
 
+# 8.2 / NFR-5: the last workaround. Loads the page in a fresh headless Chrome (a new visitor)
+# and returns the rendered HTML with the status of the page's own response.
+browser_get <- function(url) {
+  session <- chromote::ChromoteSession$new()
+  on.exit(session$close(), add = TRUE)
+  status <- NA_integer_
+  session$Network$enable()
+  session$Network$setUserAgentOverride(userAgent = BROWSER_USER_AGENT, acceptLanguage = "zh-TW,zh")
+  session$Network$responseReceived(callback_ = function(event) {
+    if (identical(event$type, "Document") && is.na(status)) status <<- as.integer(event$response$status)
+  })
+  loaded <- session$Page$loadEventFired(wait_ = FALSE, timeout_ = 30)
+  session$Page$navigate(url, wait_ = FALSE)
+  session$wait_for(loaded)
+  html <- session$Runtime$evaluate("document.documentElement.outerHTML")$result$value
+  if (is.na(status)) stop("Chrome received no response for ", url)
+  list(status = status, body = charToRaw(enc2utf8(html)), retry_after = NULL)
+}
+
 save_body <- function(body, path) {
   if (file.exists(path)) stop("Refusing to overwrite raw response: ", path)
   connection <- gzfile(path, "wb")
   on.exit(close(connection))
   writeBin(body, connection)
-}
-
-empty_rows <- function() {
-  data.frame(date = character(), scraped_at = character(), platform = character(),
-             product_id = character(), platform_item_id = character(), original_price = integer(),
-             sale_price = integer(), extra_price = integer(), extra_price_label = character(),
-             shown_discount_pct = numeric(), promo_tag = character(), coupon_note = character(),
-             seller_type = character(), in_stock = logical(), http_status = integer(),
-             source = character(), fetch_status = character(), stringsAsFactors = FALSE)
 }
 
 new_row <- function(run_date, product_id, item_id) {
@@ -196,19 +223,56 @@ new_row <- function(run_date, product_id, item_id) {
              source = "scraper", fetch_status = "bad_input", stringsAsFactors = FALSE)
 }
 
+empty_rows <- function() new_row("", "", "")[0, ]
+
 retry_delay <- function(header, now) {
-  if (is.null(header) || length(header) != 1L || is.na(header)) return(60)
+  if (is.null(header) || length(header) != 1L || is.na(header)) return(RETRY_WAIT_SECONDS)
   seconds <- suppressWarnings(as.numeric(header))
   if (!is.finite(seconds)) {
     target <- suppressWarnings(as.POSIXct(header, format = "%a, %d %b %Y %H:%M:%S", tz = "GMT"))
     seconds <- as.numeric(difftime(target, now, units = "secs"))
   }
-  if (!is.finite(seconds)) 60 else max(60, seconds)
+  if (!is.finite(seconds)) RETRY_WAIT_SECONDS
+  else min(MAX_RETRY_AFTER_SECONDS, max(RETRY_WAIT_SECONDS, seconds))
+}
+
+# 8.1: what one response means for the row.
+judge_response <- function(response, item_id) {
+  if (is.null(response)) return(list(fetch_status = "timeout", http_status = NA_integer_, retry = TRUE))
+  status <- as.integer(response$status)
+  if (status == 403L || (status == 200L && is_challenge(response$body))) {
+    return(list(fetch_status = "blocked", http_status = 403L, retry = FALSE))
+  }
+  if (status == 200L) {
+    parsed <- tryCatch(parse_product_page(response$body, item_id), error = function(error) {
+      list(fetch_status = "parse_failure", verification_note = conditionMessage(error))
+    })
+    return(list(fetch_status = parsed$fetch_status, http_status = status, retry = FALSE, parsed = parsed))
+  }
+  list(fetch_status = if (status == 429L) "blocked" else "http_error", http_status = status,
+       retry = status == 429L || (status >= 500L && status < 600L))
+}
+
+# FR-5: the body the row was read from is <id>.html.gz; earlier attempts keep their number.
+save_bodies <- function(bodies, raw_dir, raw_name) {
+  for (index in seq_along(bodies)) {
+    suffix <- if (index == length(bodies)) "" else paste0("__attempt", index)
+    save_body(bodies[[index]], file.path(raw_dir, paste0(raw_name, suffix, ".html.gz")))
+  }
+}
+
+# FR-8: platform, products, the count of each status that occurred, output file.
+summary_line <- function(rows, output) {
+  counts <- table(factor(rows$fetch_status, levels = FETCH_STATUSES))
+  counts <- counts[counts > 0]
+  parts <- if (length(counts)) paste(names(counts), counts, collapse = ", ") else "nothing to do"
+  paste0("pchome: ", nrow(rows), " products | ", parts, " | ", output)
 }
 
 run_scraper <- function(args = character(), contact = Sys.getenv("SCRAPER_CONTACT"),
                         platform_dir = file.path("scrapers", "pchome"),
-                        transport = http_get, clock = Sys.time, wait = Sys.sleep) {
+                        transport = http_get, clock = Sys.time, wait = Sys.sleep,
+                        browser = if (requireNamespace("chromote", quietly = TRUE)) browser_get) {
   if (length(args) > 1L) stop("Usage: Rscript scrapers/pchome/scrape_pchome.R [products.csv]")
   if (!nzchar(trimws(contact)) || grepl("[\r\n]", contact)) stop("Set SCRAPER_CONTACT in .Renviron")
   input <- if (length(args)) args[1] else file.path("products", "products.csv")
@@ -227,11 +291,13 @@ run_scraper <- function(args = character(), contact = Sys.getenv("SCRAPER_CONTAC
   dir.create(raw_parent, recursive = TRUE, showWarnings = FALSE)
   if (!dir.exists(output_dir) || !dir.exists(raw_parent)) stop("Cannot create output directories")
   if (!dir.create(raw_dir, showWarnings = FALSE)) stop("Cannot reserve run directory: ", raw_dir)
+  # An interrupted run that saved nothing frees its minute again.
+  on.exit(if (!length(list.files(raw_dir, all.files = TRUE, no.. = TRUE))) unlink(raw_dir, recursive = TRUE))
   user_agent <- paste0("PBA-Double11-study (NTHU ISS4066; contact: ", trimws(contact), ")")
   rows <- list()
   verification <- list()
   last_finished <- NULL
-  site_blocked <- FALSE
+  blocked_streak <- 0L
   used_ids <- character()
   for (product_index in included) {
     product_id <- products$product_id[product_index]
@@ -240,52 +306,52 @@ run_scraper <- function(args = character(), contact = Sys.getenv("SCRAPER_CONTAC
     verification_note <- "No customer-visible page verified"
     if (duplicated_ids[product_index] || !nzchar(trimws(product_id)) || is.na(item_id)) {
       message("pchome: bad_input at table row ", product_index + 1L, " (", product_id, ")")
-    } else if (site_blocked) {
-      row$fetch_status <- "blocked"
     } else {
       raw_name <- if (item_id %in% used_ids) paste0(item_id, "__row", product_index) else item_id
       used_ids <- c(used_ids, item_id)
-      for (attempt in 1:2) {
+      url <- product_url(item_id)
+      bodies <- list()
+      attempt <- function(fetch) {
         if (!is.null(last_finished)) {
           elapsed <- as.numeric(difftime(clock(), last_finished, units = "secs"))
-          if (elapsed < 5) wait(5 - elapsed)
+          if (elapsed < PACE_SECONDS) wait(PACE_SECONDS - elapsed)
         }
-        row$scraped_at <- tw_format(clock(), "%Y-%m-%d %H:%M:%S")
-        response <- tryCatch(transport(product_url(item_id), user_agent), error = function(error) NULL)
-        last_finished <- clock()
-        row$http_status <- if (is.null(response)) NA_integer_ else as.integer(response$status)
-        if (!is.null(response)) {
-          suffix <- if (attempt == 1L) "" else paste0("__attempt", attempt)
-          save_body(response$body, file.path(raw_dir, paste0(raw_name, suffix, ".html.gz")))
+        row$scraped_at <<- tw_format(clock(), "%Y-%m-%d %H:%M:%S")
+        response <- tryCatch(fetch(url), error = function(error) NULL)
+        last_finished <<- clock()
+        if (!is.null(response)) bodies[[length(bodies) + 1L]] <<- response$body
+        c(judge_response(response, item_id), list(retry_after = response$retry_after))
+      }
+      plain <- function(url) transport(url, user_agent)
+      persisting <- blocked_streak < MAX_BLOCKED_STREAK
+      verdict <- attempt(plain)
+      # 8.2: one retry. Once several products in a row ended blocked, a 429 is not waited on
+      # again, so a site that refuses everything cannot push the run past WF-7.
+      if (verdict$retry && (persisting || verdict$fetch_status != "blocked")) {
+        wait(retry_delay(verdict$retry_after, clock()))
+        verdict <- attempt(plain)
+      }
+      # 8.2: a block is worked around before the product counts as blocked: back off and come
+      # back as a new visitor with a browser's identity, then in a fresh headless Chrome.
+      if (verdict$fetch_status == "blocked" && persisting) {
+        message("pchome: ", product_id, " blocked (HTTP ", verdict$http_status, "), retrying as a browser")
+        wait(RETRY_WAIT_SECONDS)
+        verdict <- attempt(function(url) transport(url, BROWSER_USER_AGENT))
+        if (verdict$fetch_status == "blocked" && !is.null(browser)) {
+          message("pchome: ", product_id, " still blocked, loading it in headless Chrome")
+          wait(RETRY_WAIT_SECONDS)
+          loaded <- attempt(browser)
+          # Chrome failing to start or load says nothing about the site: the product stays blocked.
+          if (loaded$fetch_status != "timeout") verdict <- loaded
         }
-        if (is.null(response)) {
-          row$fetch_status <- "timeout"
-        } else if (row$http_status == 403L ||
-                   (row$http_status == 200L && is_challenge(response$body))) {
-          row$fetch_status <- "blocked"
-          if (row$http_status == 200L) row$http_status <- 403L
-          site_blocked <- TRUE
-          message("pchome: access restriction received; stopping further site requests")
-          break
-        } else if (row$http_status == 200L) {
-          parsed <- tryCatch(parse_product_page(response$body, item_id), error = function(error) {
-            list(fetch_status = "parse_failure", verification_note = conditionMessage(error))
-          })
-          for (field in intersect(names(parsed), OUTPUT_COLUMNS)) row[[field]] <- parsed[[field]]
-          verification_note <- parsed$verification_note
-          break
-        } else {
-          row$fetch_status <- if (row$http_status == 429L) "blocked" else "http_error"
-        }
-        retryable <- is.null(response) || row$http_status == 429L ||
-          (row$http_status >= 500L && row$http_status < 600L)
-        if (attempt == 1L && retryable) {
-          header <- if (is.null(response)) NULL else response$retry_after
-          wait(retry_delay(header, clock()))
-        } else {
-          if (row$fetch_status == "blocked") site_blocked <- TRUE
-          break
-        }
+      }
+      blocked_streak <- if (verdict$fetch_status == "blocked") blocked_streak + 1L else 0L
+      save_bodies(bodies, raw_dir, raw_name)
+      row$fetch_status <- verdict$fetch_status
+      row$http_status <- verdict$http_status
+      if (!is.null(verdict$parsed)) {
+        for (field in intersect(names(verdict$parsed), OUTPUT_COLUMNS)) row[[field]] <- verdict$parsed[[field]]
+        verification_note <- verdict$parsed$verification_note
       }
     }
     rows[[length(rows) + 1L]] <- row
@@ -308,9 +374,7 @@ run_scraper <- function(args = character(), contact = Sys.getenv("SCRAPER_CONTAC
   write.csv(snapshot, staged, row.names = FALSE, na = "NA", fileEncoding = "UTF-8")
   if (!file.copy(staged, output, overwrite = FALSE)) stop("Cannot publish new CSV: ", output)
   unlink(staged)
-  counts <- table(factor(snapshot$fetch_status, levels = FETCH_STATUSES))
-  summary <- paste(paste(names(counts), as.integer(counts)), collapse = ", ")
-  cat("pchome: ", nrow(snapshot), " products | ", summary, " | ", output, "\n", sep = "")
+  cat(summary_line(snapshot, output), "\n", sep = "")
   if (any(snapshot$fetch_status == "ok")) {
     message("pchome: visible-text coverage only; client-loaded coupon/card/member offers and image-only labels are not fully verified. See ",
             file.path(raw_dir, "verification.csv"))
@@ -320,7 +384,7 @@ run_scraper <- function(args = character(), contact = Sys.getenv("SCRAPER_CONTAC
 }
 
 main <- function() {
-  needed <- c("httr2", "rvest", "jsonlite")
+  needed <- c("httr2", "rvest", "xml2")
   missing <- needed[!vapply(needed, requireNamespace, logical(1), quietly = TRUE)]
   if (length(missing)) stop("Install required packages: ", paste(missing, collapse = ", "))
   run_scraper(commandArgs(trailingOnly = TRUE))$exit_code

@@ -7,7 +7,7 @@ Owner: **Albert**. Build it to [`../data-collection-spec.md`](../data-collection
 Use R 4.6.1. Install the course packages once:
 
 ```r
-install.packages(c("httr2", "rvest", "jsonlite"))
+install.packages(c("httr2", "rvest", "chromote"))
 ```
 
 Set `SCRAPER_CONTACT=your-contact-email` in the ignored `.Renviron` at the repository root.
@@ -32,21 +32,24 @@ Ensure `Rscript` from your R installation is on PATH and the required packages a
 - The CSV has the specification's exact 17 columns, UTF-8 text, and literal `NA` values.
 - Each run freezes its Taiwan date and minute. Files go to `output/pchome_YYYY-MM-DD_HHMM.csv`
   and `raw/YYYY-MM-DD_HHMM/`. Both are ignored by git.
-- A repeated minute fails before any request, even if the previous run only reserved its raw
-  folder before being interrupted. Wait for a new minute; keep previous evidence intact.
-- Every received body is saved unchanged in an `.html.gz`, including error bodies.
-  Retries add `__attempt2`; repeated platform IDs on different product rows add `__rowN`.
-  Neither a retry nor a second product can overwrite an earlier response.
+- A repeated minute fails before any request. A run interrupted before it saved anything
+  removes its empty raw folder, so that minute can be run again; saved evidence is kept.
+- Every received body is saved unchanged in an `.html.gz`, including error bodies. The body
+  the row was read from is `<ID>.html.gz`; earlier attempts are `<ID>__attempt<n>.html.gz`.
+  Repeated platform IDs on different product rows add `__rowN`. Nothing is overwritten.
 - Requests use the identified study user-agent, a 30-second timeout, at least five seconds
   after the preceding request finishes, and one retry after at least 60 seconds for a connection
-  error, timeout, HTTP 429 or 5xx. A longer `Retry-After` is honored.
+  error, timeout, HTTP 429 or 5xx. A longer `Retry-After` is honored, up to 300 seconds.
 - Invalid input rows get `bad_input`; every duplicated `product_id` is rejected. Blank PChome
   links are skipped. Other failures retain a row and processing continues.
-- Under the PChome collection access policy, a 403, challenge or repeated 429 stops further
-  requests to the site. Remaining valid products get `blocked`, with `NA` request time and HTTP
-  status because they were never sent. This intentionally overrides the repository's block
-  circumvention instructions in sections 8.2 and 10. No alternative IP, disguised user-agent,
-  login, or browser fallback is used by this collector.
+- Blocks follow spec section 8.2. After a 403, challenge page or repeated 429, the scraper
+  waits 60 seconds and requests the page again with a browser user agent, then waits again and
+  loads it in a fresh headless Chrome (when `chromote` is installed). Only then is the product
+  `blocked`, and the run moves on. After three products in a row end blocked, later products
+  get one request each (no 429 retry), so a site refusing everything cannot push the run past
+  the 45-minute job limit. On 2026-10-18 headless Chrome got 429 where plain httr2 got 200.
+- A challenge is recognised only on a page without the product block, so CAPTCHA scripts or a
+  `noscript` notice on a normal product page never block a row.
 - Exit is zero if at least one row is `ok`, otherwise one. An empty main product table writes
   a header-only CSV and exits one; this is not a successful full-dataset collection.
 
@@ -72,8 +75,8 @@ identifies that exact variant, rather than silently selecting the base product.
 | `shown_discount_pct` | Only a standalone percentage badge in the product discount/price badge area. No computed percentage, cashback conversion, or conversion of 折. |
 | `promo_tag` | Product header campaign text, discount links, price tags, promotion tags and wording, in DOM order with exact duplicates removed. |
 | `coupon_note` | Displayed discount conditions, coupon text and card-benefit links inside the product information area. |
-| `seller_type` | `platform` when the product's delivery section explicitly says PChome 倉庫出貨; otherwise NA. No host-based default. |
-| `in_stock` | Enabled purchase buttons, or an explicit sold-out/removed notice in the main product area; otherwise NA. No API quantity default. |
+| `seller_type` | `platform`: 24h product pages are sold by PChome itself (spec 7.3). |
+| `in_stock` | Enabled purchase buttons → TRUE; an explicit sold-out/removed notice in the main product area → FALSE; otherwise TRUE when a selling price is shown (spec 7.1: an `ok` row is never NA). No API quantity default. |
 
 The visible soy milk page has baseline 網路價 285, crossed-out 285, conditional 275, and
 `限時活動 10/14 - 10/31 任選1件$275`. The collector records sale 285, original 285, extra 275,
@@ -101,8 +104,7 @@ offers. These limits affect `extra_price`, `extra_price_label`, `shown_discount_
 On 2026-10-16, product-site robots.txt allowed ordinary `/prod/` pages. The asset host's
 robots.txt disallowed all paths, so no direct CSS scraping request was made. The original
 price class's strike-through presentation was checked visually in the ordinary browser.
-Site HTML/CSS redesigns require revalidation. Requests do not switch clients or identities
-after restrictions, and no robots-disallowed endpoint is used. Recheck site rules before
+Site HTML/CSS redesigns require revalidation. No robots-disallowed endpoint is used. Recheck site rules before
 collection if policy or requested URLs change.
 
 Old feed-based CSVs and JSON responses remain intact as development evidence; they are not
