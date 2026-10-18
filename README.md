@@ -1,5 +1,14 @@
 # pba-project-the-janggals
 
+## momo recorder
+
+The initial momo-only recorder is implemented for seven confirmed single-option products.
+See [run instructions](scraper/README.md), [active input](data/products.csv),
+[remaining 93-product review queue](data/momo-review-queue.json), and
+[verification results](momo-verification.md). The original `Productss.csv` is unchanged.
+
+Run from the repo root: `Rscript scraper/scrape_momo.R`.
+
 Team **The Janggals**, ISS4066 Programming for Business Analytics, NTHU, Fall 2026.
 
 ## Topic
@@ -16,6 +25,7 @@ each page's crossed-out "original price".
 
 ## Data
 
-Raw data lives in `data/raw/`, which git ignores. Scraped pages are backed up to the team's
-shared Google Drive; BigGo history is copied by hand from biggo.com.tw. Download links will be
-added at Milestone 2.
+Daily momo records live in `data/snapshots/`. Raw momo pages live in `raw/momo/`, which git
+ignores; `data/raw/` remains ignored as well. The team must back up raw captures to its shared
+Google Drive; the recorder does not upload them. BigGo history is copied by hand from
+biggo.com.tw. Download links will be added at Milestone 2.

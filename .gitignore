@@ -1,1 +1,5 @@
 data/raw/
+raw/
+.R-library/
+.Renviron
+.Rhistory

@@ -1,0 +1,3 @@
+# Copy to .Renviron and set your study contact before live requests.
+PBA_CONTACT_EMAIL=your.name@example.com
+
