@@ -133,6 +133,12 @@ comes from. Points worth knowing for the analysis:
   shown crossed out). The scraper only does this when the page's own figures add up
   (1 + 198 = 199); otherwise the row is `parse_failure` and the page is kept for a fix. The
   collecting Chrome is not logged in to Coupang, so it sees what any visitor sees.
+- **Time-limited discounts** look the same with the label `折扣後價格`, e.g. `$590` crossed out,
+  `$425`, and under it `$65 折扣後價格 · 折扣剩下8小時`. Like momo's 限時折後價, the headline goes
+  to `extra_price` (label `折扣後價格`) and `sale_price` is the price without the discount. When
+  that price is not the crossed-out one, the line under the headline shows it, crossed out
+  (`… $490`), and the scraper takes it from there (425 + 65 = 490). First-purchase lines do
+  this too (`$200 首購折扣價 $1,260`). Seen on 5 of 37 pages on 2026-10-19.
 - **Card prices.** Prices for one bank card (e.g. `王道卡 特惠價 $3,410` under 刷卡優惠) also
   count for `extra_price`, which takes the lowest conditional price shown.
 - **Discount badges** on product pages are `N折`, never a percentage, so `shown_discount_pct` is
@@ -181,4 +187,5 @@ Checked on 2026-10-15:
   (blocked rows, back-off, fresh profile, raw pages saved, exit code 1), but every page is
   refused.
 
-Not checked yet: a sold-out page, and 11.11 campaign labels.
+A sold-out page was first seen in the 2026-10-19 15:07 run: two items showed 暫時缺貨 with JSON-LD
+`OutOfStock` and came out `ok` with `in_stock` `FALSE`. Not checked yet: 11.11 campaign labels.

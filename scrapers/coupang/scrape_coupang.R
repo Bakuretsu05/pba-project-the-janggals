@@ -405,7 +405,9 @@ visible_text <- function(node) {
 }
 
 # The price block: headline price, struck-through price, 折 or % badge, and the line under the
-# headline that explains a conditional reduction, e.g. "$198 首購折扣價 · 折扣剩下9小時".
+# headline that explains a conditional reduction, e.g. "$198 首購折扣價 · 折扣剩下9小時" or
+# "$65 折扣後價格 · 折扣剩下8小時 $490". When the price without the reduction differs from the
+# struck price, that line ends with it, struck through ($490).
 read_price_block <- function(block) {
   p <- text_pieces(block)
   is_price <- grepl(PRICE_RE, p$text)
@@ -421,8 +423,9 @@ read_price_block <- function(block) {
     struck = parse_price(p$text[which(struck)[1]]),
     zhe = p$text[grepl(ZHE_RE, p$text)],
     pct = p$text[grepl(PCT_RE, p$text)],
-    condition_label = labels[grepl("價$", labels)][1],
-    condition_amount = parse_price(p$text[after & is_price][1]),
+    condition_label = labels[grepl("價格?$", labels)][1],
+    condition_amount = parse_price(p$text[after & is_price & !struck][1]),
+    condition_struck = parse_price(p$text[after & struck][1]),
     condition_line = if (any(after)) paste(p$text[after], collapse = " ") else NA_character_
   )
 }
@@ -483,16 +486,18 @@ parse_product_page <- function(html) {
     notes <- c(notes, sprintf("JSON-LD price %d differs from the price shown (%d)", ld_price, pb$headline))
   }
 
-  # A labelled reduction under the headline (e.g. 首購折扣價) means the headline itself is a
-  # conditional price. The unconditional price is then the struck price, but only when the
-  # page's own figures show the reduction is the whole gap (headline + amount = struck price).
+  # A labelled reduction under the headline (e.g. 首購折扣價, or 折扣後價格 for a time-limited
+  # discount) means the headline itself is a conditional price. The unconditional price is then
+  # the struck price on that line, else the main struck price, but only when the page's own
+  # figures show the reduction is the whole gap (headline + amount = that price).
   sale <- headline
   conditional <- data.frame(label = character(), price = integer(), stringsAsFactors = FALSE)
   if (!is.na(pb$condition_label) && !is.na(headline)) {
     conditional <- data.frame(label = pb$condition_label, price = headline, stringsAsFactors = FALSE)
-    covers_gap <- !is.na(original) && !is.na(pb$condition_amount) &&
-      headline + pb$condition_amount == original
-    sale <- if (covers_gap) original else NA_integer_
+    without <- if (!is.na(pb$condition_struck)) pb$condition_struck else original
+    covers_gap <- !is.na(without) && !is.na(pb$condition_amount) &&
+      headline + pb$condition_amount == without
+    sale <- if (covers_gap) without else NA_integer_
     if (!covers_gap) {
       notes <- c(notes, sprintf("headline is a %s price and the price without it is not shown",
                                 pb$condition_label))
