@@ -7,7 +7,7 @@ Notes on `products.csv` (rebuilt 2026-10-18 to replace the search-page links in 
 - Every link is a product page, not a search page: momo `i_code=`, PChome `/prod/<id>`, Coupang `itemId=`.
 - Sold by the site itself: momo links are on `momoshop.com.tw` and PChome links on `24h.pchome.com.tw`. Every Coupang link had the 火箭速配 (Rocket) badge in search results on 2026-10-18.
 - Same item on each site, matched by model number, size, colour and pack count from the listing titles.
-- Every product is on at least 2 sites: 27 on all three, 73 on two.
+- Every product is on at least 2 sites: 33 on all three, 67 on two.
 - **BigGo history:** every listing was looked up in BigGo’s price history on 2026-10-19. Each one starts before October 2025, except the six marked "history starts 2025-10-xx" below, which start during October 2025. Listings whose history started later were dropped or their product replaced.
 
 ## BigGo links
@@ -19,11 +19,11 @@ BigGo shows price history in a popup on its search page; there is no separate pa
 | ID | Product | Sites | Note |
 |---|---|---|---|
 | 3C-001 | Apple AirPods 4 with Active Noise Cancellation (MXP93TA/A) | momo, Coupang | no PChome listing (only refurbished) |
-| 3C-002 | SanDisk High Endurance microSDXC 128GB (dashcam/surveillance) | momo, PChome | replaces AirPods 4 MXP63 (momo and Coupang listings started after Oct 2025, BigGo history too short) |
+| 3C-002 | SanDisk High Endurance microSDXC 128GB (dashcam/surveillance) | momo, PChome | replaces AirPods 4 MXP63 (momo and Coupang listings started after Oct 2025, BigGo history too short); momo link changed 2026-10-19, see below |
 | 3C-006 | Apple EarPods (USB-C) MYQY3 | momo, PChome | replaces iPad A16 (all listings start 2026, too new for BigGo history); Coupang listing dropped (BigGo history too short) |
 | 3C-007 | Logitech Pebble Mouse 2 M350s (graphite) | momo, PChome, Coupang | replaces MagSafe Charger 1 m (listings start Dec 2025) |
 | 3C-008 | Anker A1664 10000mAh Qi2 magnetic power bank | momo, PChome, Coupang | was "PowerCore 10000" (not a current model) |
-| 3C-009 | Logitech M331 SilentPlus wireless mouse (black) | momo, PChome | replaces Anker A1636 (Coupang listing started Apr 2026 and momo has no black one, BigGo history too short) |
+| 3C-009 | Logitech M331 SilentPlus wireless mouse (black) | momo, PChome, Coupang | replaces Anker A1636 (Coupang listing started Apr 2026 and momo has no black one, BigGo history too short) |
 | 3C-010 | Samsung Portable SSD T7 1TB, Titan Gray (MU-PC1T0T/WW) | momo, PChome | momo history starts 2025-10-19, PChome 2025-10-03 |
 | 3C-011 | Logitech MX Master 3S Lite (graphite) | momo, PChome | the full MX Master 3S is only sold as the B2B edition now; Coupang listing dropped (BigGo history too short) |
 | 3C-014 | Logitech C270 HD webcam | momo, PChome, Coupang | replaces C920 (not on momo) |
@@ -37,15 +37,15 @@ BigGo shows price history in a popup on its search page; there is no separate pa
 | APPL-004 | Philips NA221 4.2L air fryer (black) | momo, PChome | replaces HD9252 (not on momo) |
 | APPL-005 | Philips NA110 3.2L air fryer | momo, PChome | replaces HD9650 (not sold); Coupang listing dropped (BigGo history too short) |
 | APPL-006 | Zojirushi CD-LGF40 4L electric water boiler | momo, PChome | replaces Tefal EY111B70 (momo and Coupang listings started 2026, BigGo history too short) |
-| APPL-007 | Hitachi RD-22FJ 11L dehumidifier | momo, PChome | replaces Panasonic F-Y20JH (momo and Coupang listings started 2026, BigGo history too short) |
-| APPL-009 | Honeywell HPA5150WTWV1 air purifier | momo, PChome | replaces Xiaomi Air Purifier 4 Lite (Coupang listing started Aug 2026, no momo listing, BigGo history too short) |
+| APPL-007 | Hitachi RD-22FJ 11L dehumidifier | momo, PChome, Coupang | replaces Panasonic F-Y20JH (momo and Coupang listings started 2026, BigGo history too short) |
+| APPL-009 | Honeywell HPA5150WTWV1 air purifier | momo, PChome, Coupang | replaces Xiaomi Air Purifier 4 Lite (Coupang listing started Aug 2026, no momo listing, BigGo history too short) |
 | APPL-010 | Philips HD9389 1.5L stainless steel kettle | momo, PChome, Coupang | replaces HD9350 (not sold); PChome history starts 2025-10-30 |
 | APPL-011 | Dyson V8 Cyclone SV55 cordless vacuum | momo, PChome | Coupang listing dropped (BigGo history too short) |
 | APPL-012 | Xiaomi Robot Vacuum H40 | momo, PChome | replaces Roborock Q8 Max (not sold); Coupang listing dropped (BigGo history too short) |
 | APPL-013 | Panasonic NI-M300T steam iron (blue) | momo, PChome | replaces NI-WL30 (not sold) |
 | APPL-014 | Panasonic ES-6510 rotary shaver | momo, PChome, Coupang | replaces ES-LV9 (not sold) |
 | APPL-015 | Oral-B iO2 electric toothbrush | momo, PChome | replaces iO Series 4 (not sold) |
-| APPL-016 | Oral-B PRO1 3D electric toothbrush (white) | momo, PChome | replaces Philips HX5191 (all listings started Apr 2026, BigGo history too short); momo listing lets you choose the colour, track white |
+| APPL-016 | Oral-B PRO1 3D electric toothbrush (white) | momo, PChome, Coupang | replaces Philips HX5191 (all listings started Apr 2026, BigGo history too short); momo listing lets you choose the colour, track white |
 | APPL-018 | SodaStream GAIA sparkling water maker (black) | momo, PChome | replaces Terra (not sold in Taiwan) |
 | APPL-020 | Tatung 6-cup stainless steel rice cooker TAC-06L-MCW (white) | momo, PChome, Coupang | Coupang history starts 2025-10-03 |
 | BEAU-001 | Anessa Perfect UV Sunscreen Skincare Milk NA 60ml | PChome, Coupang | no momo listing |
@@ -61,7 +61,7 @@ BigGo shows price history in a popup on its search page; there is no separate pa
 | BEAU-013 | Skin Aqua Mentholatum SKINAQUA sunscreen spray 90g (unscented) | momo, Coupang | was the 50g spray (only on PChome); check momo sells the unscented one |
 | BEAU-014 | Neutrogena Hydro Boost Water Gel 50g | momo, Coupang | replaces Kiehl's Ultra Facial Cream (only on PChome); momo listing lets you choose gel/cream/night, track the gel; Coupang history starts 2025-10-05 |
 | BEAU-015 | Hada Labo Gokujyun Hyaluronic Lotion 400ml | momo, PChome | replaces Clinique Moisture Surge 50ml (momo listing started Aug 2026, BigGo history too short); momo sells the parallel-import bottle |
-| BEAU-017 | KOSE Sekkisei lotion 500ml | momo, PChome | replaces Bioderma Sensibio H2O x2 (momo listing started May 2026, BigGo history too short); both listings let you choose the type, track 一般型 |
+| BEAU-017 | KOSE Sekkisei lotion 500ml | momo, PChome, Coupang | replaces Bioderma Sensibio H2O x2 (momo listing started May 2026, BigGo history too short); both listings let you choose the type, track 一般型 |
 | BEAU-018 | Innisfree Green Tea Seed Hyaluronic Serum 80ml | momo, Coupang | no PChome listing |
 | BEAU-019 | KISSME Heroine Make Micro Mascara EX 360 4.5g (black) | momo, Coupang | replaces Maybelline Sky High (only new limited editions); no PChome listing |
 | FOOD-001 | Nongshim Shin Ramyun 120g x5 | momo, PChome | Coupang listing dropped (BigGo history too short) |
@@ -85,8 +85,28 @@ BigGo shows price history in a popup on its search page; there is no separate pa
 | HOME-006 | Kleenex Kitchen towel 110 sheets x3 x4 packs | momo, PChome | replaces Bai Ge softener 1800g (momo listing started Mar 2026, BigGo history too short) |
 | HOME-007 | Ariel Antibacterial liquid detergent refill 1.69kg (stain removal) | PChome, Coupang | replaces Dettol antiseptic (only on momo); PChome listing lets you choose the type, track 抗菌去漬 |
 | HOME-008 | Bai Lan Liquid detergent refill with Snuggle 1.6kg | momo, PChome | replaces Febreze fabric refresher 370ml (momo listing started Aug 2026, BigGo history too short); both listings let you choose the scent |
+| HOME-009 | Scotch-Brite Dishwashing sponge 5 pack | momo, PChome, Coupang | Coupang link added 2026-10-19, see below |
 | HOME-013 | Listerine Total Care mouthwash 750ml | momo, PChome, Coupang | Coupang history starts 2025-10-06 |
 | HOME-014 | Dove Deeply Nourishing body wash 900g | momo, PChome | was 1000ml (not sold) |
 | HOME-015 | Head & Shoulders anti-dandruff shampoo 680g | momo, PChome | was 750ml (not sold) |
 | HOME-016 | Pantene shampoo 650g | momo, PChome | was 700ml (not sold) |
 | HOME-017 | Paoshu Dishwashing liquid refill 800g x12 | momo, PChome | replaces Mama Lemon (not found) |
+
+## Coupang links added 2026-10-19
+
+Six products that had no Coupang link got one. Each was found through BigGo's and Coupang's search on 2026-10-19 and checked on the Coupang page: same item and pack, 火箭速配 badge, and BigGo history from before October 2025 (HOME-009: from 2025-10-04).
+
+| ID | Coupang listing | BigGo history starts |
+|---|---|---|
+| 3C-009 | logitech 羅技 靜音無線滑鼠 M331, 黑色 | 2025-06-03 |
+| APPL-007 | HITACHI 日立 除濕機 11L RD-22FJ | 2025-06-03 |
+| APPL-009 | Honeywell 淨味空氣清淨機 HPA5150WTWV1, 白色 | 2024-12-01 |
+| APPL-016 | Oral-B 歐樂B 3D電動牙刷, PRO1, 簡約白, 1支 (the link selects the white option) | 2024-10-19 |
+| BEAU-017 | KOSE 高絲 SEKKISEI 雪肌精, 500ml, 1瓶 | 2025-06-03 |
+| HOME-009 | 3M Scotch-Brite 百利 細緻餐具茶杯專用 菜瓜布 5個裝, 1套 | 2025-10-04 |
+
+- **No snapshots before the merge.** Our Coupang collection reads `products.csv` from `main`, so these six have no Coupang snapshots from 2026-10-19 until the day this change was merged.
+- **BigGo's Coupang history is per product page, not per option.** BigGo keys the history by the Coupang product id, so on a page with several options (pack counts, colours) its chart mixes them. For APPL-016 the chart can include the blue option. The same holds for Coupang links already in the table (for example FOOD-009). Check the price level before reading a BigGo Coupang chart as one item's history.
+- **3C-002 momo link:** momo delisted i_code 6623420 (it shows 網頁無法顯示 since about 2026-10-15) and relisted the same card as i_code 15770661 on 2026-10-14. The link now points to 15770661. BigGo has the old listing's history from before 2025 to 2026-10-15 under `tw_pec_momoshop-6623420`; the new listing's starts 2026-10-14.
+
+Checked and not added (no Rocket listing of the same item and pack, or BigGo history starts after October 2025): 3C-010 (Coupang only sells the T7 Shield), 3C-018, 3C-019 (Coupang sells the 140MB/s SDSQUAB card, the others the 100MB/s one), APPL-019 (marketplace listing, no Rocket badge), BEAU-004, BEAU-008, BEAU-009, BEAU-015, FOOD-013, FOOD-014, FOOD-015, FOOD-019, HOME-001, HOME-003 (the 6-pack option was sold out with no Rocket badge), HOME-004, HOME-005, HOME-006, HOME-008, HOME-010, HOME-011, HOME-012, HOME-014, HOME-018, HOME-019, HOME-020. The other rows without a Coupang link had no matching Coupang listing.
