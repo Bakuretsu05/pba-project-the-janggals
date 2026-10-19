@@ -15,12 +15,16 @@ product <- list(product_id = "TEST-001", momo_i_code = "123", momo_variant_sku =
   momo_variant_label = "Single 24 pack", momo_expected_title = "Test drink 330ml x24")
 fixture <- function(conditional = TRUE, options = 1L, currency = "TWD", schema_price = NULL,
                     missing_sale = FALSE, title = product$momo_expected_title,
-                    coupon = "查看可使用的折價券", sold_out = FALSE) {
+                    coupon = "查看可使用的折價券", sold_out = FALSE, option_prices = NULL,
+                    single_product = FALSE) {
   offer_price <- if (is.null(schema_price)) if (conditional) "233" else "275" else schema_price
+  if (is.null(option_prices)) option_prices <- rep(offer_price, options)
   variants <- lapply(seq_len(options), function(i) list("@type" = "Product", sku = sprintf("%03d", i),
-    name = "Single 24 pack", offers = list("@type" = "Offer", price = offer_price, priceCurrency = currency)))
-  schema <- jsonlite::toJSON(list("@graph" = list(list("@type" = "ProductGroup", sku = "123",
-    name = title, hasVariant = variants))), auto_unbox = TRUE)
+    name = "Single 24 pack", offers = list("@type" = "Offer", price = option_prices[[i]], priceCurrency = currency)))
+  item <- if (single_product) list("@type" = "Product", sku = "123", name = title,
+    offers = variants[[1L]]$offers) else
+    list("@type" = "ProductGroup", sku = "123", name = title, hasVariant = variants)
+  schema <- jsonlite::toJSON(list("@graph" = list(item)), auto_unbox = TRUE)
   price <- function(label, amount) paste0('<div><span>', label,
     '</span><span class="font-price"><span>$</span><span>', amount, '</span></span><span>元</span></div>')
   ordinary <- if (missing_sale) "" else price("促銷價", "275")
@@ -28,7 +32,11 @@ fixture <- function(conditional = TRUE, options = 1L, currency = "TWD", schema_p
   strike <- paste0(if (conditional) ordinary else "", price("市售價", "299"))
   html <- paste0('<html><head><title>Test</title><script type="application/ld+json">', schema,
     '</script></head><body><div id="purchase"><div data-testid="goods-info">',
-    '<div data-testid="goods-code-info">品號：123</div><span>美食單件85折</span><span>滿1件享85折</span>',
+    '<div><div data-testid="goods-name-content">', title, '</div></div>',
+    '<div><div><div><span>10/19~10/22</span><a href="/category/PromoDtList.jsp?promoNo=1">★美食單件85折</a></div>',
+    '<div><span>滿1件享85折</span><button>(說明)</button></div></div></div>',
+    '<div><ul data-testid="goods-description"><li><span>限時特價口味</span></li></ul>',
+    '<div data-testid="goods-code-info">品號：123</div></div>',
     '</div><div data-testid="web-goods-price-container"><div data-testid="price-main-container">',
     '<div data-testid="price-primary-row">', primary, '</div><div data-testid="price-strike-row">',
     strike, '</div></div></div><button>', coupon, '</button>',
@@ -39,12 +47,18 @@ parsed <- momo_parse(fixture(), product)
 check(identical(parsed$original_price, 299L) && identical(parsed$sale_price, 275L) &&
   identical(parsed$extra_price, 233L), "Keep market, ordinary selling and conditional prices separate")
 check(identical(parsed$extra_price_label, "限時折後價") &&
-  grepl("滿1件享85折", parsed$promo_tag, fixed = TRUE) &&
+  identical(parsed$promo_tag, "10/19~10/22 ★美食單件85折 | 滿1件享85折") &&
   is.na(parsed$shown_discount_pct), "Copy Chinese labels; do not calculate a percent from 85折")
 ordinary <- momo_parse(fixture(FALSE), product)
 check(identical(ordinary$sale_price, 275L) && is.na(ordinary$extra_price),
   "An ordinary headline is not an extra discount")
-check(must_fail(momo_parse(fixture(options = 2L), product)), "Reject multiple options instead of choosing the default")
+url_only <- list(momo_i_code = "123")
+check(identical(momo_parse(fixture(options = 3L), url_only)$sale_price, 275L),
+  "Read several options when they all have the displayed price")
+check(must_fail(momo_parse(fixture(options = 2L, option_prices = c("233", "250")), url_only)),
+  "Reject options with different prices instead of choosing the default")
+check(identical(momo_parse(fixture(single_product = TRUE), url_only)$extra_price, 233L),
+  "Read a page whose schema is one Product without a ProductGroup")
 check(must_fail(momo_parse(fixture(title = "Test drink 330ml x48"), product)), "Reject changed pack size/title")
 check(must_fail(momo_parse(fixture(currency = "USD"), product)), "Reject foreign currency")
 check(must_fail(momo_parse(fixture(schema_price = "199"), product)), "Reject schema/headline disagreement")

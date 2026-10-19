@@ -105,7 +105,7 @@ must cope with that.
 
 | Platform | Product is included when | `platform_item_id` | URL requested |
 |---|---|---|---|
-| momo | `momo_url` is not empty | The `i_code` value in the link | Built from the ID (section 7.3) |
+| momo | `momo_url` is not empty | The `i_code` value in the link, or the ID in a `/product/<ID>` link | Built from the ID (section 7.3) |
 | PChome | `pchome_url` is not empty | The product ID in the link (the part after `/prod/`; see 7.3 on its exact form) | Built from the ID (section 7.3) |
 | Coupang | `coupang_url` is not empty | The `itemId` value in the link | `coupang_url` as stored |
 
@@ -175,13 +175,13 @@ updates this table.
 
 | Column | PChome (customer-visible product HTML) | momo (product page HTML) | Coupang (product page HTML) |
 |---|---|---|---|
-| `original_price` | Visible crossed-out price in the product price block (`del`/`s`, explicit line-through, or visually verified `.c-prodPrice__originalPrice` class). Preserve it even if equal to the pre-condition selling price. Never substitute API `Price.M` | Explicit 市售價 / 市價 / 原價 in the main price block; seven real pages checked 2026-10-18 | Crossed-out price: the JSON-LD `StrikethroughPrice`, else the struck price in `.price-container`. Per Coupang, the supplier's suggested or official-channel price, else the item's highest Coupang price in 90 days |
+| `original_price` | Visible crossed-out price in the product price block (`del`/`s`, explicit line-through, or visually verified `.c-prodPrice__originalPrice` class). Preserve it even if equal to the pre-condition selling price. Never substitute API `Price.M` | Explicit 市售價 / 市價 / 原價 in the main price block (shown on 70 of 92 pages, 2026-10-19) | Crossed-out price: the JSON-LD `StrikethroughPrice`, else the struck price in `.price-container`. Per Coupang, the supplier's suggested or official-channel price, else the item's highest Coupang price in 90 days |
 | `sale_price` | Displayed pre-condition selling price; in the verified 折扣價 / 網路價 layout, the displayed 網路價. Unknown conditional baselines give `parse_failure` | 促銷價 | Headline price (JSON-LD `offers.price`). If a line under it marks the headline as conditional (`$198 首購折扣價`), the crossed-out price instead, provided headline + reduction = crossed-out price; otherwise `NA` and `parse_failure` |
 | `extra_price` | Lowest verified conditional price linked to displayed condition wording; copy that wording to `extra_price_label`. Unverified amounts/labels stay `NA` | 限時折後價 (the JSON-LD `price` also holds this) | Lowest of: a headline marked conditional (label e.g. `首購折扣價`, first purchase) and card prices under 刷卡優惠 (label e.g. `王道卡 特惠價`) |
-| `shown_discount_pct`, `promo_tag`, `coupon_note` | Copy product price/discount percentage badges, campaign/promotion text, and visible coupon/card wording from the main product area. Do not infer % from amounts or cashback; 折 stays text. Interactive/image-only content has incomplete coverage, recorded in a separate verification audit | From the page **(check)** | Product pages show `N折`, never %, so `shown_discount_pct` is `NA` and the badge goes to `promo_tag`. `coupon_note`: the conditional line, `.conditional-benefits`, 刷卡優惠 and 銀行回饋 entries. 11.11 campaign labels not seen yet |
-| `seller_type` | `platform` (24h product pages are sold by PChome itself) | `platform` unless a third-party shop is shown **(check)** | `賣家：<name>` (`.seller-info`) → `marketplace`; else the `ROCKET` badge in the price block → `platform` |
-| `in_stock` | Enabled purchase buttons → `TRUE`; explicit sold-out/removed notice → `FALSE`; otherwise `TRUE` when a selling price is shown | `FALSE` if a sold-out notice is shown, else `TRUE` **(check)** | JSON-LD `offers.availability` (`InStock` → `TRUE`); without JSON-LD, `FALSE` if 已售完, 暫時缺貨 or similar is shown. No sold-out page seen yet **(check)**. A wrong link and a delisted item get the same HTTP 200 page, 找不到商品: `parse_failure` |
-| Challenge-page marker (section 8.1) | Only on a page without the product block: `sec-if-cpt-container`, `cf-chl-`, `challenge-platform`, or visible text Access Denied, CAPTCHA, verify you are human, 網頁載入中, JavaScript required/check. A page with the product block is never a challenge | **(check)** | Akamai: `Access Denied`, or `sec-if-cpt-container` (JavaScript check that reloads itself); Coupang: `id="error403"` (你沒有權限存取此頁面) |
+| `shown_discount_pct`, `promo_tag`, `coupon_note` | Copy product price/discount percentage badges, campaign/promotion text, and visible coupon/card wording from the main product area. Do not infer % from amounts or cashback; 折 stays text. Interactive/image-only content has incomplete coverage, recorded in a separate verification audit | `promo_tag`: each row of the campaign block under the product name, the dated campaign link then its condition (`10/01~10/31 ★AirPods十在優惠 \| 滿1件折1102元`). `coupon_note`: 折價券, 刷卡 and 回饋 wording in the purchase column. No % badge on 92 pages (2026-10-19), so `shown_discount_pct` is `NA` so far | Product pages show `N折`, never %, so `shown_discount_pct` is `NA` and the badge goes to `promo_tag`. `coupon_note`: the conditional line, `.conditional-benefits`, 刷卡優惠 and 銀行回饋 entries. 11.11 campaign labels not seen yet |
+| `seller_type` | `platform` (24h product pages are sold by PChome itself) | `platform` unless the purchase column names a third-party seller (第三方賣家, 店家名稱, a `/3p/` link). None seen on 93 pages (2026-10-19) | `賣家：<name>` (`.seller-info`) → `marketplace`; else the `ROCKET` badge in the price block → `platform` |
+| `in_stock` | Enabled purchase buttons → `TRUE`; explicit sold-out/removed notice → `FALSE`; otherwise `TRUE` when a selling price is shown | `FALSE` if a sold-out notice (已售完, 補貨中) is shown or every option's JSON-LD `availability` is out of stock, else `TRUE`; mixed option stock → `NA`. No sold-out page seen yet **(check)**. A removed item or wrong link gets a generic 網頁無法顯示 page that lists 商品目前無展售 and 網頁不存在 as possible causes: `parse_failure` | JSON-LD `offers.availability` (`InStock` → `TRUE`); without JSON-LD, `FALSE` if 已售完, 暫時缺貨 or similar is shown. No sold-out page seen yet **(check)**. A wrong link and a delisted item get the same HTTP 200 page, 找不到商品: `parse_failure` |
+| Challenge-page marker (section 8.1) | Only on a page without the product block: `sec-if-cpt-container`, `cf-chl-`, `challenge-platform`, or visible text Access Denied, CAPTCHA, verify you are human, 網頁載入中, JavaScript required/check. A page with the product block is never a challenge | Only on a page without the price block and 品號: Access Denied, Just a moment, `sec-if-cpt-container`, `cf-chl-`, `challenge-platform`, `g-recaptcha`, 驗證您是人類, 安全驗證. None seen on 93 pages from a home connection (2026-10-19) **(check)** from GitHub | Akamai: `Access Denied`, or `sec-if-cpt-container` (JavaScript check that reloads itself); Coupang: `id="error403"` (你沒有權限存取此頁面) |
 
 Endpoints:
 
@@ -207,20 +207,20 @@ Endpoints:
   got HTTP 200 while headless Chrome got 429, so the browser user agent is the useful
   workaround and headless Chrome is the last resort. Raw files: the body the row was read from
   is `<platform_item_id>.html.gz`; earlier attempts are `<platform_item_id>__attempt<n>.html.gz`.
-- **momo** (rechecked 2026-10-18): product page
-  `https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=<platform_item_id>`. Prices are in
-  the HTML. robots.txt (checked 2026-10-13) allows `GoodsDetail.jsp`, disallows `/api/` and
-  `/ajax/`, and also disallows URLs carrying the tracking parameters `utm_`, `osm=` and
+- **momo** (rechecked 2026-10-19, Jordan and Marvin): product page
+  `https://www.momoshop.com.tw/product/<platform_item_id>`, built from the ID whether the link
+  is a `/product/<ID>` or a `GoodsDetail.jsp?i_code=<ID>` link. Prices are in the HTML.
+  robots.txt (checked 2026-10-18) allows `/product/` and `GoodsDetail.jsp`, disallows `/api/`
+  and `/ajax/`, and also disallows URLs carrying the tracking parameters `utm_`, `osm=` and
   `recomd_id=`. Links pasted from a browser often carry these, which is why the scraper builds
-  its own URL from the `i_code` and never requests the pasted link.
-  The integrated recorder also accepts canonical `/product/<ID>` links and requests that
-  public path directly (robots.txt checked 2026-10-18). It uses the shared URL-only input,
-  17-column per-run output and `SCRAPER_CONTACT`. In the verified modern layout, 市售價 is
-  original_price, 促銷價 is sale_price even if crossed out, and 限時折後價 is extra_price.
-  Ferrero displayed 299 / 275 / 233 respectively. Multiple options and unknown layouts fail
-  conservatively; interactive/image-only promotion coverage and seller variants remain
-  incomplete. The bounded block fallback does not implement every workaround in section 8.2.
-  See `momo/README.md` and `momo/VERIFICATION.md` for evidence and remaining limitations.
+  its own URL from the ID and never requests the pasted link. In the price block, 市售價 is
+  `original_price`, 促銷價 is `sale_price` even when struck through beside a further offer, and
+  限時折後價 is `extra_price` (Ferrero: 299 / 275 / 233). The JSON-LD `price` must equal the
+  displayed headline. A page with several options (colours, scents) is read only when every
+  option has the same price; otherwise `parse_failure`. On 2026-10-19, 92 of the 93 momo links
+  in the product table read `ok`; 33 of them have several options, each at one price. Blocks get
+  one retry with a different user agent; headless Chrome and proxies (8.2) are not implemented.
+  See `momo/README.md` and `momo/VERIFICATION.md`.
 - **Coupang** (tested 2026-10-15): the product page at `coupang_url`, requested exactly as stored
   in the product table, from a Coupang page in an everyday Chrome, by the Chrome extension in
   `scrapers/coupang/extension` (`scrapers/coupang/README.md` explains why). Prices are read from
@@ -378,9 +378,9 @@ Type in **change points only**, one row per price change. R turns these into dai
 
 | # | Question | Who answers | Status |
 |---|---|---|---|
-| Q1 | Does momo show a crossed-out 市價 on product pages? | momo owner | Open |
+| Q1 | Does momo show a crossed-out 市價 on product pages? | momo owner | **Answered 2026-10-19:** yes, a struck 市售價 on 70 of 92 pages; see 7.3 |
 | Q2 | Does Coupang show a crossed-out 原價? What second prices appear? | Coupang owner | **Answered 2026-10-15:** yes, a struck price (supplier's suggested price, else the 90-day high on Coupang). Second prices: a first-purchase price (首購折扣價) built into the headline for visitors not logged in, and card prices (e.g. 王道卡 特惠價); also bank cashback, shown as text. See 7.3 |
-| Q3 | How do momo and Coupang show third-party sellers? | Platform owners | Open for momo. **Coupang (2026-10-15):** a `賣家：<name>` line with a seller rating, and no Rocket badge |
+| Q3 | How do momo and Coupang show third-party sellers? | Platform owners | **momo (2026-10-19):** none of the 93 product-table pages showed a third-party seller; markers in 7.3. **Coupang (2026-10-15):** a `賣家：<name>` line with a seller rating, and no Rocket badge |
 | Q4 | Does BigGo's history show the 原價 as well as the price? How often does it check prices? | BigGo transcribers | Open |
 | Q5 | Do the scrapers run on GitHub Actions or on a laptop with Task Scheduler? | Team | **Closed 2026-10-13: GitHub Actions** (section 9) |
 | Q6 | Where are snapshots and raw pages kept long term? (The scrapers and workflow live in this repo.) Until decided, outputs live as 90-day workflow artifacts (WF-6), the earliest of which expire around Jan 17; decide before the final report (Dec 20). The repo is public (checked 2026-10-13), so artifact storage has no quota; if it is made private, GitHub Free's 500 MB artifact quota applies and the raw pages may approach it. | Team | Open |

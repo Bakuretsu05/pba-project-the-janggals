@@ -11,10 +11,10 @@ momo_text <- function(node) {
   value <- trimws(gsub("\\s+", " ", rvest::html_text2(node), perl = TRUE))
   if (!nzchar(value)) NA_character_ else value
 }
-momo_join <- function(values) {
+momo_join <- function(values, sep = " | ") {
   values <- trimws(gsub("\\s+", " ", values, perl = TRUE))
   values <- unique(values[!is.na(values) & nzchar(values)])
-  if (length(values)) paste(values, collapse = " | ") else NA_character_
+  if (length(values)) paste(values, collapse = sep) else NA_character_
 }
 momo_money <- function(value) {
   if (length(value) != 1L || is.na(value)) return(NA_integer_)
@@ -34,19 +34,28 @@ momo_challenge <- function(body) {
 
 momo_product_group <- function(doc, code) {
   groups <- list()
+  singles <- list()
   for (node in rvest::html_elements(doc, 'script[type="application/ld+json"]')) {
     parsed <- tryCatch(jsonlite::fromJSON(rvest::html_text(node), simplifyVector = FALSE),
       error = function(e) NULL)
     walk <- function(x) {
       if (!is.list(x)) return()
-      if ("ProductGroup" %in% unlist(x[["@type"]]) &&
-          identical(as.character(x$sku), code)) groups[[length(groups) + 1L]] <<- x
+      if (identical(as.character(x$sku), code)) {
+        if ("ProductGroup" %in% unlist(x[["@type"]])) groups[[length(groups) + 1L]] <<- x
+        else if ("Product" %in% unlist(x[["@type"]])) singles[[length(singles) + 1L]] <<- x
+      }
       for (child in x) if (is.list(child)) walk(child)
     }
     walk(parsed)
   }
-  if (length(groups) != 1L) stop("Expected one ProductGroup for requested item ID")
-  groups[[1L]]
+  if (length(groups) == 1L) return(groups[[1L]])
+  # Some single-option pages publish one Product with its own offer and no ProductGroup.
+  if (!length(groups) && length(singles) == 1L) {
+    group <- singles[[1L]]
+    group$hasVariant <- list(singles[[1L]])
+    return(group)
+  }
+  stop("Expected one ProductGroup or Product for requested item ID")
 }
 
 momo_parse <- function(body, product) {
@@ -61,16 +70,25 @@ momo_parse <- function(body, product) {
   code_text <- momo_text(rvest::html_element(doc, '[data-testid="goods-code-info"]'))
   if (is.na(code_text) || !identical(gsub("[^0-9]", "", code_text), code))
     stop("Visible product ID does not match requested listing")
-  # Only single-option pages are enabled. No guessed colour/default price.
   variants <- group$hasVariant
-  if (length(variants) != 1L) stop("Multiple/unknown options; manual option verification required")
-  variant <- variants[[1L]]
-  if ((!is.null(product$momo_variant_sku) && !identical(as.character(variant$sku), product$momo_variant_sku)) ||
-      (!is.null(product$momo_variant_label) && !identical(as.character(variant$name), product$momo_variant_label)))
-    stop("Variant SKU/label changed")
-  offer <- variant$offers
-  if (is.null(offer$priceCurrency) || offer$priceCurrency != "TWD")
-    stop("Missing or unexpected currency")
+  if (!length(variants)) stop("No options in the product schema")
+  if (!is.null(product$momo_variant_sku) || !is.null(product$momo_variant_label)) {
+    variants <- Filter(function(v)
+      (is.null(product$momo_variant_sku) || identical(as.character(v$sku), product$momo_variant_sku)) &&
+      (is.null(product$momo_variant_label) || identical(as.character(v$name), product$momo_variant_label)),
+      variants)
+    if (length(variants) != 1L) stop("Variant SKU/label changed")
+  }
+  # The product table names one option (colour, scent) but not which one on the page.
+  # Several options are read only when they all have one price, so the choice cannot
+  # matter; options with different prices are never guessed.
+  offers <- lapply(variants, function(v) v$offers)
+  currencies <- vapply(offers, function(o) as.character(o$priceCurrency %||% NA), character(1))
+  if (anyNA(currencies) || any(currencies != "TWD")) stop("Missing or unexpected currency")
+  amounts <- vapply(offers, function(o) momo_money(as.character(o$price %||% NA)), integer(1))
+  if (anyNA(amounts) || length(unique(amounts)) != 1L)
+    stop("Options have different prices; manual option verification required")
+  offer <- offers[[1L]]
 
   prices <- rvest::html_elements(doc, '[data-testid="price-main-container"]')
   if (length(prices) != 1L) stop("Missing/ambiguous main price block")
@@ -113,7 +131,16 @@ momo_parse <- function(body, product) {
   purchase <- rvest::html_element(info, xpath = './ancestor::div[.//*[@data-testid="web-goods-price-container"]][1]')
   if (inherits(purchase, "xml_missing")) stop("Cannot isolate product purchase column")
   info_lines <- trimws(strsplit(rvest::html_text2(info), "\n", fixed = TRUE)[[1L]])
-  promo <- info_lines[grepl("折|滿.*送|限時|特價|特惠|登記送|折扣", info_lines) & info_lines != "(說明)"]
+  # Campaigns have their own block between the name and the description, one row each:
+  # the dated campaign link (10/01~10/31 ★AirPods十在優惠) and its condition
+  # (滿1件折1102元). The (說明) button beside a condition is not part of the label.
+  promo_block <- rvest::html_elements(info, xpath = paste0("./div[not(.//*[@data-testid=",
+    "'goods-name-content'] or .//*[@data-testid='goods-code-info'])]"))
+  promo <- vapply(rvest::html_elements(promo_block, xpath = ".//div[not(div)]"), function(row) {
+    parts <- xml2::xml_children(row)
+    parts <- parts[xml2::xml_name(parts) != "button"]
+    momo_join(vapply(parts, momo_text, character(1)), sep = " ")
+  }, character(1))
   copy_nodes <- rvest::html_elements(purchase, "a, span, button")
   copy_text <- vapply(copy_nodes, momo_text, character(1))
   coupon <- copy_text[!is.na(copy_text) & grepl("折價券|優惠券|會員價|刷.*卡|回饋|券後", copy_text)]
@@ -130,9 +157,10 @@ momo_parse <- function(body, product) {
     any(grepl("/3p/|/3pGoods", rvest::html_attr(rvest::html_elements(purchase, "a[href]"), "href")))
   # Provisional normal-catalogue rule from spec 7.3, not legal seller verification.
   stock <- !grepl("已售完|已售罄|售完補貨|補貨中|商品目前無展售|尚未開賣", purchase_text)
-  availability <- offer$availability
-  if (!is.null(availability) && grepl("OutOfStock|SoldOut|Discontinued|PreOrder", availability))
-    stock <- FALSE
+  # With several options the row's own option is unknown, so mixed stock is NA.
+  out <- grepl("OutOfStock|SoldOut|Discontinued|PreOrder",
+    vapply(offers, function(o) as.character(o$availability %||% ""), character(1)))
+  if (all(out)) stock <- FALSE else if (any(out)) stock <- NA
   list(original_price = original, sale_price = sale, extra_price = extra,
     extra_price_label = extra_label, shown_discount_pct = pct,
     promo_tag = momo_join(promo), coupon_note = momo_join(coupon),

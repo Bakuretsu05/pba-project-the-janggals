@@ -57,18 +57,23 @@ No authentication or credentials are used to fetch products.
 ## Price mapping and limits
 
 The parser checks visible 品號 and JSON-LD source ID, TWD currency and the headline/schema
-amount. It supports the verified modern data-testid price layout with one hasVariant entry.
-Multi-option or unrecognized layouts give parse_failure; no arbitrary option is selected.
+amount. It supports the verified modern data-testid price layout, with the schema as a
+ProductGroup or a single Product. A page with several options (colour, scent) is read only when
+every option has the same price, so it cannot matter which one the product table means; options
+with different prices, or unrecognized layouts, give parse_failure. No option is guessed.
 
 - 市售價 / 市價 / 原價 → original_price.
 - 促銷價 / 售價 → sale_price, even when crossed out beside a further offer.
 - Explicit conditional amount such as 限時折後價 → extra_price and its exact label.
 - JSON-LD may contain the conditional amount; it is never blindly used as sale_price.
-- Promo/coupon/card text is copied from the purchase area, with shared whitespace rules.
+- promo_tag: each row of the campaign block under the product name, e.g.
+  `10/01~10/31 ★AirPods十在優惠 | 滿1件折1102元`, without the (說明) button.
+- coupon_note: coupon/card/cashback wording from the purchase area.
   折 stays text; no discount, per-unit price or cashback amount is calculated.
 - seller_type follows the provisional regular-catalogue rule, with visible third-party
   markers reported as marketplace. This is not a legal seller audit.
-- Explicit sold-out/removed notices produce ok with in_stock FALSE. A generic missing page
+- Explicit sold-out/removed notices produce ok with in_stock FALSE. With several options,
+  JSON-LD stock that differs between options gives in_stock NA. A generic missing page
   without a selling price or removed notice is parse_failure. Other failed rows have NA stock.
 
 Interactive offers, hidden coupon prices, image-only labels and all marketplace/sold-out

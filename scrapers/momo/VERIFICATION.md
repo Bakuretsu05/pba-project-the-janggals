@@ -6,7 +6,7 @@ earlier prototype.
 
 ## Results
 
-- **38 offline checks passed** with Rscript scrapers/momo/tests/test_momo.R.
+- **40 offline checks passed** with Rscript scrapers/momo/tests/test_momo.R.
 - **Seven real products returned ok** in the run started at 23:54 Taiwan time:
   output/momo_2026-10-18_2354.csv, with the shared 17-column header.
 - The live error run at 23:58 used a bad URL, a nonexistent item and a valid SanDisk item,
@@ -40,6 +40,22 @@ The parser was corrected to classify it as parse_failure; a specific confirmed r
 sold-out notice still yields ok with in_stock FALSE. A regression check covers this distinction.
 The earlier 23:57 diagnostic output predates that classification fix and is not the accepted
 error-test result; it remains local in the ignored output folder.
+
+## Full product table (2026-10-19, Marvin)
+
+A live run on the 93 momo links of the rebuilt product table (`fix-products-csv` branch) at
+12:39 Taiwan time, from a home connection, got HTTP 200 for all 93 with no block. The first
+parser read 58 `ok` and 35 `parse_failure`: 33 pages had several options and one published a
+single JSON-LD `Product` without a ProductGroup. On all 33 multi-option pages every option had
+the same price, equal to the displayed headline, so the parser now reads them and still fails
+options with different prices. Re-parsing the saved pages gives 92 `ok`; the sale price of the
+58 earlier `ok` rows is unchanged. The last one, BEAU-020 (12738520), is momo's generic
+網頁無法顯示 page: the link needs replacing in the product table.
+
+promo_tag previously matched keywords on every line of the product info, so it missed campaign
+names without 折 (`★AirPods十在優惠`) and kept the `(說明)` button text. It now copies the rows
+of the campaign block; 61 of 92 pages have one. 市售價 is shown on 70 of 92 pages and a
+conditional price (限時折後價) on 32. No % badge, third-party seller or sold-out notice was seen.
 
 ## Integration
 
