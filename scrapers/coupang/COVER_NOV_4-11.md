@@ -54,10 +54,8 @@ a copy of this repository (`git clone`, or `git pull` on `main`). Pick a time be
 After the Nov 3 15:07 run has finished:
 
 1. Switch the extension off on `chrome://extensions`.
-2. Turn off the wake task, in PowerShell:
-   `Disable-ScheduledTask -TaskName 'Coupang snapshots wake'`
-3. Send the teammate the Healthchecks ping URL(s) privately, never through the repository.
-4. In Healthchecks.io, *Integrations* → *Email*: add the teammate's address so they also get
+2. Send the teammate the Healthchecks ping URL(s) privately, never through the repository.
+3. In Healthchecks.io, *Integrations* → *Email*: add the teammate's address so they also get
    the alerts. They confirm it from the email they receive.
 
 ## 3. Switch on (teammate, Nov 4)
@@ -71,15 +69,6 @@ Between 00:00 and 15:00 on Nov 4:
 3. **Check the next run.** The popup should say `Next run: 2026-11-04 15:07 (Taiwan time)`. If it
    says *No more scheduled runs*, quit Chrome completely (⋮ menu → *Exit*), start it again, and
    check again.
-4. **Wake task.** From the root of the repository, in PowerShell:
-
-   ```
-   powershell -ExecutionPolicy Bypass -File scrapers\coupang\windows\install_wake_task.ps1
-   ```
-
-   It prints the task's next run time. One minute before each run it starts Chrome if needed and
-   keeps the laptop awake until the run is saved. It can't be relied on to wake a sleeping
-   laptop.
 
 ## 4. Each day (teammate)
 
@@ -104,9 +93,7 @@ The runs are at **15:07** every day, plus **18:07 and 23:07 on Nov 10 and 11**.
 After the Nov 11 23:07 run has finished (about 23:20), and before Nov 12 15:00:
 
 1. Remove the extension: `chrome://extensions` → *Coupang snapshots* → *Remove*.
-2. Remove the wake task, in PowerShell:
-   `Unregister-ScheduledTask -TaskName 'Coupang snapshots wake' -Confirm:$false`
-3. Zip `Downloads\coupang-snapshots\` (one folder per run, plus `wake.log`) and share it with
+2. Zip `Downloads\coupang-snapshots\` (one folder per run) and share it with
    Marvin. You don't need R; Marvin converts the runs.
 
 ## 6. Take back (Marvin, Nov 12)
@@ -115,12 +102,11 @@ Between 00:00 and 15:00 on Nov 12:
 
 1. Switch the extension on and check the popup says `Next run: 2026-11-12 15:07`. If it says *No
    more scheduled runs*, exit and restart Chrome.
-2. Turn the wake task back on: `Enable-ScheduledTask -TaskName 'Coupang snapshots wake'`.
-3. In Healthchecks.io, remove the teammate's email integration.
+2. In Healthchecks.io, remove the teammate's email integration.
 
 Then, any time:
 
-4. Copy the run folders (`2026-11-04_1507` …, not `wake.log`) from the teammate's zip into your own
+3. Copy the run folders (`2026-11-04_1507` …) from the teammate's zip into your own
    `Downloads\coupang-snapshots\`, and run from the project root:
    `Rscript scrapers/coupang/scrape_coupang.R --saved`
-5. Copy `output/` and `raw/` to the team's storage (Q6), and delete this file.
+4. Copy `output/` and `raw/` to the team's storage (Q6), and delete this file.
