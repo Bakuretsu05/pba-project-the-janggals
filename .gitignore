@@ -1,5 +1,7 @@
 raw/
 output/
+data/raw/
+.R-library/
 .Renviron
 .Rhistory
 .RData

@@ -1,0 +1,1831 @@
+{
+  "scope": "momo-only recorder follow-up",
+  "confirmed_count": 7,
+  "pending_count": 93,
+  "note": "Prior audit may mention cross-platform/BigGo gates; these do not block momo-only recording.",
+  "products": [
+    {
+      "product_id": "3C-001",
+      "brand": "Apple",
+      "original_model": "AirPods 4 (Active Noise Cancellation) MXP93TA/A",
+      "proposed_variant": "AirPods 4 主動式降噪 MXP93TA/A 白色 單機",
+      "momo_candidate": {
+        "candidate_item_id": "13521467",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=13521467",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "3C-001",
+          "requested": "13521467",
+          "displayed": "13521467",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Keep ANC MXP93TA/A white. momo page matches; selected PChome response exposed only a title. momo history reaches 2024-12-10, but displayed changes have a long gap (2025-03-06 to 2026-05-07); continuity is not established.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "3C-002",
+      "brand": "Apple",
+      "original_model": "AirPods Pro 3",
+      "proposed_variant": "AirPods Pro 3 MFHP4TA/A 白色 單機",
+      "momo_candidate": {
+        "candidate_item_id": "14773132",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=14773132",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "3C-002",
+          "requested": "14773132",
+          "displayed": "14773132",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Keep AirPods Pro 3, propose Taiwan MFHP4TA/A white. Both page candidates readable; confirm the regional SKU on momo and resolve exact-listing BigGo history on both platforms.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "3C-003",
+      "brand": "Apple",
+      "original_model": "20W USB-C Power Adapter",
+      "proposed_variant": "Apple 20W USB-C 電源轉接器 MWVV3TA/A 單入",
+      "momo_candidate": {
+        "candidate_item_id": "14562513",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=14562513",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "3C-003",
+          "requested": "14562513",
+          "displayed": "14562513",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: exact regional adapter SKU remains unconfirmed. momo 14562513 history starts 2025-10-23, too late to establish the Oct 1 baseline; choose a qualifying older listing or replace the sample.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "3C-004",
+      "brand": "Apple",
+      "original_model": "USB-C Charge Cable 1m",
+      "proposed_variant": "Apple 60W USB-C 充電連接線 1公尺 白色",
+      "momo_candidate": {
+        "candidate_item_id": "14067509",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=14067509",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "3C-004",
+          "requested": "14067509",
+          "displayed": "14067509",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo describes a 1m braided USB-C cable; 60W and exact generation/SKU require confirmation. PChome response had only a title. Do not equate every Apple 1m USB-C cable.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "3C-005",
+      "brand": "Apple",
+      "original_model": "Apple Pencil (USB-C)",
+      "proposed_variant": "Apple Pencil USB-C MUWA3TA/A 白色",
+      "momo_candidate": {
+        "candidate_item_id": "12204784",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=12204784",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "3C-005",
+          "requested": "12204784",
+          "displayed": "12204784",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Keep USB-C Pencil, propose MUWA3TA/A white. Both page candidates readable; verify regional SKU and exact-listing history on both platforms.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "3C-006",
+      "brand": "Apple",
+      "original_model": "iPad 11-inch (A16) 128GB Wi-Fi",
+      "proposed_variant": "iPad A16 11吋 WiFi 128GB 銀色 單機",
+      "momo_candidate": {
+        "candidate_item_id": "15472902",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=15472902",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "3C-006",
+          "requested": "15472902",
+          "displayed": "15472902",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: choose A16, Wi-Fi, 128GB, silver explicitly. momo family page readable; PChome response had only a title. Regional SKU and histories unresolved.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "3C-007",
+      "brand": "Apple",
+      "original_model": "MagSafe Charger 1m",
+      "proposed_variant": "Apple MagSafe 充電器 A3502 1公尺 白色",
+      "momo_candidate": {
+        "candidate_item_id": "14994055",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=14994055",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "3C-007",
+          "requested": "14994055",
+          "displayed": "14994055",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: propose A3502 1m, but momo generation/model is not established. PChome direct fetch unavailable. Older MagSafe versions cannot share this row by name alone.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "3C-008",
+      "brand": "Anker",
+      "original_model": "PowerCore 10000 power bank",
+      "proposed_variant": "Anker PowerCore 10000 黑色 單入",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: no exact eligible momo PowerCore 10000 listing established. Other Anker 10000mAh models are different products; indexed cross-platform leads do not clear this row.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "3C-009",
+      "brand": "Anker",
+      "original_model": "735 Charger (GaNPrime 65W)",
+      "proposed_variant": "Anker 735 GaNPrime 65W 黑色 單入",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: exact Anker 735 GaNPrime 65W leads exist in cross-platform search, but no eligible momo listing established. Could qualify through PChome plus Coupang only after both are verified.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "3C-010",
+      "brand": "Samsung",
+      "original_model": "Portable SSD T7 1TB",
+      "proposed_variant": "Samsung T7 1TB 深空灰 公司貨",
+      "momo_candidate": {
+        "candidate_item_id": "14533852",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=14533852",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "3C-010",
+          "requested": "14533852",
+          "displayed": "14533852",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: freeze T7 1TB grey and distribution/warranty version. momo options readable; exact matching second platform and histories unresolved. T7 Shield is excluded.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "3C-011",
+      "brand": "Logitech",
+      "original_model": "MX Master 3S mouse",
+      "proposed_variant": "Logitech MX Master 3S 石墨灰 標準版",
+      "momo_candidate": {
+        "candidate_item_id": "10254365",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=10254365",
+        "validation": "not_on_sale_or_missing",
+        "original_candidate_audit": {
+          "id": "3C-011",
+          "requested": "10254365",
+          "displayed": {},
+          "status": "not_on_sale_or_missing"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Reject old momo 10254365: page reports unavailable/missing. PChome standard-version lead exists, but Coupang B2B and standard variants must not be merged.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "3C-012",
+      "brand": "Logitech",
+      "original_model": "M650 mouse",
+      "proposed_variant": "Logitech M650 石墨灰 標準尺寸 右手",
+      "momo_candidate": {
+        "candidate_item_id": "9779579",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=9779579",
+        "validation": "corrected_listing_details_read",
+        "original_candidate_audit": {
+          "id": "3C-012",
+          "requested": "12515543",
+          "displayed": "12515543",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Priority pair: use momo 9779579 and PChome DSAR0S-A900DQZVE; select standard M650 graphite, right-handed. Both exact listing histories reach Oct 2024. Do not attach 9779579 history to the previously reviewed 12515543.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "3C-013",
+      "brand": "Logitech",
+      "original_model": "K380 Multi-Device keyboard",
+      "proposed_variant": "Logitech K380 石墨灰 繁體中文",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo lead is mo店+ marketplace; K380s is not K380. PChome graphite K380 is an indexed lead only; second eligible platform, keyboard layout and histories unresolved.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "3C-014",
+      "brand": "Logitech",
+      "original_model": "C920 HD Pro webcam",
+      "proposed_variant": "Logitech C920 HD Pro 單機",
+      "momo_candidate": {
+        "candidate_item_id": "3699843",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=3699843",
+        "validation": "not_on_sale_or_missing",
+        "original_candidate_audit": {
+          "id": "3C-014",
+          "requested": "3699843",
+          "displayed": {},
+          "status": "not_on_sale_or_missing"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Reject old momo 3699843: unavailable/missing. C920r regional suffix needs explicit equivalence confirmation before matching a C920 listing.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "3C-015",
+      "brand": "Sony",
+      "original_model": "WH-1000XM5 headphones",
+      "proposed_variant": "Sony WH-1000XM5 黑色 公司貨 單機",
+      "momo_candidate": {
+        "candidate_item_id": "10201991",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=10201991",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "3C-015",
+          "requested": "10201991",
+          "displayed": "10201991",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Pair candidates found for black WH-1000XM5 company stock. momo gift wording and included accessories require an offer-equivalence check; PChome vendor delivery alone does not prove a marketplace seller. Histories unresolved.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "3C-016",
+      "brand": "JBL",
+      "original_model": "Go 4 speaker",
+      "proposed_variant": "JBL GO 4 黑色 公司貨 單入",
+      "momo_candidate": {
+        "candidate_item_id": "14119526",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=14119526",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "3C-016",
+          "requested": "14119526",
+          "displayed": "14119526",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: proposed black GO 4 is not cleared by the momo black-orange option shown. Choose a colour available on two platforms and verify company/import version and history.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "3C-017",
+      "brand": "Logitech",
+      "original_model": "MX Keys S keyboard",
+      "proposed_variant": "Logitech MX Keys S 石墨灰 繁體中文 單鍵盤",
+      "momo_candidate": {
+        "candidate_item_id": "11933858",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=11933858",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "3C-017",
+          "requested": "11933858",
+          "displayed": "11933858",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Priority pair: momo 11933858 and PChome DSAR0V-A900GEH7M, standalone graphite MX Keys S. Both histories reach Oct 2024. Traditional Chinese key layout still needs explicit confirmation before final release.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "3C-018",
+      "brand": "Anker",
+      "original_model": "Soundcore Space A40 earbuds",
+      "proposed_variant": "Soundcore Space A40 黑色",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: no exact eligible momo Space A40 established; PChome device lead indexed. Coupang accessory/case results are not device matches.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "3C-019",
+      "brand": "Samsung",
+      "original_model": "EVO Plus microSDXC 128GB",
+      "proposed_variant": "Samsung EVO Plus microSDXC 128GB 160MB/s 含轉卡",
+      "momo_candidate": {
+        "candidate_item_id": "6690981",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=6690981",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "3C-019",
+          "requested": "6690981",
+          "displayed": "6690981",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo is 128GB 160MB/s parallel import; a PChome company-stock MB-MC128KA lead is not established as the same generation/distribution variant.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "APPL-001",
+      "brand": "Dyson",
+      "original_model": "Supersonic HD15 hair dryer",
+      "proposed_variant": "Dyson Supersonic HD15 普魯士藍 標準配件 公司貨",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: no reliable individual momo HD15 listing selected. Freeze Prussian blue, company warranty and standard accessories; refurbished/other accessory packages excluded.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "APPL-002",
+      "brand": "Panasonic",
+      "original_model": "EH-NA0J nanoe hair dryer",
+      "proposed_variant": "Panasonic EH-NA0J-W 白色 公司貨",
+      "momo_candidate": {
+        "candidate_item_id": "11929493",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=11929493",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "APPL-002",
+          "requested": "11929493",
+          "displayed": "11929493",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: EH-NA0J-W white momo page readable, but country version, voltage and warranty require matching. PChome/Coupang indexed leads are not sufficient validation.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "APPL-003",
+      "brand": "Panasonic",
+      "original_model": "EH-NA32 nanoe hair dryer",
+      "proposed_variant": "Panasonic EH-NA32-T 雲灰紫 公司貨",
+      "momo_candidate": {
+        "candidate_item_id": "9618369",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=9618369",
+        "validation": "not_on_sale_or_missing",
+        "original_candidate_audit": {
+          "id": "APPL-003",
+          "requested": "9618369",
+          "displayed": {},
+          "status": "not_on_sale_or_missing"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Reject old momo 9618369: unavailable/missing. EH-NA32-T grey-purple cross-platform search leads remain provisional.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "APPL-004",
+      "brand": "Philips",
+      "original_model": "Airfryer HD9252",
+      "proposed_variant": "Philips HD9252 氣炸鍋 單機",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: no eligible momo HD9252 established. Full regional suffix and colour must be fixed; HD9257 is different.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "APPL-005",
+      "brand": "Philips",
+      "original_model": "Airfryer XXL HD9650",
+      "proposed_variant": "Philips HD9650 XXL 氣炸鍋 單機",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: no exact momo HD9650 established. HD9651 must not silently replace it.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "APPL-006",
+      "brand": "Tefal",
+      "original_model": "Easy Fry Dual XXL EY9428",
+      "proposed_variant": "Tefal EY9428 氣炸鍋 單機",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: no exact eligible EY9428 listing established; other Tefal dual-airfryer models cannot be used under this ID.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "APPL-007",
+      "brand": "Panasonic",
+      "original_model": "F-Y20JH dehumidifier",
+      "proposed_variant": "Panasonic F-Y20JH 除濕機 單機",
+      "momo_candidate": {
+        "candidate_item_id": "15804929",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=15804929",
+        "validation": "fetch_unavailable",
+        "original_candidate_audit": {
+          "id": "APPL-007",
+          "requested": "15804929",
+          "displayed": {},
+          "status": "fetch_unavailable"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo 15804929 could not be fetched; this is not proof it is discontinued. Exact F-Y20JH PChome/Coupang search leads need page and history checks.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "APPL-008",
+      "brand": "Sharp",
+      "original_model": "FP-J60T air purifier",
+      "proposed_variant": "Sharp FP-J60T-W 白色 單機",
+      "momo_candidate": {
+        "candidate_item_id": "12651020",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=12651020",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "APPL-008",
+          "requested": "12651020",
+          "displayed": "12651020",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo FP-J60T-W white page readable. Exact second-platform seller, variant and histories still unverified.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "APPL-009",
+      "brand": "Xiaomi",
+      "original_model": "Smart Air Purifier 4 Lite",
+      "proposed_variant": "Xiaomi 空氣清淨機4 Lite AC-M17-SC 白色 單機",
+      "momo_candidate": {
+        "candidate_item_id": "12419328",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=12419328",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "APPL-009",
+          "requested": "12419328",
+          "displayed": "12419328",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo 4 Lite AC-M17-SC page readable. Mainland/other regional electrical versions on another platform must not be treated as Taiwan company stock without checking voltage and warranty.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "APPL-010",
+      "brand": "Philips",
+      "original_model": "HD9350 electric kettle",
+      "proposed_variant": "Philips HD9350 電熱水壺 單機",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: no exact eligible HD9350 established. HD9389 and other kettles are different models.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "APPL-011",
+      "brand": "Dyson",
+      "original_model": "V8 cordless vacuum",
+      "proposed_variant": "Dyson V8 SV25 標準配件 公司貨",
+      "momo_candidate": {
+        "candidate_item_id": "13229603",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=13229603",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "APPL-011",
+          "requested": "13229603",
+          "displayed": "13229603",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo V8 SV25 page readable with a future-sale date shown (Oct 21). Accessory package and availability for Oct 19 require confirmation; PChome V8 packages differ.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "APPL-012",
+      "brand": "Roborock",
+      "original_model": "Q8 Max robot vacuum",
+      "proposed_variant": "Roborock Q8 Max 黑色 單機 非Plus",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: no exact eligible Q8 Max established. Q8, Q8 Max Pro and Q8 Max Plus are different configurations.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "APPL-013",
+      "brand": "Panasonic",
+      "original_model": "NI-WL30 steam iron",
+      "proposed_variant": "Panasonic NI-WL30 紫色 蒸氣電熨斗 單機",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: NI-WL30 momo lead is marketplace. Proposed purple colour requires a platform-sold second match and exact-listing histories.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "APPL-014",
+      "brand": "Panasonic",
+      "original_model": "ES-LV9 electric shaver",
+      "proposed_variant": "Panasonic ES-LV9 完整型號待確認；ES-LV9E-S 銀色僅為候選",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: CSV ES-LV9 is incomplete. ES-LV9E-S is a possible specification to investigate, not an approved correction or an equivalent to ES-LV97.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "APPL-015",
+      "brand": "Oral-B",
+      "original_model": "iO Series 4 electric toothbrush",
+      "proposed_variant": "Oral-B iO4 黑色 單機 標準刷頭",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: no exact iO Series 4 device pair established. Brush heads are accessories and cannot satisfy a toothbrush listing.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "APPL-016",
+      "brand": "Philips",
+      "original_model": "Sonicare 3100 HX3671 toothbrush",
+      "proposed_variant": "Philips Sonicare 3100 HX3671 單機",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: no exact eligible momo HX3671 established. HX3673 is not automatically equivalent; regional device/package code unresolved.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "APPL-017",
+      "brand": "Xiaomi",
+      "original_model": "Electric Toothbrush T302",
+      "proposed_variant": "Xiaomi T302 藍黑色 四刷頭套裝",
+      "momo_candidate": {
+        "candidate_item_id": "13150537",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=13150537",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "APPL-017",
+          "requested": "13150537",
+          "displayed": "13150537",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: propose T302 blue-black four-head kit. momo readable; MES608/regional kit and brush-head counts on other platforms need checking.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "APPL-018",
+      "brand": "SodaStream",
+      "original_model": "Terra sparkling water maker",
+      "proposed_variant": "Sodastream TERRA 黑色 標準套裝",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: no eligible momo TERRA product ID selected. PChome base-unit indexed lead needs checking; TIERRA spelling/model search hits do not establish SodaStream TERRA equivalence.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "APPL-019",
+      "brand": "Nespresso",
+      "original_model": "Essenza Mini coffee machine",
+      "proposed_variant": "Nespresso Essenza Mini C30 鋼琴黑 單機",
+      "momo_candidate": {
+        "candidate_item_id": "6198895",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=6198895",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "APPL-019",
+          "requested": "6198895",
+          "displayed": "6198895",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo C30 family page readable; choose piano black standalone without milk frother. Exact PChome/Coupang leads indexed; seller and history not cleared.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "APPL-020",
+      "brand": "Tatung",
+      "original_model": "Electric rice cooker (electric pot) 6-cup",
+      "proposed_variant": "Tatung TAC-06R-MM 六人份 不鏽鋼 全配款 銀色",
+      "momo_candidate": {
+        "candidate_item_id": "14851490",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=14851490",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "APPL-020",
+          "requested": "14851490",
+          "displayed": "14851490",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: propose TAC-06R-MM six-cup all-steel silver full-accessory package. momo readable; exact accessory package on a second platform and histories unresolved.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "BEAU-001",
+      "brand": "Anessa",
+      "original_model": "Perfect UV Sunscreen Skincare Milk 60ml",
+      "proposed_variant": "ANESSA 金鑽高效防曬露NA 60ml 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": "15232392",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=15232392",
+        "validation": "redirected",
+        "original_candidate_audit": {
+          "id": "BEAU-001",
+          "requested": "12516393",
+          "displayed": "15232392",
+          "status": "redirected"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Reject old-link substitution: 12516393 redirects to 15232392, a 60ml plus 12ml x2 starter bundle. It is not the proposed single NA 60ml bottle.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "BEAU-002",
+      "brand": "Biore",
+      "original_model": "UV Aqua Rich Watery Essence 50g",
+      "proposed_variant": "Biore UV Aqua Rich 水感精華 50g 單條",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo 50g lead is marketplace. 50g/70g, formula revisions and five-packs must remain separate.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "BEAU-003",
+      "brand": "La Roche-Posay",
+      "original_model": "Anthelios Ultra-Light Fluid SPF50+ 50ml",
+      "proposed_variant": "理膚寶水 Anthelios Ultra-Light Fluid SPF50+ 50ml 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": "14042760",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=14042760",
+        "validation": "redirected",
+        "original_candidate_audit": {
+          "id": "BEAU-003",
+          "requested": "10094690",
+          "displayed": "14042760",
+          "status": "redirected"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Reject old-link substitution: 10094690 redirects to 14042760 with sample/bundle wording. Ultra-Light, Shaka, UVMune and oil-control formulas are not established as equivalent.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "BEAU-004",
+      "brand": "La Roche-Posay",
+      "original_model": "Cicaplast Baume B5 40ml",
+      "proposed_variant": "理膚寶水 Cicaplast Baume B5 40ml 單條",
+      "momo_candidate": {
+        "candidate_item_id": "11071207",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=11071207",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "BEAU-004",
+          "requested": "11071207",
+          "displayed": "11071207",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo 11071207 repair gel/乳 wording does not establish Cicaplast Baume B5 40ml. B5+ and gel are different until proven otherwise.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "BEAU-005",
+      "brand": "SK-II",
+      "original_model": "Facial Treatment Essence 230ml",
+      "proposed_variant": "SK-II 青春露230ml 台灣公司貨 標準瓶",
+      "momo_candidate": {
+        "candidate_item_id": "10566860",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=10566860",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "BEAU-005",
+          "requested": "10566860",
+          "displayed": "10566860",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo SK-II essence 230ml readable; selected PChome fetch unavailable. Confirm Taiwan company stock, standard bottle and formula before pairing.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "BEAU-006",
+      "brand": "Estee Lauder",
+      "original_model": "Advanced Night Repair 50ml",
+      "proposed_variant": "Estee Lauder 特潤超導全方位修護露50ml 台灣公司貨 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": "8820191",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=8820191",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "BEAU-006",
+          "requested": "8820191",
+          "displayed": "8820191",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Pair candidates found: ANR 50ml Taiwan company stock. Confirm generation and included gifts; PChome vendor delivery is not by itself a third-party-seller finding. Histories unresolved.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "BEAU-007",
+      "brand": "Lancome",
+      "original_model": "Genifique serum 50ml",
+      "proposed_variant": "LANCOME 超極限肌因賦活露PRO 50ml 台灣公司貨 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": "13696646",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=13696646",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "BEAU-007",
+          "requested": "13696646",
+          "displayed": "13696646",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: proposed Genifique PRO/Ultimate 50ml narrows the original broad name. momo PRO page is readable; older Genifique and 100ml Coupang results are not matches.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "BEAU-008",
+      "brand": "Cetaphil",
+      "original_model": "Gentle Skin Cleanser 591ml",
+      "proposed_variant": "Cetaphil 溫和潔膚乳591ml 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": "14959647",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=14959647",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "BEAU-008",
+          "requested": "14959647",
+          "displayed": "14959647",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo title says cleanser 591ml but displayed specification says long-lasting moisturizing lotion 591ml. Resolve this conflict or use a different listing before collecting a price.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "BEAU-009",
+      "brand": "Laneige",
+      "original_model": "Lip Sleeping Mask 20g",
+      "proposed_variant": "LANEIGE 睡美人晚安唇膜20g 甜莓 單罐",
+      "momo_candidate": {
+        "candidate_item_id": "9566030",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=9566030",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "BEAU-009",
+          "requested": "9566030",
+          "displayed": "9566030",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: propose berry 20g. momo page readable; a PChome buy-one-get-one offer is two jars, not the same single-jar offer. Formula/import version unresolved.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "BEAU-010",
+      "brand": "Hada Labo",
+      "original_model": "Gokujyun Hyaluronic Lotion 170ml",
+      "proposed_variant": "肌研 極潤保濕化粧水170ml 一般型 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": "8068032",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=8068032",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "BEAU-010",
+          "requested": "8068032",
+          "displayed": "8068032",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Pair candidates found: choose regular moisturizing 170ml (PChome 滋潤型/白) on both pages. Other selectable variants cannot share its price. Histories unresolved.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "BEAU-011",
+      "brand": "Curel",
+      "original_model": "Intensive Moisture Care Cream 40g",
+      "proposed_variant": "Curel 潤浸保濕深層乳霜40g 單罐",
+      "momo_candidate": {
+        "candidate_item_id": "8124972",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=8124972",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "BEAU-011",
+          "requested": "8124972",
+          "displayed": "8124972",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo plain facial cream 40g readable; PChome response title-only. Coupang whitening cream is a different formula.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "BEAU-012",
+      "brand": "Avene",
+      "original_model": "Thermal Spring Water Spray 300ml",
+      "proposed_variant": "Avene 舒護活泉水300ml 單罐",
+      "momo_candidate": {
+        "candidate_item_id": "7493417",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=7493417",
+        "validation": "not_on_sale_or_missing",
+        "original_candidate_audit": {
+          "id": "BEAU-012",
+          "requested": "7493417",
+          "displayed": {},
+          "status": "not_on_sale_or_missing"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Reject old momo 7493417: unavailable/missing. Exact 300ml single-can PChome/Coupang indexed leads need verification.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "BEAU-013",
+      "brand": "Skin Aqua",
+      "original_model": "Tone Up UV Essence 80g",
+      "proposed_variant": "Skin Aqua Tone Up UV Essence 80g 薰衣草紫 單條",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo Tone Up 80g leads are marketplace. Lavender tint and formula generation must match; mermaid-edition wording is not enough.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "BEAU-014",
+      "brand": "Kiehl's",
+      "original_model": "Ultra Facial Cream 50ml",
+      "proposed_variant": "Kiehl's Ultra Facial Cream 冰河醣蛋白保濕霜50ml 原配方 單罐",
+      "momo_candidate": {
+        "candidate_item_id": "15415316",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=15415316",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "BEAU-014",
+          "requested": "15415316",
+          "displayed": "15415316",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo 15415316 is a newly named repair formulation, while proposed target is original Ultra Facial Cream 50ml. A formula change requires an explicit sample decision.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "BEAU-015",
+      "brand": "Clinique",
+      "original_model": "Moisture Surge 72-Hour Hydrator 50ml",
+      "proposed_variant": "CLINIQUE 水磁場72H保濕凝膠50ml 單罐",
+      "momo_candidate": {
+        "candidate_item_id": "8847824",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=8847824",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "BEAU-015",
+          "requested": "8847824",
+          "displayed": "8847824",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Reject momo 8847824 for this target: it is 100H, while CSV requires 72H. A 72H PChome indexed lead does not clear a two-platform pair.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "BEAU-016",
+      "brand": "Shu Uemura",
+      "original_model": "Cleansing Oil 450ml",
+      "proposed_variant": "Shu Uemura 山茶花精萃奢養潔顏油450ml 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": "11616015",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=11616015",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "BEAU-016",
+          "requested": "11616015",
+          "displayed": "11616015",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: propose camellia cleansing oil 450ml from the originally unspecified oil. momo readable and cross-platform leads indexed; formula, seller and histories need confirmation.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "BEAU-017",
+      "brand": "Bioderma",
+      "original_model": "Sensibio H2O micellar water 500ml",
+      "proposed_variant": "BIODERMA Sensibio H2O 舒敏高效潔膚液500ml 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: no exact eligible momo single 500ml Sensibio H2O selected. 500ml multipacks and 850ml singles cannot replace it.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "BEAU-018",
+      "brand": "Innisfree",
+      "original_model": "Green Tea Seed Serum 80ml",
+      "proposed_variant": "innisfree 綠茶籽玻尿酸保濕精華80ml 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": "9946953",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=9946953",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "BEAU-018",
+          "requested": "9946953",
+          "displayed": "9946953",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: proposed green-tea hyaluronic 80ml needs generation confirmation against original Green Tea Seed Serum. Company/import version and second-platform history unresolved.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "BEAU-019",
+      "brand": "Maybelline",
+      "original_model": "Sky High mascara",
+      "proposed_variant": "MAYBELLINE SKY HIGH 飛天翹防水睫毛膏 黑色 單支",
+      "momo_candidate": {
+        "candidate_item_id": "13232328",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=13232328",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "BEAU-019",
+          "requested": "13232328",
+          "displayed": "13232328",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo displayed shade 暮日雲 does not clear proposed black waterproof SKY HIGH. Select the correct mascara shade/type and verify a second platform.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "BEAU-020",
+      "brand": "Kose",
+      "original_model": "Softymo Speedy Cleansing Oil 230ml",
+      "proposed_variant": "KOSE Softymo Speedy 乾濕兩用卸妝油230ml 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": "12738519",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=12738519",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "BEAU-020",
+          "requested": "12738519",
+          "displayed": "12738519",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Reject momo 12738519 for original target: current single bottle is upgraded 240ml, not CSV 230ml. Do not combine sizes/formula histories.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "FOOD-001",
+      "brand": "Nongshim",
+      "original_model": "Shin Ramyun 120g x 20 pack",
+      "proposed_variant": "農心 辛拉麵 韓國版120g 20包",
+      "momo_candidate": {
+        "candidate_item_id": "14390378",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=14390378",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "FOOD-001",
+          "requested": "14390378",
+          "displayed": "14390378",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo Korean original 120g x20 readable. Coupang x20 indexed lead needs page/seller verification; PChome four-packs are not a 20-pack.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "FOOD-002",
+      "brand": "Samyang",
+      "original_model": "Buldak Hot Chicken Ramen 140g x 5",
+      "proposed_variant": "三養 火辣雞肉鐵板炒麵 經典140g 5包",
+      "momo_candidate": {
+        "candidate_item_id": "13431867",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=13431867",
+        "validation": "fetch_unavailable",
+        "original_candidate_audit": {
+          "id": "FOOD-002",
+          "requested": "13431867",
+          "displayed": {},
+          "status": "fetch_unavailable"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Reject selected momo lead as an unconfirmed single pack, not original x5; direct fetch unavailable. PChome/Coupang original 140g x5 search leads still require validation.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "FOOD-003",
+      "brand": "Nissin",
+      "original_model": "Demae Itcho Sesame Oil Ramen x 5",
+      "proposed_variant": "日清 出前一丁 麻油味100g 5包",
+      "momo_candidate": {
+        "candidate_item_id": "4059805",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=4059805",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "FOOD-003",
+          "requested": "4059805",
+          "displayed": "4059805",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Pair candidates found: sesame-oil 100g x5; choose 麻油味 explicitly on PChome multi-flavour page. Both listing histories unresolved.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "FOOD-004",
+      "brand": "Nongshim",
+      "original_model": "Neoguri Spicy Seafood Ramen x 5",
+      "proposed_variant": "農心 Neoguri 辣味海鮮烏龍麵120g 5包",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: no exact eligible momo spicy Neoguri 120g x5 selected. Cross-platform x5 leads indexed; '5 groups' must not be mistaken for five noodle packs.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "FOOD-005",
+      "brand": "Nescafe",
+      "original_model": "Dolce Gusto Latte Macchiato capsules",
+      "proposed_variant": "NESCAFE Dolce Gusto 拿鐵瑪奇朵16顆 單盒",
+      "momo_candidate": {
+        "candidate_item_id": "13783657",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=13783657",
+        "validation": "not_on_sale_or_missing",
+        "original_candidate_audit": {
+          "id": "FOOD-005",
+          "requested": "13783657",
+          "displayed": {},
+          "status": "not_on_sale_or_missing"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Reject old momo 13783657: unavailable/missing. Proposed Latte Macchiato is one 16-capsule box; PChome/Coupang leads indexed only.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "FOOD-006",
+      "brand": "Nespresso",
+      "original_model": "Original Ispirazione Roma 10 capsules",
+      "proposed_variant": "Nespresso Original Ispirazione Roma 10顆 單條",
+      "momo_candidate": {
+        "candidate_item_id": "7022883",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=7022883",
+        "validation": "fetch_unavailable",
+        "original_candidate_audit": {
+          "id": "FOOD-006",
+          "requested": "7022883",
+          "displayed": {},
+          "status": "fetch_unavailable"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo 7022883 fetch unavailable. Target is Original-system Roma 10 capsules; a PChome 100-capsule bundle is different.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "FOOD-007",
+      "brand": "Starbucks by Nespresso",
+      "original_model": "Veranda Blend 10 capsules",
+      "proposed_variant": "STARBUCKS Veranda Blend 黃金烘焙 Nespresso Original 10顆",
+      "momo_candidate": {
+        "candidate_item_id": "11007969",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=11007969",
+        "validation": "fetch_unavailable",
+        "original_candidate_audit": {
+          "id": "FOOD-007",
+          "requested": "11007969",
+          "displayed": {},
+          "status": "fetch_unavailable"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo 11007969 fetch unavailable. Confirm Veranda name/recipe equivalence to the blonde-roast Original-system 10-capsule listing; do not infer from roast colour alone.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "FOOD-008",
+      "brand": "Nescafe",
+      "original_model": "Gold Blend instant coffee 200g jar",
+      "proposed_variant": "NESCAFE Gold Blend 即溶咖啡200g 玻璃罐 單罐",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: no exact Gold Blend 200g jar established. Nescafe Classic and smaller Gold packs are different products.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "FOOD-013",
+      "brand": "Red Bull",
+      "original_model": "Energy Drink 250ml x 24",
+      "proposed_variant": "Red Bull 原味250ml 24罐",
+      "momo_candidate": {
+        "candidate_item_id": "12325178",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=12325178",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "FOOD-013",
+          "requested": "12325178",
+          "displayed": "12325178",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Pair candidates found: Red Bull original 250ml x24, momo 12325178 and PChome DBAJD6-A900J87PG. Select original flavour explicitly; histories unresolved.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "FOOD-014",
+      "brand": "Pringles",
+      "original_model": "Original 110g",
+      "proposed_variant": "Pringles 品客原味110g 單罐",
+      "momo_candidate": {
+        "candidate_item_id": "13980840",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=13980840",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "FOOD-014",
+          "requested": "13980840",
+          "displayed": "13980840",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Reject momo 13980840 for requested 110g: shown range is 95–102g. A PChome 110g single lead is indexed; Coupang ten-packs are different.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "FOOD-015",
+      "brand": "Oreo",
+      "original_model": "Original sandwich cookies 266g",
+      "proposed_variant": "OREO 原味夾心餅乾266g 單包",
+      "momo_candidate": {
+        "candidate_item_id": "15170325",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=15170325",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "FOOD-015",
+          "requested": "15170325",
+          "displayed": "15170325",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Reject momo 15170325: 105g x2 does not equal original 266g single pack. 236.25g and mini-pack results also do not establish a match.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "FOOD-017",
+      "brand": "Meiji",
+      "original_model": "Hello Panda chocolate",
+      "proposed_variant": "Meiji Hello Panda 巧克力夾心餅乾50g 單盒",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: propose chocolate 50g single box to define the broad CSV item. momo lead is marketplace; five-box and mixed bulk packs are different offers.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "FOOD-018",
+      "brand": "Glico",
+      "original_model": "Pocky Chocolate",
+      "proposed_variant": "Glico Pocky 巧克力棒分享包81g 單袋",
+      "momo_candidate": {
+        "candidate_item_id": "13335894",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=13335894",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "FOOD-018",
+          "requested": "13335894",
+          "displayed": "13335894",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Priority pair: momo 13335894 and PChome DBAEF0-A900J2D8T, chocolate 81g sharing bag. Both histories reach before Oct 2025. momo latest displayed change is 2025-09-29: unchanged price versus stale tracking is unresolved.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "FOOD-019",
+      "brand": "Haribo",
+      "original_model": "Goldbears 200g",
+      "proposed_variant": "HARIBO Goldbears 小熊軟糖200g 正常效期 單包",
+      "momo_candidate": {
+        "candidate_item_id": "12547810",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=12547810",
+        "validation": "fetch_unavailable",
+        "original_candidate_audit": {
+          "id": "FOOD-019",
+          "requested": "12547810",
+          "displayed": {},
+          "status": "fetch_unavailable"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo 12547810 was indexed as near-expiry 200g stock and could not be fetched. Exclude that offer from normal-expiry target; other-platform multi-packs differ.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "FOOD-020",
+      "brand": "Lotte",
+      "original_model": "Xylitol Gum Fresh Mint bottle",
+      "proposed_variant": "LOTTE XYLITOL Fresh Mint 清新薄荷143g 單罐",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: propose Fresh Mint 143g one can. momo lead is marketplace three-can offer; small stick packs are not the same product/offer.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "HOME-001",
+      "brand": "Kleenex",
+      "original_model": "Cottony Soft facial tissue (tissue pack)",
+      "proposed_variant": "Kleenex 舒潔棉柔舒適抽取衛生紙100抽36包",
+      "momo_candidate": {
+        "candidate_item_id": "12503478",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=12503478",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "HOME-001",
+          "requested": "12503478",
+          "displayed": "12503478",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: propose Cottony Soft 100 pulls x36 packs; momo 12503478 readable. Exact PChome indexed lead exists, but seller and both histories not cleared.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "HOME-002",
+      "brand": "Breeze",
+      "original_model": "Facial tissue pack",
+      "proposed_variant": "Breeze 面紙：品牌身分、抽數、包數待確認",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: Breeze brand identity is ambiguous; do not silently rename it 清風 or 春風. Freeze manufacturer, tissue type, pulls and pack count before selecting listings.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "HOME-003",
+      "brand": "Attack",
+      "original_model": "Bio EX liquid detergent refill",
+      "proposed_variant": "Attack Bio EX 洗衣精補充包1.5kg 單包",
+      "momo_candidate": {
+        "candidate_item_id": "13459838",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=13459838",
+        "validation": "fetch_unavailable",
+        "original_candidate_audit": {
+          "id": "HOME-003",
+          "requested": "13459838",
+          "displayed": {},
+          "status": "fetch_unavailable"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo 13459838 is a related Attack ZERO lead and fetch unavailable; Bio EX is not established. Anti-EX and ZERO formula names cannot be silently substituted.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "HOME-004",
+      "brand": "Ariel",
+      "original_model": "Liquid detergent refill",
+      "proposed_variant": "ARIEL 極致雙效洗衣精補充包1100g 單包",
+      "momo_candidate": {
+        "candidate_item_id": "15206895",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=15206895",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "HOME-004",
+          "requested": "15206895",
+          "displayed": "15206895",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: propose ARIEL 1100g one refill, matching exact formula across platforms. momo gift wording and PChome multi-packs need resolution; Coupang anti-odour formula is unproven equivalent.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "HOME-005",
+      "brand": "Downy",
+      "original_model": "Fabric softener refill",
+      "proposed_variant": "Downy 柔軟精補充包 香型容量待確認",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: original Downy refill lacks scent and capacity. Detergent refills and bottled softener are not the requested softener refill; no eligible pair settled.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "HOME-006",
+      "brand": "Comfort",
+      "original_model": "Fabric softener refill",
+      "proposed_variant": "Comfort 柔軟精補充包500ml 藍色 單包",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: propose Comfort blue 500ml one refill, but momo lead is marketplace. FAFA and Pigeon are different brands.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "HOME-007",
+      "brand": "Dettol",
+      "original_model": "Disinfectant liquid",
+      "proposed_variant": "Dettol 滴露消毒藥水750ml 2瓶",
+      "momo_candidate": {
+        "candidate_item_id": "15474297",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=15474297",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "HOME-007",
+          "requested": "15474297",
+          "displayed": "15474297",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo target is Dettol 750ml x2; PChome single-bottle lead and inconsistent Coupang quantities are not the same offer.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "HOME-008",
+      "brand": "Febreze",
+      "original_model": "Fabric refresher spray",
+      "proposed_variant": "Febreze 布織品專用速乾消臭噴霧320ml 無香 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": "14230948",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=14230948",
+        "validation": "fetch_unavailable",
+        "original_candidate_audit": {
+          "id": "HOME-008",
+          "requested": "14230948",
+          "displayed": {},
+          "status": "fetch_unavailable"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo 14230948 fetch unavailable. Proposed unscented quick-dry fabric spray 320ml has indexed cross-platform leads only; verify scent and bottle versus refill.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "HOME-010",
+      "brand": "3M",
+      "original_model": "Command adhesive hooks",
+      "proposed_variant": "3M Command 無痕大型一般掛鉤 附替換膠條 單組",
+      "momo_candidate": {
+        "candidate_item_id": "10025929",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=10025929",
+        "validation": "fetch_unavailable",
+        "original_candidate_audit": {
+          "id": "HOME-010",
+          "requested": "10025929",
+          "displayed": {},
+          "status": "fetch_unavailable"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo 10025929 fetch unavailable. Target is a large general hook set with strips; second-platform replacement strips alone are accessories, not a matching hook set.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "HOME-011",
+      "brand": "Colgate",
+      "original_model": "Total toothpaste",
+      "proposed_variant": "Colgate Total 全效牙膏清淨薄荷150g 單條",
+      "momo_candidate": {
+        "candidate_item_id": "13496844",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=13496844",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "HOME-011",
+          "requested": "13496844",
+          "displayed": "13496844",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: propose Total clean-mint 150g one tube. Select exact momo option; imported/different-flavour and two-/three-pack results do not establish a same-offer pair.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "HOME-012",
+      "brand": "Darlie",
+      "original_model": "Double Action toothpaste",
+      "proposed_variant": "Darlie Double Action 雙重功效牙膏200g 3條",
+      "momo_candidate": {
+        "candidate_item_id": "12481831",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=12481831",
+        "validation": "fetch_unavailable",
+        "original_candidate_audit": {
+          "id": "HOME-012",
+          "requested": "12481831",
+          "displayed": {},
+          "status": "fetch_unavailable"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo 12481831 fetch unavailable. Proposed Double Action 200g x3 must match exact PChome 2+1 offer; Coupang 175g metadata differs.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "HOME-013",
+      "brand": "Listerine",
+      "original_model": "Cool Mint mouthwash 750ml",
+      "proposed_variant": "Listerine Cool Mint 薄荷漱口水750ml 含酒精 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": "3822313",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=3822313",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "HOME-013",
+          "requested": "3822313",
+          "displayed": "3822313",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: explicitly keep alcohol-containing Cool Mint 750ml one bottle. momo assorted page must expose that exact option; Cool Mint Zero is a different formulation.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "HOME-014",
+      "brand": "Dove",
+      "original_model": "Body wash 1000ml",
+      "proposed_variant": "Dove 深層滋養沐浴乳1000ml 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": "13179895",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=13179895",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "HOME-014",
+          "requested": "13179895",
+          "displayed": "13179895",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Reject momo 13179895 for requested 1000ml: candidate is 900ml. Second-platform antibacterial/other scents are not the chosen Deep Nourish formula.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "HOME-015",
+      "brand": "Head & Shoulders",
+      "original_model": "Classic Clean shampoo 750ml",
+      "proposed_variant": "Head Shoulders 經典清潔去屑洗髮乳750ml 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": "13846731",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=13846731",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "HOME-015",
+          "requested": "13846731",
+          "displayed": "13846731",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Reject momo 13846731 for CSV 750ml: candidate is 1000ml. Other 750ml scents do not prove Classic Clean equivalence.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "HOME-016",
+      "brand": "Pantene",
+      "original_model": "Shampoo 700ml",
+      "proposed_variant": "Pantene 垂順直髮洗髮精700ml 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": "14462088",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=14462088",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "HOME-016",
+          "requested": "14462088",
+          "displayed": "14462088",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Reject momo 14462088: 650g does not equal requested 700ml. Proposed Pantene straight/smooth 700ml formula requires matching listings; 700g is not automatically 700ml.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "HOME-017",
+      "brand": "Mama Lemon",
+      "original_model": "Dish soap",
+      "proposed_variant": "LION Mama Lemon 檸檬洗碗精4L 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": {},
+        "url": {},
+        "validation": "no_eligible_exact_catalogue_listing_selected",
+        "original_candidate_audit": {},
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: propose LION Mama Lemon lemon 4L single bottle to define broad CSV item. Exact eligible momo/PChome pair not established.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "HOME-018",
+      "brand": "Ziploc",
+      "original_model": "Zipper storage bags",
+      "proposed_variant": "Ziploc 密保諾雙層夾鏈冷凍保鮮袋 小54入 單盒",
+      "momo_candidate": {
+        "candidate_item_id": "11119319",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=11119319",
+        "validation": "details_read",
+        "original_candidate_audit": {
+          "id": "HOME-018",
+          "requested": "11119319",
+          "displayed": "11119319",
+          "status": "details_read"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: propose small freezer bags 54-count, 17.7 x18.8cm. momo readable; other-platform multi-box offers and M-size labels need dimensions/count checks.",
+      "next_action": "Inspect current momo title and all options; verify exact variant and parseable ordinary price. Cross-platform/BigGo checks do not block this momo-only review."
+    },
+    {
+      "product_id": "HOME-019",
+      "brand": "Glad",
+      "original_model": "Cling wrap",
+      "proposed_variant": "GLAD 標準保鮮膜30cm 30m 單盒 非Press'n Seal",
+      "momo_candidate": {
+        "candidate_item_id": "13200096",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=13200096",
+        "validation": "fetch_unavailable",
+        "original_candidate_audit": {
+          "id": "HOME-019",
+          "requested": "13200096",
+          "displayed": {},
+          "status": "fetch_unavailable"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo 13200096 is related Press'n Seal three-pack and fetch unavailable. Proposed standard cling wrap is a different film; width, length and count must match.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    },
+    {
+      "product_id": "HOME-020",
+      "brand": "Lux",
+      "original_model": "Body wash 1000ml",
+      "proposed_variant": "LUX 精油香氛沐浴乳1000ml 嫵媚迷香 單瓶",
+      "momo_candidate": {
+        "candidate_item_id": "13179901",
+        "url": "https://www.momoshop.com.tw/goods/GoodsDetail.jsp?i_code=13179901",
+        "validation": "fetch_unavailable",
+        "original_candidate_audit": {
+          "id": "HOME-020",
+          "requested": "13179901",
+          "displayed": {},
+          "status": "fetch_unavailable"
+        },
+        "exact_option_locked": false,
+        "seller_validation": "Normal momo catalogue rule is provisional under spec 6.3; legal seller and exact option not independently confirmed."
+      },
+      "previous_finding": "Hold: momo 13179901 fetch unavailable. Proposed 1000ml 嫵媚迷香 needs exact option; different fragrance names and six-bottle offers are not matches.",
+      "next_action": "Resolve the momo listing/availability/identity issue first, then verify current option and price fields."
+    }
+  ]
+}

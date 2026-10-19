@@ -1,0 +1,2 @@
+# Copy to .Renviron and set your study contact before live requests.
+SCRAPER_CONTACT=your.name@example.com

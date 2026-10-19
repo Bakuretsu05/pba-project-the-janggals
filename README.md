@@ -30,6 +30,12 @@ Each task has its own folder.
 
 The scrapers are built to [`scrapers/data-collection-spec.md`](scrapers/data-collection-spec.md).
 
+## momo recorder
+
+Run `Rscript scrapers/momo/scrape_momo.R` from the project root. The default input is
+`products/products.csv`; a first positional argument selects a test table. See
+[scrapers/momo/README.md](scrapers/momo/README.md) for setup, tests and verification evidence.
+
 ## Data
 
 Scraper output and raw pages stay out of git (`output/` and `raw/` folders are ignored). BigGo
