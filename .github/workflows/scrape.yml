@@ -2,18 +2,26 @@
 name: scrape
 
 on:
+  # WF-8: an outside timer starts the runs on time (workflow_dispatch with timer=true) at
+  # 15:07, and 18:07 and 23:07 on Nov 10-12. GitHub's schedule starts hours late, so it is
+  # only the backup: 30 minutes after each slot, and it does nothing if that slot already ran.
   schedule:
-    - cron: "7 7 * * *"       # 15:07 Taiwan, Oct 19 - Nov 25
-    - cron: "7 10 10-12 11 *" # 18:07 Taiwan, Nov 10-12
-    - cron: "7 15 10-12 11 *" # 23:07 Taiwan, Nov 10-12
+    - cron: "37 7 * * *"       # backup for 15:07 Taiwan, Oct 19 - Nov 25
+    - cron: "37 10 10-12 11 *" # backup for 18:07 Taiwan, Nov 10-12
+    - cron: "37 15 10-12 11 *" # backup for 23:07 Taiwan, Nov 10-12
   workflow_dispatch:
     inputs:
       products:
         description: Product table to read
         default: products/products.csv
+      timer:
+        description: Started by the outside timer (applies the collection period, WF-3)
+        type: boolean
+        default: false
 
 permissions:
   contents: read
+  actions: read # WF-8: the backup looks for an earlier run of its slot
 
 jobs:
   scrape:
@@ -29,14 +37,43 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      # WF-3: scheduled runs outside Oct 19 - Nov 25 (Taiwan date) do nothing. Manual runs always run.
+      # WF-3: timer and scheduled runs outside Oct 19 - Nov 25 (Taiwan date) do nothing.
+      # Other manual runs always run. WF-8: a scheduled backup does nothing if a manual run
+      # started since 10 minutes before its slot and has not failed.
       - name: Decide whether to run
         id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SCHEDULE: ${{ github.event.schedule }}
+          TIMER: ${{ inputs.timer }}
         run: |
-          today=$(TZ=Asia/Taipei date +%F)
+          day=$(TZ=Asia/Taipei date +%F)
           run=true
-          if [ "$GITHUB_EVENT_NAME" = schedule ] && { [[ "$today" < 2026-10-19 ]] || [[ "$today" > 2026-11-25 ]]; }; then
-            echo "Taiwan date $today is outside the collection period; nothing to do."
+          if [ "$GITHUB_EVENT_NAME" = schedule ]; then
+            case "$SCHEDULE" in
+              "37 7 * * *") slot_time=15:07 ;;
+              "37 10 10-12 11 *") slot_time=18:07 ;;
+              "37 15 10-12 11 *") slot_time=23:07 ;;
+              *) echo "::error::Unknown schedule '$SCHEDULE'"; exit 1 ;;
+            esac
+            # The slot is the last time it came round: a backup can start after midnight.
+            slot=$(TZ=Asia/Taipei date -d "$slot_time" +%s)
+            if [ "$slot" -gt "$(date +%s)" ]; then slot=$((slot - 86400)); fi
+            day=$(TZ=Asia/Taipei date -d "@$slot" +%F)
+            since=$(date -u -d "@$((slot - 600))" +%Y-%m-%dT%H:%M:%SZ)
+            covered=$(gh api -X GET "repos/$GITHUB_REPOSITORY/actions/workflows/scrape.yml/runs" \
+              -f event=workflow_dispatch -f created=">=$since" \
+              --jq '[.workflow_runs[] | select(.status != "completed" or .conclusion == "success")] | length') || covered=0
+            if [ "${covered:-0}" -gt 0 ]; then
+              echo "The $day $slot_time slot already ran (manual run since $since); nothing to do."
+              run=false
+            else
+              echo "::warning::No run for the $day $slot_time slot yet; the scheduled backup collects it."
+            fi
+          fi
+          if { [ "$GITHUB_EVENT_NAME" = schedule ] || [ "$TIMER" = true ]; } &&
+             { [[ "$day" < 2026-10-19 ]] || [[ "$day" > 2026-11-25 ]]; }; then
+            echo "Taiwan date $day is outside the collection period; nothing to do."
             run=false
           fi
           if [ ! -f "scrapers/$PLATFORM/scrape_$PLATFORM.R" ]; then

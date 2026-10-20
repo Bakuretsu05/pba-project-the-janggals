@@ -276,30 +276,34 @@ Endpoints:
 
 ### 9.1 Schedule
 
-| Period (Taiwan time) | Runs | Cron (UTC) |
+| Period (Taiwan time) | Runs | Backup cron (UTC) |
 |---|---|---|
-| Oct 19 → Nov 25 | Once a day, 15:07 | `7 7 * * *` |
-| **Nov 10, 11, 12** | Two extra runs, 18:07 and 23:07 (flash sales) | `7 10 10-12 11 *` and `7 15 10-12 11 *` |
+| Oct 19 → Nov 25 | Once a day, 15:07 | `37 7 * * *` |
+| **Nov 10, 11, 12** | Two extra runs, 18:07 and 23:07 (flash sales) | `37 10 10-12 11 *` and `37 15 10-12 11 *` |
 
 The runs are seven minutes past the hour because GitHub delays or drops more scheduled runs
-on the hour. Scheduled runs can still start late; `scraped_at` records the real time.
+on the hour. GitHub's own schedule started the 15:07 run 5.5 and 7.5 hours late on Oct 19 and
+20, so since Oct 21 an outside timer starts each run on time (WF-8) and the schedule is only a
+backup, 30 minutes after each slot. `scraped_at` records the real time either way.
 
 ### 9.2 Workflow requirements
 
 | ID | Requirement |
 |---|---|
-| **WF-1** | One workflow file, `.github/workflows/scrape.yml`, with the three cron entries above and a manual trigger (`workflow_dispatch`). |
+| **WF-1** | One workflow file, `.github/workflows/scrape.yml`, with the three backup cron entries above and a manual trigger (`workflow_dispatch`). |
 | **WF-2** | One job per platform (a matrix over `momo` and `pchome`, with `fail-fast: false`), so one platform failing does not cancel the other. Jobs may run in parallel; the pace rule (NFR-1) is per site. Coupang is not in the workflow: GitHub's runners are refused (Q7), and it was dropped from the daily snapshots on 2026-10-20. |
-| **WF-3** | Scheduled runs outside Oct 19 – Nov 25 (Taiwan date) do nothing and end green. Manual runs always run, for testing and make-ups. |
+| **WF-3** | Scheduled and timer runs outside Oct 19 – Nov 25 (Taiwan date) do nothing and end green. Other manual runs always run, for testing and make-ups. |
 | **WF-4** | R 4.6.1 via `r-lib/actions/setup-r`, packages via `r-lib/actions/setup-r-dependencies` (cached binaries, not source builds). |
 | **WF-5** | `SCRAPER_CONTACT` comes from a repository secret of the same name. |
 | **WF-6** | After the scraper step, whatever its exit code, the job uploads that run's output file and `raw/` folder from `scrapers/<platform>/` as one workflow artifact named `<platform>_<run date>_<run time>`, kept 90 days. This is the interim storage until Q6 is answered. |
 | **WF-7** | Job timeout 45 minutes. A full run is 150 products × 5 s ≈ 13 minutes, plus retries. |
+| **WF-8** | An outside timer (cron-job.org, time zone Asia/Taipei) starts each run at its slot time with a `workflow_dispatch` call carrying the input `timer=true`, using a fine-grained token that can only run this repo's workflows. A scheduled backup does nothing when a manual run of the workflow started since 10 minutes before its slot and has not failed; otherwise it collects the slot itself, late. |
 
 ### 9.3 Watching the runs
 
-GitHub emails scheduled-run failures to whoever last edited the cron lines, so that person
-watches. A failed or missing run is made up with a manual run as soon as it is noticed. Never
+GitHub emails scheduled-run failures to whoever last edited the cron lines, and failures of
+timer runs to the owner of the timer's token, so those people watch. A backup that collects
+shows the warning "No run for the … slot yet": the timer missed that slot. A failed or missing run is made up with a manual run as soon as it is noticed. Never
 back-fill a missed run by copying another run's values.
 
 ---
