@@ -209,6 +209,10 @@ momo_new_row <- function(product, date) {
     stringsAsFactors = FALSE)
 }
 
+momo_error_page <- function(body) {
+  grepl("網頁無法顯示", tryCatch(rawToChar(body), error = function(e) ""), fixed = TRUE, useBytes = TRUE)
+}
+
 momo_is_sold_out <- function(body) {
   text <- tryCatch({
     doc <- xml2::read_html(body)
@@ -271,14 +275,17 @@ momo_collect <- function(products, platform_dir, contact, fetch = NULL,
   dir.create(raw_dir, recursive = TRUE, showWarnings = FALSE)
   rows <- list()
   audit <- list()
-  for (i in seq_len(nrow(products))) {
+  attempts_by_row <- list()
+  error_pages <- integer()
+  blocked <- function(r) (!is.na(r$status) && r$status %in% c(403L, 429L)) ||
+    momo_challenge(r$body)
+  collect_one <- function(i, attempts = list()) {
     product <- as.list(products[i, , drop = FALSE])
     row <- momo_new_row(product, date)
     error <- NULL
-    attempts <- list()
     if (!isTRUE(product$momo_bad_input)) {
       response <- fetch(product$momo_url)
-      attempts[[1L]] <- response
+      attempts[[length(attempts) + 1L]] <- response
       row$scraped_at <- format(response$sent_at, "%Y-%m-%d %H:%M:%S", tz = "Asia/Taipei")
       retryable <- is.na(response$status) || response$status == 429L || response$status >= 500L
       if (retryable) {
@@ -286,8 +293,6 @@ momo_collect <- function(products, platform_dir, contact, fetch = NULL,
         response <- fetch(product$momo_url)
         attempts[[length(attempts) + 1L]] <- response
       }
-      blocked <- function(r) (!is.na(r$status) && r$status %in% c(403L, 429L)) ||
-        momo_challenge(r$body)
       # One bounded alternate, still study-identified user agent; no proxies or login.
       if (blocked(response)) {
         sleep(5)
@@ -296,7 +301,7 @@ momo_collect <- function(products, platform_dir, contact, fetch = NULL,
       }
       code <- product$momo_i_code
       # Duplicate source IDs under different product IDs must not overwrite a response.
-      if (any(vapply(rows, function(r) identical(r$platform_item_id, code), logical(1))))
+      if (any(vapply(rows[seq_len(i - 1L)], function(r) identical(r$platform_item_id, code), logical(1))))
         code <- paste0(code, "__row", i)
       for (j in seq_along(attempts)) {
         suffix <- if (j == length(attempts)) "" else paste0("__attempt", j)
@@ -323,14 +328,23 @@ momo_collect <- function(products, platform_dir, contact, fetch = NULL,
         } else {
           row$fetch_status <- "parse_failure"
           error <- conditionMessage(parsed)
+          if (momo_error_page(response$body)) error_pages <<- c(error_pages, i)
         }
       }
     } else error <- "Duplicate/missing product_id or no valid momo listing ID in URL"
-    rows[[i]] <- row
-    audit[[i]] <- list(product_id = product$product_id, fetch_status = row$fetch_status,
+    rows[[i]] <<- row
+    attempts_by_row[[i]] <<- attempts
+    audit[[i]] <<- list(product_id = product$product_id, fetch_status = row$fetch_status,
       error = error, attempts = length(attempts),
       note = "ok verifies supported visible price layout; hidden/image-only offers and multi-option pages have incomplete coverage")
   }
+  for (i in seq_len(nrow(products))) collect_one(i)
+  # momo sometimes serves its 網頁無法顯示 page for a live item; minutes later the page loads
+  # (6 of 7 on 2026-10-19). Request those once more at the end of the run (spec 8.2).
+  retry <- error_pages
+  error_pages <- integer()
+  if (length(retry)) sleep(60)
+  for (i in retry) collect_one(i, attempts_by_row[[i]])
   result <- if (length(rows)) do.call(rbind, rows) else {
     p <- list(product_id = NA_character_, momo_i_code = NA_character_)
     momo_new_row(p, date)[FALSE, ]

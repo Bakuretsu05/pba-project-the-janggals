@@ -73,7 +73,7 @@ identifies that exact variant, rather than silently selecting the base product.
 | `original_price` | A crossed-out price inside the product price block: semantic `del`/`s`, explicit line-through styling, or the site's `.c-prodPrice__originalPrice` presentation class, visually confirmed on three product pages in the browser. No API `Price.M` is read. |
 | `extra_price`, `extra_price_label` | Lowest price in the recognised conditional price blocks whose amount is explicitly linked to a displayed promotion/condition. The corresponding condition is copied from that promotion. Unlinked amounts/labels remain NA. |
 | `shown_discount_pct` | Only a standalone percentage badge in the product discount/price badge area. No computed percentage, cashback conversion, or conversion of 折. |
-| `promo_tag` | Product header campaign text, discount links, price tags, promotion tags and wording, in DOM order with exact duplicates removed. |
+| `promo_tag` | Discount links, price tags, promotion tags and wording, in DOM order with exact duplicates removed. The slogan line above the product name is not read: it is product copy, not a sale label. |
 | `coupon_note` | Displayed discount conditions, coupon text and card-benefit links inside the product information area. |
 | `seller_type` | `platform`: 24h product pages are sold by PChome itself (spec 7.3). |
 | `in_stock` | Enabled purchase buttons → TRUE; an explicit sold-out/removed notice in the main product area → FALSE; otherwise TRUE when a selling price is shown (spec 7.1: an `ok` row is never NA). No API quantity default. |

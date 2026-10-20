@@ -49,7 +49,8 @@ existing Actions workflow uploads them as artifacts.
 The summary and exit code match the shared workflow: zero if at least one row is ok, one if
 none is ok or startup fails. Every included product gets a row. Requests have a 30-second
 timeout and at least five seconds between starts. Timeouts, connection errors, 429 and 5xx get
-one retry after 60 seconds. Blocks get one bounded alternate study-identified user agent;
+one retry after 60 seconds. A 網頁無法顯示 page, which momo sometimes serves for a live item, is
+requested once more at the end of the run. Blocks get one bounded alternate study-identified user agent;
 remaining blocks are recorded and later products still run. Browser/proxy fallbacks are
 **not implemented**: this is incomplete coverage of spec §8.2, not a claim to defeat every block.
 No authentication or credentials are used to fetch products.

@@ -33,7 +33,8 @@ page_html <- function(sale = 100L, original = 150L, conditional = NULL, stock = 
     '<div class="c-prodPrice__originalPrice">$', sale, '</div></div>')
   paste0('<html><body><div data-regression="prod_info" data-gtm-item_id="', id, '">',
     '<div class="c-boxGrid__item--prodBriefingArea"><h1>中文測試商品</h1>',
-    '<div class="o-prodMainName__colorPrimary300">期間限定優惠</div>',
+    '<div class="o-prodMainName__colorPrimary300">超越保濕 直達肌底修復力</div>',
+    '<div data-regression="prod_promoTag"><span class="c-label__text">期間限定優惠</span></div>',
     if (!is.null(conditional)) paste0('<div data-regression="prod_discount">',
       '<a class="c-discountEvent__link">', terms, '</a></div>') else '',
     '<div data-regression="prod_price">', main, '</div>',
@@ -184,6 +185,10 @@ test("discount badges are copied, fold badges are not converted, cashback is not
     stopifnot(grepl(badge, parsed$promo_tag, fixed = TRUE))
     if (badge == "-23%") stopifnot(parsed$shown_discount_pct == 23) else stopifnot(is.na(parsed$shown_discount_pct))
   }
+})
+test("the seller's slogan above the product name is not a promo tag", {
+  parsed <- parse_product_page(charToRaw(enc2utf8(page_html())), item_id)
+  stopifnot(identical(parsed$promo_tag, "期間限定優惠"))
 })
 test("24h pages are sold by PChome and a shown price without a sold-out notice is in stock", {
   body <- sub("PChome 倉庫出貨，24小時到貨", "配送資訊未提供", page_html(), fixed = TRUE)

@@ -137,8 +137,10 @@ parse_product_page <- function(body, item_id) {
   # 7.1: an ok row is TRUE or FALSE. A shown price without a sold-out notice is for sale.
   in_stock <- if (any(enabled)) TRUE else if (sold_out) FALSE else !is.na(sale)
   if (is.na(sale) && in_stock) return(failure("No verified selling price or sold-out notice"))
+  # The coloured line above the product name (.o-prodMainName__colorPrimary300) is not read:
+  # on 66 of 68 pages (2026-10-20) it was the seller's slogan, not a sale or campaign label.
   tag_nodes <- rvest::html_elements(scope, paste(
-    ".o-prodMainName__colorPrimary300, [data-regression='prod_discount'] .c-label__text,",
+    "[data-regression='prod_discount'] .c-label__text,",
     "[data-regression='prod_discount'] .c-discountEvent__link, .c-prodPriceTips .c-colorTag__text,",
     "[data-regression='prod_promoTag'] .c-label__text, [data-regression='prod_promoText'],",
     "[data-regression='prod_coupon'] .c-detailCol__title"))

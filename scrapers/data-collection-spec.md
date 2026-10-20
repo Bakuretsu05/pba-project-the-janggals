@@ -167,6 +167,10 @@ Each product must:
 - **折 badges** (`7折`, `85折`) are not converted to a percentage. The badge goes into
   `promo_tag` as displayed and `shown_discount_pct` stays `NA`.
 - **Missing** is written as `NA`. Not `0`, not blank, not `-`.
+- **Comparing platforms:** the sites label the same discount differently, so it can land in
+  different columns. On 2026-10-20 BEAU-007 was 800 on both: momo showed 促銷價 1600 with
+  限時折後價 800 (`sale_price` 1600, `extra_price` 800), PChome showed 網路價 800
+  (`sale_price` 800). The analysis compares the lowest price shown, not `sale_price` alone.
 - **File format:** UTF-8, comma-separated, one header row, text quoted where needed. Base R's
   `write.csv(x, file, row.names = FALSE, na = "NA", fileEncoding = "UTF-8")` meets this.
 
@@ -180,7 +184,7 @@ updates this table. The Coupang column and endpoint describe the retired Coupang
 | `original_price` | Visible crossed-out price in the product price block (`del`/`s`, explicit line-through, or visually verified `.c-prodPrice__originalPrice` class). Preserve it even if equal to the pre-condition selling price. Never substitute API `Price.M` | Explicit 市售價 / 市價 / 原價 in the main price block (shown on 70 of 92 pages, 2026-10-19) | Crossed-out price: the JSON-LD `StrikethroughPrice`, else the struck price in `.price-container`. Per Coupang, the supplier's suggested or official-channel price, else the item's highest Coupang price in 90 days |
 | `sale_price` | Displayed pre-condition selling price; in the verified 折扣價 / 網路價 layout, the displayed 網路價. Unknown conditional baselines give `parse_failure` | 促銷價 | Headline price (JSON-LD `offers.price`). If a line under it marks the headline as conditional (`$198 首購折扣價`, or `$65 折扣後價格 · 折扣剩下8小時` for a time-limited discount), the price without the reduction instead: the crossed-out price on that line if it has one (`$490`), else the main crossed-out price, provided headline + reduction = that price; otherwise `NA` and `parse_failure` |
 | `extra_price` | Lowest verified conditional price linked to displayed condition wording; copy that wording to `extra_price_label`. Unverified amounts/labels stay `NA` | 限時折後價 (the JSON-LD `price` also holds this) | Lowest of: a headline marked conditional (label e.g. `首購折扣價`, first purchase, or `折扣後價格`, time-limited) and card prices under 刷卡優惠 (label e.g. `王道卡 特惠價`) |
-| `shown_discount_pct`, `promo_tag`, `coupon_note` | Copy product price/discount percentage badges, campaign/promotion text, and visible coupon/card wording from the main product area. Do not infer % from amounts or cashback; 折 stays text. Interactive/image-only content has incomplete coverage, recorded in a separate verification audit | `promo_tag`: each row of the campaign block under the product name, the dated campaign link then its condition (`10/01~10/31 ★AirPods十在優惠 \| 滿1件折1102元`). `coupon_note`: 折價券, 刷卡 and 回饋 wording in the purchase column. No % badge on 92 pages (2026-10-19), so `shown_discount_pct` is `NA` so far | Product pages show `N折`, never %, so `shown_discount_pct` is `NA` and the badge goes to `promo_tag`. `coupon_note`: the conditional line, `.conditional-benefits`, 刷卡優惠 and 銀行回饋 entries. 11.11 campaign labels not seen yet |
+| `shown_discount_pct`, `promo_tag`, `coupon_note` | Copy product price/discount percentage badges, campaign/promotion text, and visible coupon/card wording from the main product area. Do not infer % from amounts or cashback; 折 stays text. The coloured slogan line above the product name is product copy and is not read (from 2026-10-21) Interactive/image-only content has incomplete coverage, recorded in a separate verification audit | `promo_tag`: each row of the campaign block under the product name, the dated campaign link then its condition (`10/01~10/31 ★AirPods十在優惠 \| 滿1件折1102元`). `coupon_note`: 折價券, 刷卡 and 回饋 wording in the purchase column. No % badge on 92 pages (2026-10-19), so `shown_discount_pct` is `NA` so far | Product pages show `N折`, never %, so `shown_discount_pct` is `NA` and the badge goes to `promo_tag`. `coupon_note`: the conditional line, `.conditional-benefits`, 刷卡優惠 and 銀行回饋 entries. 11.11 campaign labels not seen yet |
 | `seller_type` | `platform` (24h product pages are sold by PChome itself) | `platform` unless the purchase column names a third-party seller (第三方賣家, 店家名稱, a `/3p/` link). None seen on 93 pages (2026-10-19) | `賣家：<name>` (`.seller-info`) → `marketplace`; else the `ROCKET` badge in the price block → `platform` |
 | `in_stock` | Enabled purchase buttons → `TRUE`; explicit sold-out/removed notice → `FALSE`; otherwise `TRUE` when a selling price is shown | `FALSE` if a sold-out notice (已售完, 補貨中) is shown or every option's JSON-LD `availability` is out of stock, else `TRUE`; mixed option stock → `NA`. No sold-out page seen yet **(check)**. A removed item or wrong link gets a generic 網頁無法顯示 page that lists 商品目前無展售 and 網頁不存在 as possible causes: `parse_failure` | JSON-LD `offers.availability` (`InStock` → `TRUE`); without JSON-LD, `FALSE` if 已售完, 暫時缺貨 or similar is shown. Checked 2026-10-19: two 暫時缺貨 pages had `OutOfStock`. A wrong link and a delisted item get the same HTTP 200 page, 找不到商品: `parse_failure` |
 | Challenge-page marker (section 8.1) | Only on a page without the product block: `sec-if-cpt-container`, `cf-chl-`, `challenge-platform`, or visible text Access Denied, CAPTCHA, verify you are human, 網頁載入中, JavaScript required/check. A page with the product block is never a challenge | Only on a page without the price block and 品號: Access Denied, Just a moment, `sec-if-cpt-container`, `cf-chl-`, `challenge-platform`, `g-recaptcha`, 驗證您是人類, 安全驗證. None seen on 93 pages from a home connection (2026-10-19) **(check)** from GitHub | Akamai: `Access Denied`, or `sec-if-cpt-container` (JavaScript check that reloads itself); Coupang: `id="error403"` (你沒有權限存取此頁面) |
@@ -222,6 +226,8 @@ Endpoints:
   option has the same price; otherwise `parse_failure`. On 2026-10-19, 92 of the 93 momo links
   in the product table read `ok`; 33 of them have several options, each at one price. Blocks get
   one retry with a different user agent; headless Chrome and proxies (8.2) are not implemented.
+  A 網頁無法顯示 page gets one more request at the end of the run (8.2); the earlier body is kept
+  as `<platform_item_id>__attempt<n>.html.gz`.
   See `momo/README.md` and `momo/VERIFICATION.md`.
 - **Coupang** (tested 2026-10-15): the product page at `coupang_url`, requested exactly as stored
   in the product table, from a Coupang page in an everyday Chrome, by the Chrome extension in
@@ -253,7 +259,9 @@ Endpoints:
 
 - **Timeout:** 30 seconds per request.
 - **One retry** for 429, 5xx, timeout or connection error, sent 60 seconds after the failure.
-  No retry for anything else.
+  No retry for anything else, except on momo: a 網頁無法顯示 page is requested once more at the
+  end of the run (at least 60 seconds later), because momo sometimes serves it for live items
+  (6 of 7 such pages loaded normally when re-requested on 2026-10-19).
 - **On a block, get around it.** A 403, challenge page or repeated 429 is not a reason to stop.
   Do whatever gets the page: back off longer, change the user agent and headers, carry cookies
   from earlier responses, switch to a headless or real browser, or route through a different IP

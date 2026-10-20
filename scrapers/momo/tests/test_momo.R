@@ -168,6 +168,22 @@ check(identical(waits, 60) && retry$rows$fetch_status == "ok" &&
   all(c("123__attempt1.html.gz", "123.html.gz") %in% list.files(retry$raw_dir)),
   "Retry a 5xx once after 60 seconds and preserve both response bodies")
 
+error_page <- charToRaw(enc2utf8("<html><body>網頁無法顯示。可能的原因是：商品目前無展售 網頁不存在</body></html>"))
+two <- products[products$product_id %in% c("GOOD", "MISSING"), , drop = FALSE]
+calls <- character()
+waits <- numeric()
+flaky_fetch <- function(url, browser_agent = FALSE) {
+  calls <<- c(calls, url)
+  body <- if (grepl("/123$", url) && sum(grepl("/123$", calls)) > 1L) fixture() else error_page
+  list(status = 200L, body = body, received = TRUE, error = NULL, sent_at = run_started + length(calls))
+}
+flaky <- momo_collect(two, file.path(temp_root, "flaky"), "test@example.com", flaky_fetch,
+  run_started, sleep = function(seconds) waits <<- c(waits, seconds))
+check(identical(calls, rep(two$momo_url, 2L)) && identical(waits, 60) &&
+  identical(flaky$rows$fetch_status, c("ok", "parse_failure")) && identical(flaky$rows$sale_price[[1L]], 275L) &&
+  all(c("123__attempt1.html.gz", "123.html.gz", "456__attempt1.html.gz", "456.html.gz") %in% list.files(flaky$raw_dir)),
+  "Request momo's 網頁無法顯示 pages once more at the end of the run, keeping both bodies")
+
 blocked_fetch <- function(url, browser_agent = FALSE) list(status = 403L, body = charToRaw("Forbidden"),
   received = TRUE, error = NULL, sent_at = run_started)
 blocked <- momo_collect(one, file.path(temp_root, "blocked"), "test@example.com", blocked_fetch,
