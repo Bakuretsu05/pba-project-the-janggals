@@ -298,6 +298,7 @@ backup, 30 minutes after each slot. `scraped_at` records the real time either wa
 | **WF-6** | After the scraper step, whatever its exit code, the job uploads that run's output file and `raw/` folder from `scrapers/<platform>/` as one workflow artifact named `<platform>_<run date>_<run time>`, kept 90 days. This is the interim storage until Q6 is answered. |
 | **WF-7** | Job timeout 45 minutes. A full run is 150 products × 5 s ≈ 13 minutes, plus retries. |
 | **WF-8** | An outside timer (cron-job.org, time zone Asia/Taipei) starts each run at its slot time with a `workflow_dispatch` call carrying the input `timer=true`, using a fine-grained token that can only run this repo's workflows. A scheduled backup does nothing when a manual run of the workflow started since 10 minutes before its slot and has not failed; otherwise it collects the slot itself, late. |
+| **WF-9** | Each platform's job reports to its own Healthchecks.io check (ping URLs in the repository secrets `HEALTHCHECKS_MOMO` and `HEALTHCHECKS_PCHOME`), with the FR-8 summary line and the run link. It reports a failure when fewer than 90% of the products end `ok` or the scraper stopped early. Each check expects a report daily by 15:07 Taiwan time with a one-hour grace period, so Healthchecks.io emails when a run fails, reads badly or never happens. Pause both checks after Nov 25. |
 
 ### 9.3 Watching the runs
 

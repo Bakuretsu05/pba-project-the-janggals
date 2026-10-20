@@ -117,6 +117,26 @@ jobs:
           line=$(grep -E "^$PLATFORM: [0-9]+ products" scrape.log || true)
           echo "::notice title=$PLATFORM::${line:-no summary line (the scraper stopped early)}"
 
+      # WF-9: one Healthchecks.io check per platform. It emails when a run fails, reads fewer
+      # than 90% of products ok, or does not report by its slot.
+      - name: Report to Healthchecks.io
+        if: always() && steps.gate.outputs.run == 'true'
+        env:
+          PING_URL: ${{ matrix.platform == 'momo' && secrets.HEALTHCHECKS_MOMO || secrets.HEALTHCHECKS_PCHOME }}
+        run: |
+          if [ -z "$PING_URL" ]; then
+            echo "::warning::No Healthchecks.io URL for $PLATFORM (WF-9); not reported."
+            exit 0
+          fi
+          line=$(grep -E "^$PLATFORM: [0-9]+ products" scrape.log 2>/dev/null || true)
+          total=$(echo "$line" | sed -nE 's/^[a-z]+: ([0-9]+) products.*/\1/p')
+          ok=$(echo "$line" | grep -oE '\| ok [0-9]+' | grep -oE '[0-9]+' || true)
+          url="$PING_URL/fail"
+          if [ "${total:-0}" -gt 0 ] && [ "${ok:-0}" -ge $(( (total * 9 + 9) / 10 )) ]; then url="$PING_URL"; fi
+          curl -fsS -m 10 --retry 3 -o /dev/null \
+            --data-raw "${line:-no summary line (the scraper stopped early)} | $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            "$url" || echo "::warning::Healthchecks.io could not be reached."
+
       # WF-6: this run's output file and raw/ folder as one artifact, whatever the exit code.
       - name: Find this run's files
         id: files
