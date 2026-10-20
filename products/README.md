@@ -4,7 +4,7 @@ Owners: **Alicia, Audrey** · Due **Saturday, Oct 17**
 
 ## The task
 
-Pick about **100 products** that we will track on three Taiwanese shopping sites (momo,
+Pick **150 products** (30 per category) that we will track on three Taiwanese shopping sites (momo,
 PChome, Coupang) until Double 11, and list them in one file:
 
 **`products/products.csv`** (this folder)
@@ -51,7 +51,7 @@ Category codes:
 
 A product goes on the list only if **all four** are true:
 
-1. **Sold on at least 2 of the 3 sites**, as the exact same item on each: same size, colour and
+1. **Sold on both momo and PChome** (Coupang optional), as the exact same item on each: same size, colour and
    pack count.
 2. **Sold by the site itself**, not by another seller on the site. How to tell:
    - momo: the link is on `momoshop.com.tw`. Links on `momomall.com.tw` (momo摩天商城) are
@@ -64,14 +64,14 @@ A product goes on the list only if **all four** are true:
    price chart reaches October 2025.
 4. **Students would actually buy it.**
 
-Aim for about **20 products per category**.
+Aim for **30 products per category**.
 
 ## Before handing it in
 
 - [ ] The header line matches the one above exactly.
 - [ ] Every `product_id` is different and follows the pattern (`3C-001`).
 - [ ] Every `category` is one of the five codes.
-- [ ] Every product has a link for at least 2 of momo, PChome and Coupang.
+- [ ] Every product has a momo link and a PChome link.
 - [ ] Every product's links point to the same item, sold by the site itself.
 - [ ] Every link you filled in has a matching BigGo link.
 - [ ] The file is saved as UTF-8: open it again and check that any Chinese text reads correctly.
