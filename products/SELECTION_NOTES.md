@@ -1,13 +1,13 @@
 # Product list: selection notes
 
-Notes on `products.csv` (rebuilt 2026-10-18 to replace the search-page links in `Productss.csv`, BigGo history checked 2026-10-19).
+Notes on `products.csv` (rebuilt 2026-10-18 to replace the search-page links in `Productss.csv`, BigGo history checked 2026-10-19, expanded to 30 products per category on 2026-10-20: see the last section).
 
 ## What was checked
 
 - Every link is a product page, not a search page: momo `i_code=`, PChome `/prod/<id>`, Coupang `itemId=`.
 - Sold by the site itself: momo links are on `momoshop.com.tw` and PChome links on `24h.pchome.com.tw`. Every Coupang link had the 火箭速配 (Rocket) badge in search results on 2026-10-18.
 - Same item on each site, matched by model number, size, colour and pack count from the listing titles.
-- Every product is on at least 2 sites: 33 on all three, 67 on two.
+- Every product is on both momo and PChome (150 products, 30 per category); 35 also have a Coupang link. Until 2026-10-20 the rule was "at least 2 of the 3 sites" (33 on all three, 67 on two).
 - **BigGo history:** every listing was looked up in BigGo’s price history on 2026-10-19. Each one starts before October 2025, except the six marked "history starts 2025-10-xx" below, which start during October 2025. Listings whose history started later were dropped or their product replaced.
 
 ## BigGo links
@@ -110,3 +110,31 @@ Six products that had no Coupang link got one. Each was found through BigGo's an
 - **3C-002 momo link:** momo delisted i_code 6623420 (it shows 網頁無法顯示 since about 2026-10-15) and relisted the same card as i_code 15770661 on 2026-10-14. The link now points to 15770661. BigGo has the old listing's history from before 2025 to 2026-10-15 under `tw_pec_momoshop-6623420`; the new listing's starts 2026-10-14.
 
 Checked and not added (no Rocket listing of the same item and pack, or BigGo history starts after October 2025): 3C-010 (Coupang only sells the T7 Shield), 3C-018, 3C-019 (Coupang sells the 140MB/s SDSQUAB card, the others the 100MB/s one), APPL-019 (marketplace listing, no Rocket badge), BEAU-004, BEAU-008, BEAU-009, BEAU-015, FOOD-013, FOOD-014, FOOD-015, FOOD-019, HOME-001, HOME-003 (the 6-pack option was sold out with no Rocket badge), HOME-004, HOME-005, HOME-006, HOME-008, HOME-010, HOME-011, HOME-012, HOME-014, HOME-018, HOME-019, HOME-020. The other rows without a Coupang link had no matching Coupang listing.
+
+## Expanded to 30 per category (2026-10-20)
+
+Coupang was dropped from the daily snapshots (its prices come from BigGo history only), so the rule became "on both momo and PChome" and the target went from about 20 to 30 products per category.
+
+**Retired** (row removed; the ID is never reused, spec 6.1). Each was on only one of momo and PChome: 3C-001, BEAU-001, BEAU-003, BEAU-013, BEAU-014, BEAU-018, BEAU-019, FOOD-008, FOOD-012, HOME-007. Their snapshots from Oct 19–20 stay in the run outputs.
+
+**Added:** 3C-021 to 3C-031, APPL-021 to APPL-030, BEAU-021 to BEAU-036, FOOD-021 to FOOD-032, HOME-021 to HOME-031 (60 products). For each:
+
+- a momo listing and a PChome 24h listing of the same item, size and pack count, matched from the listing titles;
+- BigGo price history on both listings that starts before 2025-10-01, read from BigGo's price-history data on 2026-10-20 (730-day window; "2024-10-20" below means the history goes back at least that far);
+- the BigGo columns search for the product filtered to one shop, as for the other rows.
+
+Only two new rows have a Coupang link, found in the same BigGo searches with history from 2025-06-04: 3C-026 (MK270r) and 3C-028 (Archer AX23). They were not opened on Coupang, so the Rocket badge is not checked. The other new rows have no Coupang link because no search was made for one.
+
+| ID | Note |
+|---|---|
+| APPL-023 | momo listing is in the 小米官方旗艦館 on momoshop.com.tw |
+| APPL-024 | 10-cup version of APPL-020 (6-cup) |
+| BEAU-024 | 591ml x2 pack. The single-bottle momo listing (see BEAU-008) is too new; the 2-pack listings have history from 2024 (momo) and 2025-06-26 (PChome) |
+| BEAU-029 | PChome listing lets you choose the type, track 深層淨化 |
+| BEAU-035 | momo history starts 2025-07-17 |
+| BEAU-036 | both listings are parallel imports (平輸) |
+| FOOD-029 | momo says 日本原裝進口, PChome does not; same 500ml x24 at the same price |
+| HOME-027 | momo calls it 茶樹油配方, PChome 植萃茶樹; same 1-gallon bottle at the same price |
+| HOME-029 | momo history starts 2025-07-03 |
+
+Checked and not used (a listing's BigGo history starts after 2025-10-01, or the two sites sell different packs or versions): Xiaomi power bank 10000 22.5W Lite, Kingston Canvas Select Plus 128GB, Zojirushi NL-AAF10, Fino hair mask, CeraVe foaming cleanser, Kleenex 棉柔厚韌 110x30, Red Bull 250ml x24 (momo listings new), UCC black coffee (momo only a subscription listing), Panasonic EH-NE14 and EH-NA27 (passed, left out to keep hair dryers to 5 of 30 APPL), Asahi 十六茶 330ml x24 (passed, left out to limit drinks).

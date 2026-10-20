@@ -4,7 +4,7 @@ Team **The Janggals**, ISS4066 Programming for Business Analytics, NTHU, Fall 20
 
 ## Topic
 
-Are Double 11 discounts real? We track about 100 products on momo, PChome and Coupang and
+Are Double 11 discounts real? We track 150 products on momo, PChome and Coupang and
 compare each Nov 11 "discount" with the product's lowest price in the previous 30 days (the
 EU benchmark), using BigGo price history for 2025 and 2026 plus our own daily snapshots of
 each page's crossed-out "original price".
@@ -23,7 +23,7 @@ Each task has its own folder.
 
 | Folder | Owner | Output |
 |---|---|---|
-| [`products/`](products/) | Alicia, Audrey | `products/products.csv`, the ~100 products we track |
+| [`products/`](products/) | Alicia, Audrey | `products/products.csv`, the 150 products we track |
 | [`scrapers/momo/`](scrapers/momo/) | Jordan | Daily price snapshots from momo |
 | [`scrapers/pchome/`](scrapers/pchome/) | Albert | Daily price snapshots from PChome |
 | [`scrapers/coupang/`](scrapers/coupang/) | Marvin | Daily price snapshots from Coupang |

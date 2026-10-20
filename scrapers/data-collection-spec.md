@@ -121,10 +121,10 @@ Products are requested in the order they appear in the file.
 
 ### 6.4 Selection rules (for whoever fills the table)
 
-Target: about 100 products, about 20 per category, on as many platforms as possible.
+Target: 150 products, 30 per category (raised from about 100 on 2026-10-20, when Coupang was dropped from the daily snapshots and kept for BigGo history only).
 
 Each product must:
-- be sold on at least 2 of momo, PChome and Coupang, as the same variant (size, colour, pack count);
+- be sold on both momo and PChome, as the same variant (size, colour, pack count); a Coupang link is optional;
 - be sold by the platform itself, not a third-party shop;
 - have BigGo price history back to at least October 2025;
 - be something students commonly buy.
@@ -284,7 +284,7 @@ on the hour. Scheduled runs can still start late; `scraped_at` records the real 
 | **WF-4** | R 4.6.1 via `r-lib/actions/setup-r`, packages via `r-lib/actions/setup-r-dependencies` (cached binaries, not source builds). |
 | **WF-5** | `SCRAPER_CONTACT` comes from a repository secret of the same name. |
 | **WF-6** | After the scraper step, whatever its exit code, the job uploads that run's output file and `raw/` folder from `scrapers/<platform>/` as one workflow artifact named `<platform>_<run date>_<run time>`, kept 90 days. This is the interim storage until Q6 is answered. |
-| **WF-7** | Job timeout 45 minutes. A full run is about 100 products × 5 s ≈ 9 minutes, plus retries. |
+| **WF-7** | Job timeout 45 minutes. A full run is 150 products × 5 s ≈ 13 minutes, plus retries. |
 
 ### 9.3 Watching the runs
 
