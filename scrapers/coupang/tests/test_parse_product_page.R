@@ -46,6 +46,30 @@ test("a first-purchase headline whose figures do not add up is not read (parse_f
   expect_true(grepl("首購折扣價", page$note))
 })
 
+test("a time-limited discount is the extra price; its line's struck price is the sale price", {
+  page <- parse_product_page(fixture_page("timed_discount"))
+  f <- page$fields
+
+  expect_equal(page$found, TRUE)
+  expect_equal(f$original_price, 590L)
+  expect_equal(f$sale_price, 490L)
+  expect_equal(f$extra_price, 425L)
+  expect_equal(f$extra_price_label, "折扣後價格")
+  expect_equal(f$promo_tag, "73折")
+  expect_equal(f$coupon_note, "$65 折扣後價格 · 折扣剩下8小時 $490")
+})
+
+test("a time-limited discount with no price on its line takes the struck price as sale price", {
+  html <- sub("<div translate=\"no\" class=\"twc-text-[14px] twc-line-through twc-text-bluegray-600\">$490</div>",
+              "", fixture_page("timed_discount"), fixed = TRUE)
+  html <- sub(">$65<", ">$165<", html, fixed = TRUE)
+  f <- parse_product_page(html)$fields
+
+  expect_equal(f$original_price, 590L)
+  expect_equal(f$sale_price, 590L)
+  expect_equal(f$extra_price, 425L)
+})
+
 test("a third-party seller is marketplace", {
   page <- parse_product_page(fixture_page("marketplace"))
   f <- page$fields
