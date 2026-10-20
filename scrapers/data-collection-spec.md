@@ -22,11 +22,13 @@ The data comes from two sources:
 
 ## 2. What is needed
 
-1. **Scrapers for momo, PChome and Coupang**: one R script per platform, in that platform's
+1. **Scrapers for momo and PChome**: one R script per platform, in that platform's
    folder under `scrapers/`, that writes one row per product per run in the format in section 7.
+   **Coupang was dropped from the daily snapshots on 2026-10-20**; its prices come from BigGo
+   history only (section 11). The Coupang scraper in `scrapers/coupang/` is kept for reference
+   and no longer runs (Q7).
 2. **A GitHub Actions workflow** that runs the scrapers on the schedule in section 9, from
-   Oct 19 to Nov 25, with extra runs around 11.11. Coupang refuses GitHub's runners, so its
-   runs happen on the same schedule in a Chrome extension on Marvin's laptop instead (Q7).
+   Oct 19 to Nov 25, with extra runs around 11.11.
 3. **BigGo price history transcribed** into the format in section 11.
 
 Owners are in section 12 (assigned at the Oct 12 kickoff).
@@ -35,8 +37,8 @@ Owners are in section 12 (assigned at the Oct 12 kickoff).
 
 **In scope**
 
-- momo, PChome and Coupang product pages, for the products in the product table (section 6).
-- BigGo price history for the same products.
+- momo and PChome product pages, for the products in the product table (section 6).
+- BigGo price history for the same products, on momo, PChome and Coupang.
 
 **Out of scope**
 
@@ -70,7 +72,7 @@ Owners are in section 12 (assigned at the Oct 12 kickoff).
 | **FR-4** | Each run writes a new file: `scrapers/<platform>/output/<platform>_<run date>_<run time>.csv`, e.g. `scrapers/momo/output/momo_2026-11-11_1807.csv`. If that file already exists, the scraper stops with an error before sending any request. Files are never appended to or overwritten. |
 | **FR-5** | Every response body received, whatever its status, is saved gzip-compressed to `scrapers/<platform>/raw/<run date>_<run time>/<platform_item_id>.html.gz`, so a parsing bug can be fixed later by re-parsing old pages. PChome now saves product HTML, not feed JSON (team decision 2026-10-16). No response, no file. |
 | **FR-6** | The scraper copies what the page shows. It never computes discounts, never fills a missing value from another run, and never translates or rewords labels. The only change it makes to text is the whitespace rule in section 7.2. |
-| **FR-7** | One command runs a platform: `Rscript scrapers/<platform>/scrape_<platform>.R` from the project root, where `<platform>` is `momo`, `pchome` or `coupang`. The script creates its `output/` and `raw/` folders if they are missing. **Coupang (Q7):** a Chrome extension loads and saves the pages at each run time, and `Rscript scrapers/coupang/scrape_coupang.R --saved` then writes each saved run's CSV and `raw/` files, with the run date and run time of the moment the extension started. |
+| **FR-7** | One command runs a platform: `Rscript scrapers/<platform>/scrape_<platform>.R` from the project root, where `<platform>` is `momo` or `pchome`. The script creates its `output/` and `raw/` folders if they are missing. |
 | **FR-8** | At the end of a run it prints one summary line: platform, products attempted, count per `fetch_status` value, output file. Example: `momo: 98 products | ok 95, http_error 2, parse_failure 1 | scrapers/momo/output/momo_2026-10-19_1007.csv` |
 | **FR-9** | Exit code: `1` if no product ended `ok`, or if the run could not start (section 6.3). Otherwise `0`, even when some products failed. The output file is written before exiting either way. A non-zero exit is what makes the GitHub run show as failed and send the failure email. |
 
@@ -94,7 +96,7 @@ links; that is how platforms get matched.
 | `category` | `3C` | `3C` electronics · `APPL` small appliances · `BEAU` beauty · `FOOD` snacks and drinks · `HOME` home and daily goods |
 | `momo_url` | | momo product page link. Empty if not sold on momo |
 | `pchome_url` | | PChome product page link. Empty if not sold on PChome |
-| `coupang_url` | | Coupang product page link. Empty if not sold on Coupang |
+| `coupang_url` | | Coupang product page link. Empty if not sold on Coupang. Not scraped since 2026-10-20 |
 | `biggo_url_momo`, `biggo_url_pchome`, `biggo_url_coupang` | | BigGo listing to transcribe |
 
 The file is UTF-8 with one header row. Empty cells mean "not on that platform". Links are
@@ -107,7 +109,7 @@ must cope with that.
 |---|---|---|---|
 | momo | `momo_url` is not empty | The `i_code` value in the link, or the ID in a `/product/<ID>` link | Built from the ID (section 7.3) |
 | PChome | `pchome_url` is not empty | The product ID in the link (the part after `/prod/`; see 7.3 on its exact form) | Built from the ID (section 7.3) |
-| Coupang | `coupang_url` is not empty | The `itemId` value in the link | `coupang_url` as stored |
+| Coupang (retired 2026-10-20) | `coupang_url` is not empty | The `itemId` value in the link | `coupang_url` as stored |
 
 Products are requested in the order they appear in the file.
 
@@ -139,7 +141,7 @@ Each product must:
 |---|---|---|---|
 | 1 | `date` | `YYYY-MM-DD` | Run date |
 | 2 | `scraped_at` | `YYYY-MM-DD HH:MM:SS` | Time this product's request was sent, Taiwan time. `NA` if no request was sent |
-| 3 | `platform` | text | `momo`, `pchome` or `coupang` |
+| 3 | `platform` | text | `momo` or `pchome` (`coupang` in the Coupang runs of Oct 19 and 20) |
 | 4 | `product_id` | text | From the product table |
 | 5 | `platform_item_id` | text | See 6.2. `NA` if it could not be found |
 | 6 | `original_price` | integer | The crossed-out 原價 / 市價. `NA` if none shown |
@@ -171,7 +173,7 @@ Each product must:
 ### 7.3 Where each column comes from
 
 **(check)** = not yet confirmed on a real page. Whoever builds that scraper confirms it and
-updates this table.
+updates this table. The Coupang column and endpoint describe the retired Coupang scraper.
 
 | Column | PChome (customer-visible product HTML) | momo (product page HTML) | Coupang (product page HTML) |
 |---|---|---|---|
@@ -279,7 +281,7 @@ on the hour. Scheduled runs can still start late; `scraped_at` records the real 
 | ID | Requirement |
 |---|---|
 | **WF-1** | One workflow file, `.github/workflows/scrape.yml`, with the three cron entries above and a manual trigger (`workflow_dispatch`). |
-| **WF-2** | One job per platform (a matrix over `momo` and `pchome`, with `fail-fast: false`), so one platform failing does not cancel the other. Jobs may run in parallel; the pace rule (NFR-1) is per site. Coupang is not in the workflow: GitHub's runners are refused (Q7). |
+| **WF-2** | One job per platform (a matrix over `momo` and `pchome`, with `fail-fast: false`), so one platform failing does not cancel the other. Jobs may run in parallel; the pace rule (NFR-1) is per site. Coupang is not in the workflow: GitHub's runners are refused (Q7), and it was dropped from the daily snapshots on 2026-10-20. |
 | **WF-3** | Scheduled runs outside Oct 19 – Nov 25 (Taiwan date) do nothing and end green. Manual runs always run, for testing and make-ups. |
 | **WF-4** | R 4.6.1 via `r-lib/actions/setup-r`, packages via `r-lib/actions/setup-r-dependencies` (cached binaries, not source builds). |
 | **WF-5** | `SCRAPER_CONTACT` comes from a repository secret of the same name. |
@@ -372,7 +374,7 @@ Type in **change points only**, one row per price change. R turns these into dai
 
 - [ ] A manual run produces one artifact per platform, each holding the CSV and raw pages.
 - [ ] Rows in that CSV show Taiwan time, not UTC.
-- [ ] One platform's job failing leaves the other two to finish.
+- [ ] One platform's job failing leaves the other to finish.
 
 ## 14. Open questions
 
@@ -384,4 +386,4 @@ Type in **change points only**, one row per price change. R turns these into dai
 | Q4 | Does BigGo's history show the 原價 as well as the price? How often does it check prices? | BigGo transcribers | Open |
 | Q5 | Do the scrapers run on GitHub Actions or on a laptop with Task Scheduler? | Team | **Closed 2026-10-13: GitHub Actions** (section 9) |
 | Q6 | Where are snapshots and raw pages kept long term? (The scrapers and workflow live in this repo.) Until decided, outputs live as 90-day workflow artifacts (WF-6), the earliest of which expire around Jan 17; decide before the final report (Dec 20). The repo is public (checked 2026-10-13), so artifact storage has no quota; if it is made private, GitHub Free's 500 MB artifact quota applies and the raw pages may approach it. | Team | Open |
-| Q7 | Coupang refuses GitHub-hosted runners: Akamai answers every request from them with 403 (tested 2026-10-15). Where does the Coupang scraper run? A team member's computer in Taiwan as a self-hosted runner (it must be on at every run time), a paid proxy, or no Coupang snapshots (BigGo history only)? | Team | **Answered 2026-10-15 (Marvin):** on Marvin's laptop, in his everyday Chrome, which Coupang serves normally. A Chrome extension saves the pages at each run time (the laptop must be awake: it ignores wake timers, so the wake task tried for this was removed on 2026-10-19); each run reports to Healthchecks.io, which emails when a run fails or is missing; `scrape_coupang.R --saved` writes the CSVs. Outputs are copied to the Q6 storage by hand. See `scrapers/coupang/README.md` |
+| Q7 | Coupang refuses GitHub-hosted runners: Akamai answers every request from them with 403 (tested 2026-10-15). Where does the Coupang scraper run? A team member's computer in Taiwan as a self-hosted runner (it must be on at every run time), a paid proxy, or no Coupang snapshots (BigGo history only)? | Team | **Answered 2026-10-15 (Marvin):** on Marvin's laptop, in his everyday Chrome, which Coupang serves normally. A Chrome extension saves the pages at each run time (the laptop must be awake: it ignores wake timers, so the wake task tried for this was removed on 2026-10-19); each run reports to Healthchecks.io, which emails when a run fails or is missing; `scrape_coupang.R --saved` writes the CSVs. Outputs are copied to the Q6 storage by hand. See `scrapers/coupang/README.md`. **Superseded 2026-10-20:** Coupang was dropped from the daily snapshots (BigGo history only); the extension is switched off. It collected on Oct 19 and 20 only |

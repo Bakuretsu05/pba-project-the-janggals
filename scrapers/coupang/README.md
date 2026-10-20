@@ -2,6 +2,11 @@
 
 Owner: **Marvin**. Built to [`../data-collection-spec.md`](../data-collection-spec.md).
 
+> **Retired 2026-10-20.** Coupang was dropped from the daily snapshots; its prices come from
+> BigGo history only (spec section 2). The extension is switched off and nobody collects Coupang
+> pages. It collected on Oct 19 and 20 only. The rest of this page describes how it worked, kept
+> for reference.
+
 ## How the runs are collected
 
 Coupang refuses every automated client that was tried, and every request from GitHub's runners

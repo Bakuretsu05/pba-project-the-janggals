@@ -4,8 +4,8 @@ Owners: **Alicia, Audrey** · Due **Saturday, Oct 17**
 
 ## The task
 
-Pick **150 products** (30 per category) that we will track on three Taiwanese shopping sites (momo,
-PChome, Coupang) until Double 11, and list them in one file:
+Pick **150 products** (30 per category) that we will track on momo and PChome until Double 11 (Coupang
+through BigGo history only), and list them in one file:
 
 **`products/products.csv`** (this folder)
 

@@ -1,4 +1,4 @@
-# Spec section 9: the daily momo and PChome runs. Coupang is collected locally (Q7).
+# Spec section 9: the daily momo and PChome runs. Coupang is not collected daily (dropped 2026-10-20, Q7).
 name: scrape
 
 on:
