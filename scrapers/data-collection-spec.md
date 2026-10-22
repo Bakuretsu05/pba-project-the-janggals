@@ -97,7 +97,7 @@ links; that is how platforms get matched.
 | `momo_url` | | momo product page link. Empty if not sold on momo |
 | `pchome_url` | | PChome product page link. Empty if not sold on PChome |
 | `coupang_url` | | Coupang product page link. Empty if not sold on Coupang. Not scraped since 2026-10-20 |
-| `biggo_url_momo`, `biggo_url_pchome`, `biggo_url_coupang` | | BigGo listing to transcribe |
+| `biggo_url_momo`, `biggo_url_pchome`, `biggo_url_coupang` | | BigGo search page for that platform. It can show several listings, so the history is looked up by item ID instead (`biggo/README.md`) |
 
 The file is UTF-8 with one header row. Empty cells mean "not on that platform". Links are
 pasted from a browser's address bar, so they may carry extra tracking parameters; the scrapers
@@ -354,7 +354,7 @@ has what is known about BigGo's history data.
 | # | Deliverable | Owner | Due |
 |---|---|---|---|
 | D1 | Scraper tested on 3 products of the owner's choice | Each scraper owner, for their platform | Wed Oct 14 |
-| D2 | Full product table, ~100 products | Alicia, Audrey | Sat Oct 17 |
+| D2 | Full product table, 150 products (~100 until 2026-10-20) | Alicia, Audrey | Sat Oct 17 |
 | D3 | PChome scraper passing section 13 | Albert | Sat Oct 17 |
 | D4 | momo scraper passing section 13 | Jordan | Sat Oct 17 |
 | D5 | Coupang scraper passing section 13 | Marvin | Sat Oct 17 |
@@ -399,7 +399,7 @@ has what is known about BigGo's history data.
 | Q1 | Does momo show a crossed-out 市價 on product pages? | momo owner | **Answered 2026-10-19:** yes, a struck 市售價 on 70 of 92 pages; see 7.3 |
 | Q2 | Does Coupang show a crossed-out 原價? What second prices appear? | Coupang owner | **Answered 2026-10-15:** yes, a struck price (supplier's suggested price, else the 90-day high on Coupang). Second prices: a first-purchase price (首購折扣價) built into the headline for visitors not logged in, and card prices (e.g. 王道卡 特惠價); also bank cashback, shown as text. See 7.3 |
 | Q3 | How do momo and Coupang show third-party sellers? | Platform owners | **momo (2026-10-19):** none of the 93 product-table pages showed a third-party seller; markers in 7.3. **Coupang (2026-10-15):** a `賣家：<name>` line with a seller rating, and no Rocket badge |
-| Q4 | Does BigGo's history show the 原價 as well as the price? How often does it check prices? | BigGo owner | **Answered (first half) 2026-10-22 (Marvin):** no 原價. BigGo's history view and the history response behind it give a timestamp and a price per point, nothing else; checked on momo and PChome listings. How often BigGo checks prices is still open: the points seen were about a day apart. See `biggo/README.md` |
+| Q4 | Does BigGo's history show the 原價 as well as the price? How often does it check prices? | BigGo owner | **Answered (first half) 2026-10-22 (Marvin):** no 原價. BigGo's history view and the history response behind it give a timestamp and a price per point, nothing else; checked on momo and PChome listings. How often BigGo checks prices is still open: spacing varies, from a point a day to a few points in two years. See `biggo/README.md` |
 | Q5 | Do the scrapers run on GitHub Actions or on a laptop with Task Scheduler? | Team | **Closed 2026-10-13: GitHub Actions** (section 9) |
 | Q6 | Where are snapshots and raw pages kept long term? (The scrapers and workflow live in this repo.) Until decided, outputs live as 90-day workflow artifacts (WF-6), the earliest of which expire around Jan 17; decide before the final report (Dec 20). The repo is public (checked 2026-10-13), so artifact storage has no quota; if it is made private, GitHub Free's 500 MB artifact quota applies and the raw pages may approach it. | Team | Open |
 | Q7 | Coupang refuses GitHub-hosted runners: Akamai answers every request from them with 403 (tested 2026-10-15). Where does the Coupang scraper run? A team member's computer in Taiwan as a self-hosted runner (it must be on at every run time), a paid proxy, or no Coupang snapshots (BigGo history only)? | Team | **Answered 2026-10-15 (Marvin):** on Marvin's laptop, in his everyday Chrome, which Coupang serves normally. A Chrome extension saves the pages at each run time (the laptop must be awake: it ignores wake timers, so the wake task tried for this was removed on 2026-10-19); each run reports to Healthchecks.io, which emails when a run fails or is missing; `scrape_coupang.R --saved` writes the CSVs. Outputs are copied to the Q6 storage by hand. See `scrapers/coupang/README.md`. **Superseded 2026-10-20:** Coupang was dropped from the daily snapshots (BigGo history only); the extension is switched off. It collected on Oct 19 and 20 only |
