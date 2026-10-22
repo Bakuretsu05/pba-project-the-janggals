@@ -27,6 +27,7 @@ Each task has its own folder.
 | [`scrapers/momo/`](scrapers/momo/) | Jordan | Daily price snapshots from momo |
 | [`scrapers/pchome/`](scrapers/pchome/) | Albert | Daily price snapshots from PChome |
 | [`scrapers/coupang/`](scrapers/coupang/) | Marvin | Retired 2026-10-20 (Coupang uses BigGo history only) |
+| [`biggo/`](biggo/) | Albert | `biggo/price_changes.csv`, BigGo price history for 2025 and 2026 |
 
 The scrapers are built to [`scrapers/data-collection-spec.md`](scrapers/data-collection-spec.md).
 
@@ -39,4 +40,5 @@ Run `Rscript scrapers/momo/scrape_momo.R` from the project root. The default inp
 ## Data
 
 Scraper output and raw pages stay out of git (`output/` and `raw/` folders are ignored). BigGo
-history is copied by hand from biggo.com.tw. Download links will be added at Milestone 2.
+history is collected from biggo.com.tw into `biggo/price_changes.csv`, which is tracked. Download
+links will be added at Milestone 2.

@@ -29,7 +29,7 @@ The data comes from two sources:
    and no longer runs (Q7).
 2. **A GitHub Actions workflow** that runs the scrapers on the schedule in section 9, from
    Oct 19 to Nov 25, with extra runs around 11.11.
-3. **BigGo price history transcribed** into the format in section 11.
+3. **BigGo price history collected** into the format in section 11.
 
 Owners are in section 12 (assigned at the Oct 12 kickoff).
 
@@ -323,26 +323,29 @@ back-fill a missed run by copying another run's values.
 
 ---
 
-## 11. BigGo transcription format: `biggo/price_changes.csv`
+## 11. BigGo price history format: `biggo/price_changes.csv`
 
-Type in **change points only**, one row per price change. R turns these into daily prices.
+Record **change points only**, one row per price change. R turns these into daily prices. How
+the rows are collected (by hand, a script, browser automation) is up to the owner; `biggo/README.md`
+has what is known about BigGo's history data.
 
 | Column | Type | Content |
 |---|---|---|
 | `product_id` | text | From the product table |
 | `platform` | text | Platform of the BigGo listing: `momo`, `pchome`, `coupang` |
-| `biggo_url` | text | The listing transcribed |
+| `biggo_url` | text | The product-table link for that platform (`biggo_url_<platform>`) |
 | `changed_at` | `YYYY-MM-DD HH:MM` | Timestamp as BigGo shows it |
 | `price` | integer | Price after the change, NT$ |
-| `entered_by` | text | Your first name |
-| `entered_on` | `YYYY-MM-DD` | Date you typed it |
+| `entered_by` | text | The owner's first name |
+| `entered_on` | `YYYY-MM-DD` | Date the row was collected |
 | `note` | text | Anything odd (gap in history, seller changed). Otherwise `NA` |
 
-- **Period:** Oct 1 to Nov 25, in 2025 and in 2026. 2025 is typed now; 2026 after collection
+- **Period:** Oct 1 to Nov 25, in 2025 and in 2026. 2025 is collected now; 2026 after collection
   ends on Nov 25.
 - Include the last change **before** the period starts, so the first day's price is known.
-- About 10% of listings are typed a second time by someone else as a check; differences are
-  resolved and noted.
+- About 10% of listings are collected a second time, or checked against BigGo's chart, as a
+  check; differences are resolved and noted. The owner does this (changed 2026-10-22: the whole
+  of BigGo is one person's work).
 
 ---
 
@@ -357,10 +360,10 @@ Type in **change points only**, one row per price change. R turns these into dai
 | D5 | Coupang scraper passing section 13 | Marvin | Sat Oct 17 |
 | D6 | Workflow (section 9) passing section 13, manual run green on momo and PChome; Coupang's extension set up on Marvin's laptop (Q7) | Marvin | Sun Oct 18 |
 | D7 | First scheduled run on all three platforms | all | **Mon Oct 19** |
-| D8 | 2025 BigGo history | | Sun Oct 25 (Milestone 2) |
+| D8 | 2025 BigGo history | Albert | Sun Oct 25 (Milestone 2) |
 | D9 | Extra runs on Nov 10 to 12 | all | Thu Nov 12 |
 | D10 | Collection stops; workflow disabled; every run's output saved to the Q6 location | all | Wed Nov 25 |
-| D11 | 2026 BigGo history | | Sun Nov 29 |
+| D11 | 2026 BigGo history | Albert | Sun Nov 29 |
 
 ## 13. Acceptance criteria
 
@@ -396,7 +399,7 @@ Type in **change points only**, one row per price change. R turns these into dai
 | Q1 | Does momo show a crossed-out 市價 on product pages? | momo owner | **Answered 2026-10-19:** yes, a struck 市售價 on 70 of 92 pages; see 7.3 |
 | Q2 | Does Coupang show a crossed-out 原價? What second prices appear? | Coupang owner | **Answered 2026-10-15:** yes, a struck price (supplier's suggested price, else the 90-day high on Coupang). Second prices: a first-purchase price (首購折扣價) built into the headline for visitors not logged in, and card prices (e.g. 王道卡 特惠價); also bank cashback, shown as text. See 7.3 |
 | Q3 | How do momo and Coupang show third-party sellers? | Platform owners | **momo (2026-10-19):** none of the 93 product-table pages showed a third-party seller; markers in 7.3. **Coupang (2026-10-15):** a `賣家：<name>` line with a seller rating, and no Rocket badge |
-| Q4 | Does BigGo's history show the 原價 as well as the price? How often does it check prices? | BigGo transcribers | Open |
+| Q4 | Does BigGo's history show the 原價 as well as the price? How often does it check prices? | BigGo owner | **Answered (first half) 2026-10-22 (Marvin):** no 原價. BigGo's history view and the history response behind it give a timestamp and a price per point, nothing else; checked on momo and PChome listings. How often BigGo checks prices is still open: the points seen were about a day apart. See `biggo/README.md` |
 | Q5 | Do the scrapers run on GitHub Actions or on a laptop with Task Scheduler? | Team | **Closed 2026-10-13: GitHub Actions** (section 9) |
 | Q6 | Where are snapshots and raw pages kept long term? (The scrapers and workflow live in this repo.) Until decided, outputs live as 90-day workflow artifacts (WF-6), the earliest of which expire around Jan 17; decide before the final report (Dec 20). The repo is public (checked 2026-10-13), so artifact storage has no quota; if it is made private, GitHub Free's 500 MB artifact quota applies and the raw pages may approach it. | Team | Open |
 | Q7 | Coupang refuses GitHub-hosted runners: Akamai answers every request from them with 403 (tested 2026-10-15). Where does the Coupang scraper run? A team member's computer in Taiwan as a self-hosted runner (it must be on at every run time), a paid proxy, or no Coupang snapshots (BigGo history only)? | Team | **Answered 2026-10-15 (Marvin):** on Marvin's laptop, in his everyday Chrome, which Coupang serves normally. A Chrome extension saves the pages at each run time (the laptop must be awake: it ignores wake timers, so the wake task tried for this was removed on 2026-10-19); each run reports to Healthchecks.io, which emails when a run fails or is missing; `scrape_coupang.R --saved` writes the CSVs. Outputs are copied to the Q6 storage by hand. See `scrapers/coupang/README.md`. **Superseded 2026-10-20:** Coupang was dropped from the daily snapshots (BigGo history only); the extension is switched off. It collected on Oct 19 and 20 only |
