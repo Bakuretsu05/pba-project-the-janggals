@@ -1,0 +1,10 @@
+{
+  "original_rows": 1397,
+  "original_bytes": 224745,
+  "original_sha256": "6a888791005a1a6818f01753e5bccfdcdf764446f184fb350a9c14cc08851842",
+  "original_is_unchanged_prefix": true,
+  "final_rows": 2867,
+  "final_bytes": 748126,
+  "final_sha256": "b684d8e7ae09294867003c6c67fcce97542452f8acf6b5514d8bbac56a7e46a1",
+  "full_evidence_rebuild_byte_identical": true
+}

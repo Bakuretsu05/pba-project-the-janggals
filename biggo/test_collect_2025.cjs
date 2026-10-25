@@ -96,9 +96,9 @@ function rawFixture(t) {
   const result=runRebuild(root);assert.equal(result.status,0,result.stderr);
   return {root,first,zero,save,ts};
 }
-test('fresh checkout with all 1397 rows and no raw refuses rebuild without modifying outputs',t=>{
+test('fresh checkout with populated CSV and no raw refuses rebuild without modifying outputs',t=>{
   const root=checkout(t,true),before=snapshot(root);
-  assert.equal(c.parseCSV(before[0].toString()).length,1397);
+  assert.ok(c.parseCSV(before[0].toString()).length>=1397);
   refusedWithoutChanges(root,before);
 });
 test('an empty raw directory cannot erase existing records',t=>{
@@ -125,5 +125,45 @@ test('a valid but truncated history cannot replace existing records',t=>{
 test('complete fixture evidence rebuilds without changing existing outputs',t=>{
   const {root}=rawFixture(t),before=snapshot(root);
   const result=runRebuild(root);assert.equal(result.status,0,result.stderr);
+  assert.deepEqual(snapshot(root),before);
+});
+
+function visibleRecord(table) {
+  return {source:'biggo_visible_table',product_id:t.product_id,platform:t.platform,history_id:t.history_id,
+    source_url:'https://biggo.com.tw/s/test/?m=cp&c%5B%5D=tw_pec_momoshop',
+    listing_url:'/r/?i=tw_pec_momoshop&id=123&purl='+encodeURIComponent('https://www.momoshop.com.tw/product/123'),
+    title:'測試商品',range:'最近2年',collected_at:'2026-10-25T14:00:00Z',table};
+}
+test('visible-table evidence retains displayed Taiwan timestamps without claiming an HTTP status',()=>{
+  const r=c.extract(t,visibleRecord('現在\t$110\t—\n2025-10-01 00:04\t$110\t10\n2025-09-20 12:00\t$100\t—'));
+  assert.deepEqual(r.rows.map(x=>[x.changed_at,x.price]),[['2025-09-20 12:00',100],['2025-10-01 00:04',110]]);
+  assert.match(r.rows[0].note,/displayed minute precision/);
+});
+test('same-minute visible reversals remain distinct without inventing sub-minute timestamps',()=>{
+  const r=c.extract(t,visibleRecord('現在\t$90\t—\n2025-10-01 08:00\t$90\t10\n2025-10-01 08:00\t$100\t10\n2025-10-01 08:00\t$90\t10\n2025-09-20 12:00\t$100\t—'));
+  assert.deepEqual(r.rows.map(x=>x.price),[100,90,100,90]);
+  assert.notEqual(r.rows[1].note,r.rows[3].note);
+  assert.ok(r.rows.slice(1).every(x=>x.changed_at==='2025-10-01 08:00'));
+});
+test('visible evidence rejects wrong identity, range and calendar dates',()=>{
+  const r=visibleRecord('2025-09-20 12:00\t$100\t—');
+  assert.throws(()=>c.extract(t,{...r,history_id:'wrong'}));
+  assert.throws(()=>c.extract(t,{...r,range:'最近180天'}));
+  assert.throws(()=>c.extract(t,{...r,table:'2025-02-30 12:00\t$100\t—'}));
+});
+test('catalog correction refuses an unprotected snapshot without modifying outputs',t=>{
+  const root=checkout(t,true),before=snapshot(root),baseline=path.join(root,'wrong-baseline.csv');
+  fs.writeFileSync(baseline,'not the protected original');
+  assert.throws(()=>require('./apply_catalog_variants.cjs').apply(baseline,path.join(root,'biggo')),/Wrong protected original CSV/);
+  assert.deepEqual(snapshot(root),before);
+});
+
+test('catalog correction cannot change a listing in the protected original collection',t=>{
+  const root=checkout(t,true),before=snapshot(root),baseline=path.join(root,'original.csv');
+  fs.writeFileSync(baseline,fs.readFileSync(path.join(__dirname,'price_changes.csv')).subarray(0,224745));
+  const original=c.parseCSV(fs.readFileSync(baseline,'utf8'))[0];
+  const target=c.targets().find(t=>t.product_id===original.product_id&&t.platform===original.platform),raw=path.join(root,'biggo/raw/2025');fs.mkdirSync(raw,{recursive:true});
+  fs.writeFileSync(path.join(raw,target.product_id+'_'+target.platform+'_catalog_variant.json.gz'),zlib.gzipSync(JSON.stringify({correction:true,catalog_variant:'other',correction_reason:'test'})));
+  assert.throws(()=>require('./apply_catalog_variants.cjs').apply(baseline,path.join(root,'biggo')),/may not change the protected collection/);
   assert.deepEqual(snapshot(root),before);
 });

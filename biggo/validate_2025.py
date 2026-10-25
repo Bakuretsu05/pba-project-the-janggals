@@ -8,7 +8,7 @@ import re
 from collections import Counter
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
-from urllib.parse import urlparse, parse_qs
+from urllib.parse import urlparse, parse_qs, urljoin
 
 BASE = Path(__file__).resolve().parent
 TW = timezone(timedelta(hours=8))
@@ -24,12 +24,17 @@ def read(path):
     assert '\ufffd' not in text, f'Replacement character: {path}'
     return list(csv.DictReader(io.StringIO(text.lstrip('\ufeff'), newline='')))
 
-def item_id(platform, link):
+def item_id(platform, link, response_url=False):
     u = urlparse(link)
     if platform == 'momo':
         return parse_qs(u.query).get('i_code', [None])[0] or re.search(r'/product/(\d+)', u.path)[1]
     if platform == 'pchome':
         return re.search(r'/prod/([^/]+)', u.path)[1]
+    if response_url and u.hostname=='coupang.onelink.me':
+        query=parse_qs(u.query);ident=query['pageKey'][0]
+        deep=parse_qs(urlparse(query['deep_link_value'][0]).query)
+        assert ident.isdigit() and deep['pId']==[ident], 'Coupang referral identity mismatch'
+        return ident
     return re.search(r'/products/(\d+)', u.path)[1]
 
 def audit(base=BASE, raw=False):
@@ -78,16 +83,21 @@ def audit(base=BASE, raw=False):
         assert int(r['rows'])==len(grouped[k]), f'Status/CSV row count differs: {k}'
     verification=read(BASE/'verification_2025.csv') if (BASE/'verification_2025.csv').exists() else []
     chart_checks=read(BASE/'chart_checks_2025.csv') if (BASE/'chart_checks_2025.csv').exists() else []
-    assert not any(r['result']!='match' for r in chart_checks), 'Unresolved chart discrepancy'
+    allowed={'match','corrected_variant_match','baseline_window_clip','discrepancy','catalog_variant_unavailable'}
+    assert all(r['result'] in allowed for r in chart_checks), 'Unknown chart review result'
     assert not any(r['result']!='match' for r in verification), 'Unresolved repeat discrepancy'
     categories={category:sum(r['status']=='retrieved' and targets[k][0]['category']==category for k,r in declared.items()) for category in ['3C','APPL','BEAU','FOOD','HOME']}
     blocker=json.loads((BASE/'access_blocker_2025.json').read_text(encoding='utf-8')) if (BASE/'access_blocker_2025.json').exists() else None
     common={'target_listings':len(targets),'price_change_rows':len(rows),
+            'attempted_listings':sum(r['status']!='not_attempted' for r in status),
+            'all_listings_attempted':all(r['status']!='not_attempted' for r in status),
             'reported_retrieved':sum(r['status']=='retrieved' for r in status),
             'retrieved_counts_source':'collection_status_2025.csv (declared inventory)',
             'reported_retrieved_by_category':categories,
             'with_2025_records':sum(bool(r) for r in grouped.values()),
             'independently_retrieved_twice':len(verification),'independently_chart_checked':len(chart_checks),
+            'chart_review_results':dict(Counter(r['result'] for r in chart_checks)),
+            'unresolved_chart_reviews':[['_'.join((r['product_id'],r['platform'])),r['result']] for r in chart_checks if r['result'] in ('discrepancy','catalog_variant_unavailable')],
             'independent_verification_source':'saved audit records; no new website checks performed',
             'dataset_complete':all(r['status']=='retrieved' for r in status),
             'login_blocker':blocker}
@@ -99,15 +109,44 @@ def audit(base=BASE, raw=False):
     absent=[k for k in required if not (BASE/'raw/2025'/('_'.join(k)+'.json.gz')).is_file()]
     assert not absent, f'Full raw verification unavailable: missing evidence for {len(absent)} collected listings. Use CSV-only validation or restore the evidence bundle.'
     assert (BASE/'raw/2025/requests.jsonl').is_file(), 'Full raw verification unavailable: missing requests.jsonl. Use CSV-only validation or restore the evidence bundle.'
-    checked=0; expected_rows=0; missing=[]; issues=[]; counts=Counter(); prior_differences=[]
+    # Failed searches/excluded variants need attempt evidence too, without
+    # turning their displayed prices into accepted history records.
+    for k,r in declared.items():
+        if r['status']!='failed':continue
+        file=BASE/'raw/2025'/('_'.join(k)+'.json.gz')
+        assert file.is_file(), f'Missing failed-attempt evidence: {k}'
+        with gzip.open(file,'rt',encoding='utf-8') as f: failed=json.load(f)
+        assert failed['source']=='biggo_visible_error' and failed['error']
+        assert failed['product_id']==k[0] and failed['platform']==k[1]
+        assert failed['history_id']==SHOPS[k[1]]+'-'+targets[k][1]
+    checked=0; expected_rows=0; missing=[]; issues=[]; counts=Counter(); prior_differences=[]; sources=Counter()
     for k,(p,ident) in targets.items():
         file=BASE/'raw/2025'/('_'.join(k)+'.json.gz')
-        if not file.exists(): missing.append(k); continue
+        if k not in required: missing.append(k); continue
         with gzip.open(file,'rt',encoding='utf-8') as f: record=json.load(f)
-        d=record['data']
+        visible=record.get('source')=='biggo_visible_table'
+        if visible:
+            assert record['range']=='最近2年'
+            assert record['product_id']==k[0] and record['platform']==k[1]
+            link=urlparse(urljoin('https://biggo.com.tw',record['listing_url']))
+            query=parse_qs(link.query)
+            assert link.hostname=='biggo.com.tw' and query['id']==[ident] and query['i']==[SHOPS[k[1]]]
+            assert item_id(k[1],query['purl'][0],response_url=True)==ident
+            visible_points=[]
+            for line in record['table'].splitlines():
+                if line.startswith('現在\t'):continue
+                match=re.match(r'^(\d{4}-\d\d-\d\d \d\d:\d\d)\t\$([\d,]+)\t',line)
+                assert match, 'Invalid visible table row'
+                when=datetime.strptime(match[1],'%Y-%m-%d %H:%M').replace(tzinfo=TW)
+                visible_points.append({'x':int(when.timestamp()*1000),'y':int(match[2].replace(',',''))})
+            d={'title':record['title'],'result':True,'history_id':record['history_id'],'oid':ident,'nindex':SHOPS[k[1]],'price_history':list(reversed(visible_points))}
+            sources['visible_table_tw_minute']+=1
+        else:
+            d=record['data'];assert record['status']==200
+            sources['api_utc_milliseconds']+=1
         assert isinstance(d['title'],str) and '\ufffd' not in d['title']
         assert d['title'].encode('utf-8').decode('utf-8')==d['title'], 'Chinese title round-trip'
-        assert record['status']==200 and d['result'] is True
+        assert d['result'] is True
         assert d['history_id']==SHOPS[k[1]]+'-'+ident
         assert d['oid']==ident and d['nindex']==SHOPS[k[1]]
         points=sorted(d['price_history'],key=lambda p:p['x'])
@@ -140,11 +179,16 @@ def audit(base=BASE, raw=False):
         expected_rows+=len(selected);checked+=1
     assert expected_rows==len(rows), 'All rows accounted for'
     logs=[json.loads(line) for line in (BASE/'raw/2025/requests.jsonl').read_text().splitlines()]
+    if (BASE/'raw/2025/browser_actions.jsonl').exists():
+        logs += [json.loads(line) for line in (BASE/'raw/2025/browser_actions.jsonl').read_text().splitlines()]
+        logs.sort(key=lambda r:r['sent_at'])
     sent=[datetime.fromisoformat(r['sent_at'].replace('Z','+00:00')).timestamp() for r in logs]
     gaps=[b-a for a,b in zip(sent,sent[1:])]
     assert all(g>=5 for g in gaps), 'Request spacing under 5 seconds'
     restrictions=[r for r in logs if r.get('require_login')]
     result={**common,'validation_mode':'raw_to_csv','raw_to_csv_verified':True,
+            'attempt_evidence_verified':sum(r['status']=='failed' for r in status)+checked,
+            'source_evidence_counts':dict(sources),
             'target_listings':len(targets),'retrieved':checked,'price_change_rows':len(rows),
             'independently_retrieved_twice':len(verification),'missing':missing,
             'independently_chart_checked':len(chart_checks),

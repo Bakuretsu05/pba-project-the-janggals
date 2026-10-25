@@ -73,9 +73,31 @@ function targets() {
 const key=t=>t.product_id+'_'+t.platform;
 const rawFile=(t,verify=false)=>path.join(RAW,key(t)+(verify?'_verify':'')+'.json.gz');
 const readRaw=file=>JSON.parse(zlib.gunzipSync(fs.readFileSync(file)).toString('utf8'));
+function visibleData(t,record) {
+  if(record.history_id!==t.history_id||record.product_id!==t.product_id||record.platform!==t.platform||record.range!=='最近2年')throw Error('Visible history identity or range mismatch');
+  const link=new URL(record.listing_url,'https://biggo.com.tw');
+  if(link.hostname!=='biggo.com.tw'||link.searchParams.get('id')!==t.platform_item_id||link.searchParams.get('i')!==SHOPS[t.platform])throw Error('Visible listing link mismatch');
+  const source=new URL(record.source_url);
+  if(source.hostname!=='biggo.com.tw'||!source.searchParams.getAll('c[]').includes(SHOPS[t.platform]))throw Error('Visible search platform mismatch');
+  const purl=link.searchParams.get('purl');
+  if(itemID(t.platform,purl,true)!==t.platform_item_id)throw Error('Visible product URL mismatch');
+  const points=[];
+  for(const line of record.table.split('\n')) {
+    if(line.startsWith('現在\t'))continue;
+    const match=line.match(/^(\d{4}-\d\d-\d\d \d\d:\d\d)\t\$([\d,]+)\t/);
+    if(!match)throw Error('Invalid visible history row');
+    const x=Date.parse(match[1].replace(' ','T')+':00+08:00');
+    if(!Number.isSafeInteger(x)||tw(x)!==match[1])throw Error('Invalid visible calendar timestamp');
+    points.push({x,y:Number(match[2].replace(/,/g,''))});
+  }
+  if(!points.length||!record.title)throw Error('Visible history is empty');
+  return {result:true,history_id:t.history_id,oid:t.platform_item_id,nindex:SHOPS[t.platform],purl,currency:'TWD',title:record.title,price_history:points.reverse()};
+}
 function extract(t, record) {
-  const b=record.data;
-  if(record.status!==200||b.result!==true||!Array.isArray(b.price_history)) throw Error('No successful history');
+  if(record.source==='biggo_visible_error')throw Error(record.error);
+  const visible=record.source==='biggo_visible_table';
+  const b=visible?visibleData(t,record):record.data;
+  if((!visible&&record.status!==200)||b.result!==true||!Array.isArray(b.price_history)) throw Error('No successful history');
   if(b.history_id!==t.history_id||b.oid!==t.platform_item_id||b.nindex!==SHOPS[t.platform])throw Error('Response identity mismatch');
   if(itemID(t.platform,b.purl,true)!==t.platform_item_id)throw Error('Response product URL mismatch');
   if(b.currency!=='TWD')throw Error('Unexpected currency');
@@ -87,17 +109,25 @@ function extract(t, record) {
   const before=changes.filter(p=>p.x<START).slice(-1);
   const selected=[...before,...changes.filter(p=>p.x>=START&&p.x<END)];
   const notes=[];
+  if(visible)notes.push('Source: signed-in BigGo visible history table; Taiwan time at displayed minute precision');
+  if(record.catalog_variant)notes.push('Selected catalog variant: '+record.catalog_variant);
+  if(visible) {
+    const period=points.filter(p=>p.x>=START&&p.x<END).map(p=>p.y);
+    if(period.length!==Number(t.coverage.n_points_2025_10_01_to_11_25)||(period.length&&(Math.min(...period)!==Number(t.coverage.min_price_in_period)||Math.max(...period)!==Number(t.coverage.max_price_in_period))))notes.push('Visible 2025 history differs from prior coverage summary; verify coverage/selected variant');
+  }
   if(t.coverage.class!=='OK')notes.push('Coverage '+t.coverage.class+' (2026-10-22): '+t.coverage.note);
   if(!before.length)notes.push('No historical baseline before 2025-10-01; first observed '+(points[0]?tw(points[0].x):'NA'));
   if(points.length&&points.at(-1).x<END-60000)notes.push('Tracking last observed '+tw(points.at(-1).x)+'; do not carry price through 2025-11-25 without evidence');
   if(before.length===1&&before[0].x===points[0]?.x)notes.push('Baseline is first observed point in available history; earlier change time unknown');
   const minuteCounts=new Map();for(const p of selected)minuteCounts.set(tw(p.x),(minuteCounts.get(tw(p.x))||0)+1);
-  const rows=selected.map(p=>({product_id:t.product_id,platform:t.platform,biggo_url:t.biggo_url,changed_at:tw(p.x),price:p.y,entered_by:'Albert',entered_on:tw(Date.parse(record.collected_at),true),note:[...notes,...(minuteCounts.get(tw(p.x))>1?['Distinct source change UTC milliseconds='+p.x]:[])].join(' | ')||'NA'}));
+  const rows=selected.map((p,eventIndex)=>({product_id:t.product_id,platform:t.platform,biggo_url:t.biggo_url,changed_at:tw(p.x),price:p.y,entered_by:'Albert',entered_on:tw(Date.parse(record.collected_at),true),note:[...notes,...(minuteCounts.get(tw(p.x))>1?[visible?'Distinct visible change in table order='+eventIndex:'Distinct source change UTC milliseconds='+p.x]:[])].join(' | ')||'NA'}));
   return {rows,points,changes,baseline:before.length,first:points[0]?tw(points[0].x):'NA',last:points.length?tw(points.at(-1).x):'NA',title:b.title,note:notes.join(' | ')||'NA'};
 }
 function rebuild(list) {
   if(!fs.existsSync(RAW))throw Error('Refusing rebuild: required raw/2025 evidence is unavailable; existing CSV and status files were not changed.');
   const rows=[], coverage=[];
+  const chartFile=path.join(DIR,'chart_checks_2025.csv');
+  const chartReviews=fs.existsSync(chartFile)?readCSV(chartFile):[];
   for(const t of list) {
     let c={product_id:t.product_id,platform:t.platform,history_id:t.history_id,prior_class:t.coverage.class,status:'not_attempted',rows:0,baseline:0,title:t.coverage.title,note:t.coverage.note||'NA'};
     if(fs.existsSync(rawFile(t))) {
@@ -107,6 +137,8 @@ function rebuild(list) {
       const attempt=readRaw(path.join(RAW,key(t)+'_attempt1.json.gz'));
       c={...c,status:attempt.data.require_login?'blocked_login':'failed',note:'HTTP '+attempt.status+'; '+JSON.stringify(attempt.data)};
     }
+    const review=chartReviews.find(r=>r.product_id===t.product_id&&r.platform===t.platform&&r.result==='discrepancy');
+    if(review)c.note+=' | UNRESOLVED independent chart discrepancy: '+review.note;
     coverage.push(c);
   }
   // Check all prior records before either output is written. Never turn missing,
@@ -229,4 +261,4 @@ async function collect(mode='collect') {
   } finally {try{rebuild(list);}finally{await browser.close();}}
 }
 if(require.main===module)collect(process.argv[2]||'collect').catch(e=>{console.error(e.message);process.exitCode=1;});
-module.exports={parseCSV,itemID,tw,extract,targets,rebuild,auditSample,verifySaved,HEADER,START,END};
+module.exports={parseCSV,itemID,tw,extract,visibleData,targets,rebuild,auditSample,verifySaved,HEADER,START,END};

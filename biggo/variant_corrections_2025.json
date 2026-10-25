@@ -1,0 +1,72 @@
+[
+  {
+    "product_id": "BEAU-007",
+    "platform": "coupang",
+    "old_rows": 27,
+    "new_rows": 39,
+    "selected_variant": "150ml 2瓶",
+    "reason": "Catalog requires 150ml x2; initial default option was 150ml x1."
+  },
+  {
+    "product_id": "BEAU-012",
+    "platform": "coupang",
+    "old_rows": 67,
+    "new_rows": 34,
+    "selected_variant": "300ml 4瓶",
+    "reason": "Catalog size/pack selection corrected from 150ml 1瓶 to 300ml 4瓶"
+  },
+  {
+    "product_id": "FOOD-009",
+    "platform": "coupang",
+    "old_rows": 62,
+    "new_rows": 69,
+    "selected_variant": "330ml 24罐",
+    "excluded": false,
+    "reason": "Catalog size/pack selection corrected from 250ml 24罐 to 330ml 24罐"
+  },
+  {
+    "product_id": "FOOD-010",
+    "platform": "coupang",
+    "old_rows": 28,
+    "new_rows": 30,
+    "selected_variant": "330ml 48罐",
+    "excluded": false,
+    "reason": "Catalog size/pack selection corrected from 330ml 24罐 to 330ml 48罐"
+  },
+  {
+    "product_id": "FOOD-011",
+    "platform": "coupang",
+    "old_rows": 41,
+    "new_rows": 98,
+    "selected_variant": "580ml 24瓶",
+    "excluded": false,
+    "reason": "Catalog size/pack selection corrected from 900ml 12瓶 to 580ml 24瓶"
+  },
+  {
+    "product_id": "FOOD-020",
+    "platform": "coupang",
+    "old_rows": 32,
+    "new_rows": 21,
+    "selected_variant": "62g 10包",
+    "excluded": false,
+    "reason": "Catalog size/pack selection corrected from 28g 5包 to 62g 10包"
+  },
+  {
+    "product_id": "HOME-013",
+    "platform": "coupang",
+    "old_rows": 0,
+    "new_rows": 0,
+    "selected_variant": "1瓶",
+    "excluded": false,
+    "reason": "Catalog size/pack selection corrected from 2瓶 to 1瓶"
+  },
+  {
+    "product_id": "HOME-013",
+    "platform": "coupang",
+    "old_rows": 0,
+    "new_rows": 0,
+    "selected_variant": "Unavailable: catalog requires 750ml x1",
+    "excluded": true,
+    "reason": "MISMATCH: exact listing default title is 500mL. Catalog requires 750ml x1; observed options offer 500ml single bottle and 750ml multipacks, no confirmed 750ml single bottle. Exclude newly collected default-option records; no substitute."
+  }
+]

@@ -41,12 +41,12 @@ class ValidationTests(unittest.TestCase):
         report=json.loads(result.stdout)
         self.assertEqual(report['validation_mode'],'csv_only')
         self.assertFalse(report['raw_to_csv_verified'])
-        self.assertEqual(report['price_change_rows'],1397)
-        self.assertEqual(report['reported_retrieved_by_category'],{'3C':72,'APPL':44,'BEAU':0,'FOOD':0,'HOME':0})
-        self.assertFalse(report['dataset_complete'])
+        self.assertEqual(report['price_change_rows'],len(validator.read(self.base/'price_changes.csv')))
+        self.assertEqual(set(report['reported_retrieved_by_category']),{'3C','APPL','BEAU','FOOD','HOME'})
+        self.assertEqual(sum(report['reported_retrieved_by_category'].values()),report['reported_retrieved'])
         self.assertTrue(report['login_blocker']['response']['require_login'])
-        self.assertEqual(report['independently_chart_checked'],1)
-        self.assertEqual(report['independently_retrieved_twice'],0)
+        self.assertEqual(report['independently_chart_checked'],len(validator.read(self.base/'chart_checks_2025.csv')))
+        self.assertEqual(report['independently_retrieved_twice'],len(validator.read(self.base/'verification_2025.csv')))
         self.assertEqual({p.name:p.read_bytes() for p in self.base.iterdir()},before)
 
     def test_explicit_raw_mode_fails_clearly_without_evidence(self):
@@ -60,7 +60,7 @@ class ValidationTests(unittest.TestCase):
         (raw/'requests.jsonl').write_text('',encoding='utf-8')
         result=self.cli('--raw')
         self.assertEqual(result.returncode,1)
-        self.assertIn('missing evidence for 116 collected listings',result.stderr)
+        self.assertRegex(result.stderr,r'missing evidence for \d+ collected listings')
 
     def test_csv_only_checks_calendar_dates(self):
         self.rewrite(lambda rows:rows[0].update(changed_at='2025-02-30 10:00'))
@@ -81,5 +81,21 @@ class ValidationTests(unittest.TestCase):
         self.rewrite(lambda rows:rows[1].update(price=rows[0]['price']))
         result=self.cli();self.assertEqual(result.returncode,1)
         self.assertIn('Consecutive equal prices',result.stderr)
+
+    def test_visible_coupang_referral_requires_matching_product_ids(self):
+        url='https://coupang.onelink.me/yowQ?pageKey=123&deep_link_value=coupang%3A%2F%2Fproduct%3FpId%3D123%26itemId%3D456'
+        self.assertEqual(validator.item_id('coupang',url,response_url=True),'123')
+        with self.assertRaises(AssertionError):
+            validator.item_id('coupang',url.replace('pageKey=123','pageKey=999'),response_url=True)
+
+    def test_csv_validation_reports_unresolved_chart_findings(self):
+        path=self.base/'chart_checks_2025.csv'
+        rows=validator.read(path);rows[0]['result']='discrepancy'
+        with path.open('w',encoding='utf-8',newline='') as f:
+            writer=csv.DictWriter(f,fieldnames=rows[0].keys());writer.writeheader();writer.writerows(rows)
+        result=self.cli();self.assertEqual(result.returncode,0,result.stderr)
+        report=json.loads(result.stdout)
+        self.assertIn([rows[0]['product_id']+'_'+rows[0]['platform'],'discrepancy'],report['unresolved_chart_reviews'])
+        self.assertFalse(report['raw_to_csv_verified'])
 
 if __name__=='__main__':unittest.main()
