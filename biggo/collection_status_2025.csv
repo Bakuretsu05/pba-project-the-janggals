@@ -1,0 +1,336 @@
+product_id,platform,history_id,prior_class,status,rows,baseline,first_point_tw,last_point_tw,title,note
+3C-002,momo,tw_pec_momoshop-15770661,SHORT,retrieved,0,0,2026-10-14 18:51,2026-10-19 14:10,【SanDisk 晟碟】行車記錄器/監控專用High Endurance microSD 記憶卡 128GB(公司貨),Coverage SHORT (2026-10-22): first point 2026-10-14 is after 2025-10-01 | No historical baseline before 2025-10-01; first observed 2026-10-14 18:51
+3C-002,pchome,tw_ec_pchome24h-DGAG0H-A9009YHLL,OK,retrieved,30,1,2024-10-25 20:38,2026-10-14 13:22,SanDisk 晟碟 行車記錄器/監控專用High Endurance microSD 記憶卡 128GB (公司貨),NA
+3C-003,momo,tw_pec_momoshop-8697108,OK,retrieved,8,1,2024-10-25 20:38,2026-09-08 22:43,【Apple 蘋果】原廠公司貨A2305 / 20W USB-C電源轉接器(盒裝),NA
+3C-003,pchome,tw_ec_pchome24h-DYAJD2-A900GAFRM,OK,retrieved,1,1,2024-10-25 20:40,2026-02-04 12:40,Apple 蘋果 20W USB-C 電源轉接器,Baseline is first observed point in available history; earlier change time unknown
+3C-004,momo,tw_pec_momoshop-9372221,OK,retrieved,12,1,2024-10-25 20:40,2026-09-01 04:29,【Apple 蘋果】原廠 60W USB-C 編織充電連接線 - 1公尺(A2795),NA
+3C-004,pchome,tw_ec_pchome24h-DYAJBS-A900GPCJK,UNCERTAIN,retrieved,1,1,2024-10-25 20:40,2025-01-01 12:42,Apple 蘋果 60W USB-C 充電連接線 (1公尺),Coverage UNCERTAIN (2026-10-22): no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat); last point 2025-01-01 is before 2025-11-25; cannot tell unchanged price from stopped tracking | Tracking last observed 2025-01-01 12:42; do not carry price through 2025-11-25 without evidence | Baseline is first observed point in available history; earlier change time unknown
+3C-004,coupang,tw_pec_coupang-499436216041482,OK,retrieved,1,1,2025-06-04 00:11,2026-10-20 05:15,Apple 台灣公司貨 60W USB-C 充電連接線 1m 白色 1條,NA
+3C-005,momo,tw_pec_momoshop-12219772,OK,retrieved,1,1,2025-01-15 05:43,2026-10-23 02:36,【Apple】Apple Pencil USB-C(MUWA3TA/A),NA
+3C-005,pchome,tw_ec_pchome24h-DYAJG7-A900GQUUT,OK,retrieved,1,1,2024-10-25 20:40,2026-07-16 18:01,Apple 蘋果 Pencil (USB-C),NA
+3C-005,coupang,tw_pec_coupang-499795265290246,OK,retrieved,17,1,2025-06-12 00:12,2026-10-25 01:15,Apple 台灣公司貨 Pencil USB-C 白色 1支,NA
+3C-006,momo,tw_pec_momoshop-13305809,OK,retrieved,1,1,2024-11-05 06:06,2026-10-22 23:00,【Apple】EarPods USB-C雙耳線控(MYQY3ZP/A 原廠耳機),Baseline is first observed point in available history; earlier change time unknown
+3C-006,pchome,tw_ec_pchome24h-DYAJD2-A900HXL3J,OK,retrieved,1,1,2024-10-25 20:40,2026-10-16 21:02,Apple 蘋果 EarPods 具備 USB-C 耳機接頭,NA
+3C-007,momo,tw_pec_momoshop-11833753,OK,retrieved,4,1,2024-10-25 20:41,2026-09-23 00:48,【Logitech 羅技】Pebble M350s 無線藍牙滑鼠 - 石墨灰(不附接收器),NA
+3C-007,pchome,tw_ec_pchome24h-DCBE2G-A900GOOYA,OK,retrieved,2,1,2024-10-25 20:41,2026-09-01 17:28,Logitech 羅技 M350S 鵝卵石無線滑鼠 石墨灰,NA
+3C-007,coupang,tw_pec_coupang-463932548415502,OK,retrieved,14,1,2025-06-04 16:55,2026-10-24 19:35,logitech 羅技 M350S 無線藍牙滑鼠,NA
+3C-008,momo,tw_pec_momoshop-13606179,OK,retrieved,12,1,2025-02-03 16:49,2026-10-23 01:10,【Anker】官方授權直營 A1664超薄磁吸行動電源10000mAh Qi2 30W(黑白粉綠 Wh標示/MagSafe/溫度監控/輕薄),NA
+3C-008,pchome,tw_ec_pchome24h-DYAOFA-A900I84NN,OK,retrieved,12,1,2025-02-08 21:27,2026-10-21 20:28,Anker 授權直營 A1664 超薄磁吸行動電源 10000mAh Qi2 30W(黑/白 Wh標示/MagSafe/溫度監控/輕薄),NA
+3C-008,coupang,tw_pec_coupang-570104886509571,OK,retrieved,19,1,2025-07-28 19:37,2026-10-22 23:15,ANKER A1664 MagGo 超薄磁吸行動電源 10000mAh Qi2 15W (38.7Wh 機身標示) 黑/白/綠/粉 4色,NA
+3C-009,momo,tw_pec_momoshop-9956761,OK,retrieved,4,1,2024-10-25 20:41,2026-09-23 00:48,【Logitech 羅技】M331 SilentPlus 靜音滑鼠(黑),NA
+3C-009,pchome,tw_ec_pchome24h-DSAR0V-A900BG55G,OK,retrieved,3,1,2024-10-25 20:41,2026-08-17 13:30,Logitech 羅技 M331 無線靜音滑鼠(黑),NA
+3C-009,coupang,tw_pec_coupang-463932540010509,OK,retrieved,29,1,2025-06-04 00:12,2026-10-25 14:15,logitech 羅技 靜音無線滑鼠 M331 黑色,NA
+3C-010,momo,tw_pec_momoshop-14533852,SHORT,retrieved,6,0,2025-10-19 13:47,2026-09-02 15:35,【Samsung 三星】T7 1TB Type-C USB 3.2 Gen 2 外接式ssd固態硬碟(靛青藍/深空灰),Coverage SHORT (2026-10-22): first point 2025-10-19 is after 2025-10-01 | No historical baseline before 2025-10-01; first observed 2025-10-19 13:47
+3C-010,pchome,tw_ec_pchome24h-DRAA0A-A900J9SI5,SHORT,retrieved,5,0,2025-10-03 13:05,2026-10-14 13:50,Samsung 三星 T7 1TB USB 3.2 Gen 2移動固態硬碟 深空灰 (MU-PC1T0T/WW),Coverage SHORT (2026-10-22): first point 2025-10-03 is after 2025-10-01 | No historical baseline before 2025-10-01; first observed 2025-10-03 13:05
+3C-011,momo,tw_pec_momoshop-14470324,OK,retrieved,1,0,2025-10-01 00:57,2026-10-22 14:02,【Logitech 羅技】MX Master 3S LITE 無線藍芽滑鼠(不附bolt接收器),No historical baseline before 2025-10-01; first observed 2025-10-01 00:57
+3C-011,pchome,tw_ec_pchome24h-DSAR0X-A900J9W5M,OK,retrieved,5,0,2025-10-01 18:36,2026-10-25 15:04,Logitech 羅技 MX Master 3S Lite 無線藍牙滑鼠-石墨灰,No historical baseline before 2025-10-01; first observed 2025-10-01 18:36
+3C-012,momo,tw_pec_momoshop-9779579,OK,retrieved,7,1,2024-10-25 20:42,2026-10-25 02:18,【Logitech 羅技】M650多工靜音無線藍牙滑鼠,NA
+3C-012,pchome,tw_ec_pchome24h-DSAR0S-A900DQZVE,OK,retrieved,3,1,2024-10-25 20:42,2026-09-28 13:05,Logitech 羅技 M650 多工靜音無線藍芽滑鼠-石墨灰,NA
+3C-012,coupang,tw_pec_coupang-499448270471188,OK,retrieved,25,1,2025-06-04 00:10,2026-10-24 12:15,logitech 羅技 多工靜音無線滑鼠 M650 白色,NA
+3C-013,momo,tw_pec_momoshop-12127122,OK,retrieved,1,1,2024-10-25 20:42,2026-05-05 03:41,【Logitech 羅技】K380s 跨平台藍牙鍵盤,NA
+3C-013,pchome,tw_ec_pchome24h-DSAR0V-A900GVFX2,OK,retrieved,1,1,2024-10-25 20:42,2026-05-06 00:01,Logitech 羅技 Pebble Keys 2 K380s 跨平台藍牙鍵盤,NA
+3C-013,coupang,tw_pec_coupang-463932548399110,OK,retrieved,32,1,2025-06-08 00:09,2026-10-25 18:15,logitech 羅技 跨平台藍牙鍵盤 K380s,NA
+3C-014,momo,tw_pec_momoshop-4446530,OK,retrieved,3,1,2024-10-25 20:42,2026-09-23 05:03,【Logitech 羅技】C270 網路視訊攝影機 Webcam,NA
+3C-014,pchome,tw_ec_pchome24h-DCAS4K-A9007OPUK,OK,retrieved,3,1,2024-10-25 20:42,2026-09-07 13:06,Logitech 羅技 C270 HD 網路攝影機/視訊鏡頭/視訊攝影機,NA
+3C-014,coupang,tw_pec_coupang-465354329407491,OK,retrieved,3,1,2025-09-17 20:32,2026-10-21 19:15,logitech 羅技 HD 網路攝影機 C270 黑色,NA
+3C-015,momo,tw_pec_momoshop-10204543,OK,retrieved,2,1,2024-10-25 20:42,2026-09-15 03:01,【SONY 索尼】WH-1000XM5(無線藍牙降噪 耳罩式耳機),NA
+3C-015,pchome,tw_ec_pchome24h-DYAQ9M-A900HBWLK,OK,retrieved,53,1,2024-10-25 20:43,2026-10-13 14:14,SONY 索尼 WH-1000XM5 主動式降噪旗艦 藍牙耳機,NA
+3C-015,coupang,tw_pec_coupang-473323729272839,UNCERTAIN,retrieved,54,1,2025-06-04 00:10,2026-10-25 14:15,SONY 索尼 無線防噪立體聲耳罩式耳機,Coverage UNCERTAIN (2026-10-22): title has no model (WH-1000XM5 not stated); price 5277 vs momo 8900
+3C-016,momo,tw_pec_momoshop-14119526,OK,retrieved,19,1,2025-07-10 15:24,2026-10-23 09:29,【JBL】JBL GO 4可攜式防水藍牙喇叭,NA
+3C-016,pchome,tw_ec_pchome24h-DCAIDC-A900HWI6H,OK,retrieved,5,1,2024-12-19 19:09,2026-10-20 22:38,JBL GO 4 可攜式防水藍牙喇叭 便攜式 無線喇叭,NA
+3C-016,coupang,tw_pec_coupang-507083132682242,UNCERTAIN,retrieved,39,1,2025-06-04 16:53,2026-10-19 02:15,JBL 可攜式防水藍牙喇叭,Coverage UNCERTAIN (2026-10-22): title has no model (Go 4 not stated)
+3C-017,momo,tw_pec_momoshop-11933858,OK,retrieved,6,1,2024-10-25 20:43,2026-09-23 21:08,【Logitech 羅技】MX Keys S無線智能鍵盤 - 石墨灰(藍牙鍵盤、薄膜鍵盤),NA
+3C-017,pchome,tw_ec_pchome24h-DSAR0V-A900GEH7M,OK,retrieved,5,1,2024-10-25 20:43,2026-10-25 12:49,Logitech 羅技 MX KEYS S 無線智能鍵盤 - 石墨灰,NA
+3C-018,momo,tw_pec_momoshop-11689064,OK,retrieved,13,1,2024-10-25 20:43,2026-03-12 01:02,【Anker soundcore】Liberty 4 NC 降噪真無線藍芽耳機(頂級降噪 至臻完美),NA
+3C-018,pchome,tw_ec_pchome24h-DYAQ0A-A900GJFCK,OK,retrieved,9,1,2024-10-25 20:43,2026-10-23 12:22,soundcore Liberty 4 NC 降噪真無線藍牙耳機,NA
+3C-019,momo,tw_pec_momoshop-11129653,OK,retrieved,8,1,2024-10-25 20:43,2026-09-07 19:35,【SanDisk 晟碟】全新版 Ultra 128GB microSDXC 記憶卡 100MB/s(原廠7年保固),NA
+3C-019,pchome,tw_ec_pchome24h-DGCA15-A900HB8K5,OK,retrieved,31,1,2024-10-25 20:43,2026-10-21 17:22,SanDisk 晟碟 Ultra microSD UHS-I 128GB記憶卡-白 (公司貨) 100MB/s,NA
+3C-020,momo,tw_pec_momoshop-5904337,OK,retrieved,14,1,2024-10-25 20:43,2026-10-20 22:47,【SanDisk 晟碟】Ultra Flair USB 3.0 隨身碟 128GB(公司貨),NA
+3C-020,pchome,tw_ec_pchome24h-DGCD1E-A9006OIV3,OK,retrieved,30,1,2024-10-25 20:44,2026-10-25 20:35,SanDisk 晟碟 Ultra Flair USB 3.0 隨身碟 128GB (公司貨),NA
+3C-021,momo,tw_pec_momoshop-2816572,OK,retrieved,3,1,2024-10-25 20:44,2026-09-23 00:56,【Logitech 羅技】K120 有線鍵盤,NA
+3C-021,pchome,tw_ec_pchome24h-DCAH5V-A74795251,OK,retrieved,3,1,2024-10-25 20:44,2026-08-31 13:14,Logitech 羅技 K120 USB有線鍵盤,NA
+3C-022,momo,tw_pec_momoshop-10131674,OK,retrieved,12,1,2024-10-25 20:44,2026-09-15 01:55,【Kingston 金士頓】DataTraveler Exodia M USB3.2 64GB 隨身碟(DTXM/64GB),NA
+3C-022,pchome,tw_ec_pchome24h-DGCD15-A900F0UJN,OK,retrieved,3,1,2024-10-25 20:44,2026-06-22 16:04,Kingston 金士頓 DataTraveler Exodia M USB 3.2 Gen1 64GB 隨身碟 (DTXM/64GB),NA
+3C-023,momo,tw_pec_momoshop-5708861,OK,retrieved,3,1,2024-10-25 20:44,2026-08-31 00:46,【Logitech G】G304 LIGHTSPEED 無線電競滑鼠(黑色),NA
+3C-023,pchome,tw_ec_pchome24h-DCBE2G-A900BIFE4,OK,retrieved,5,1,2024-10-25 20:44,2026-08-31 15:33,Logitech 羅技 G304 LIGHTSPEED 無線電競遊戲滑鼠 黑色,NA
+3C-024,momo,tw_pec_momoshop-7667886,OK,retrieved,3,1,2024-10-25 20:44,2026-09-23 00:41,【Logitech G】G102 炫彩遊戲有線滑鼠(黑),NA
+3C-024,pchome,tw_ec_pchome24h-DSAR1L-A900FYPGP,OK,retrieved,1,1,2025-03-14 14:45,2026-04-01 12:45,Logitech G 羅技 G102 炫彩遊戲滑鼠-黑,NA
+3C-025,momo,tw_pec_momoshop-10346467,OK,retrieved,9,1,2024-10-25 20:44,2026-09-07 08:59,【SanDisk 晟碟】[極速升級 全新版] 128GB Extreme microSDXC V30 A2 記憶卡(讀取190MB/s 原廠永久保固),NA
+3C-025,pchome,tw_ec_pchome24h-DGAGCT-A900G5RWV,OK,retrieved,21,1,2024-10-25 20:44,2026-10-21 20:43,SanDisk 晟碟 128GB 128G microSDXC Extreme【190MB/s】UHS U3 4K SDSQXAA-128G 手機記憶卡,NA
+3C-026,momo,tw_pec_momoshop-3539798,OK,retrieved,3,1,2024-10-25 20:45,2026-09-23 02:26,【Logitech 羅技】MK270r無線鍵鼠組(黑色),NA
+3C-026,pchome,tw_ec_pchome24h-QABF0Z-A9008V5KV,OK,retrieved,1,1,2024-10-25 20:45,2026-08-31 20:08,Logitech 羅技 MK270R 無線滑鼠鍵盤組,NA
+3C-026,coupang,tw_pec_coupang-463932540043284,OK,retrieved,22,1,2025-06-04 00:12,2026-10-24 19:35,logitech 羅技 台灣公司貨 無線鍵盤滑鼠組合 MK270R 黑色 一般型,NA
+3C-027,momo,tw_pec_momoshop-8147216,OK,retrieved,13,1,2024-10-25 20:45,2026-10-19 09:27,【Apple 蘋果】原廠 USB-C 對 Lightning 連接線 - 1公尺(A2561),NA
+3C-027,pchome,tw_ec_pchome24h-DYAJD2-A900HHSZ7,OK,retrieved,1,1,2024-10-25 20:45,2026-07-26 07:01,Apple 蘋果 USB-C 對 Lightning 連接線 (1 公尺)(MM0A3FE/A),NA
+3C-028,momo,tw_pec_momoshop-9365710,OK,retrieved,1,1,2024-10-25 20:45,2026-07-01 00:27,【TP-Link】WiFi 6 AX1800 雙頻 Gigabit 雙核CPU 無線路由器 分享器(EasyMesh/APP管理/Archer AX23),NA
+3C-028,pchome,tw_ec_pchome24h-DSBC1T-A900BUUUJ,OK,retrieved,1,1,2024-10-25 20:45,2026-07-02 16:49,TP-Link Archer AX23 WiFi 6 AX1800 雙頻4串流 Gigabit 無線路由器 分享器,NA
+3C-028,coupang,tw_pec_coupang-478414175698947,OK,retrieved,102,1,2025-06-04 00:12,2026-10-25 11:15,TP-Link Archer 無線網路分享路由器 Wi-Fi 6分享器 AX23 雙頻 雙核CPU OneMesh 原廠保固 AX1800 1個,NA
+3C-029,momo,tw_pec_momoshop-7114098,OK,retrieved,3,1,2024-10-25 20:45,2026-08-17 13:55,【TP-Link】Tapo C200 1080P 200萬畫素WiFi無線旋轉網路攝影機/監視器 IP CAM  ,Baseline is first observed point in available history; earlier change time unknown
+3C-029,pchome,tw_ec_pchome24h-DSBC1T-A900FD3HL,OK,retrieved,3,1,2024-10-25 20:45,2026-09-29 19:55,TP-Link Tapo C200 wifi無線智慧可旋轉高清網路攝影機監視器IP CAM,Baseline is first observed point in available history; earlier change time unknown
+3C-030,momo,tw_pec_momoshop-13067978,OK,retrieved,3,1,2024-10-25 20:45,2026-09-23 00:48,【Logitech 羅技】M190無線滑鼠(黑色),NA
+3C-030,pchome,tw_ec_pchome24h-DCAN8J-A900AW0RT,OK,retrieved,1,1,2024-10-25 20:45,2026-03-24 05:11,Logitech 羅技 M190 無線滑鼠 - 黑,NA
+3C-031,momo,tw_pec_momoshop-6822349,OK,retrieved,14,1,2024-10-25 20:46,2026-10-16 00:17,【SanDisk 晟碟】Ultra Luxe USB 3.2 Gen 1 隨身碟 128G(公司貨),NA
+3C-031,pchome,tw_ec_pchome24h-DGCA3C-A900GKB1Y,OK,retrieved,24,1,2024-10-25 20:46,2026-10-14 14:35,SanDisk 晟碟 Ultra Luxe USB 3.2 Gen 1 隨身碟 128G(公司貨),NA
+APPL-001,momo,tw_pec_momoshop-13553315,OK,retrieved,2,1,2025-01-02 04:05,2026-08-27 08:57,【Panasonic 國際牌】奈米水離子吹風機(EH-NA9N-H柔霧灰),NA
+APPL-001,pchome,tw_ec_pchome24h-DMAH4C-A900HTGKT,OK,retrieved,9,1,2024-10-25 20:46,2026-10-15 12:26,Panasonic 國際牌 奈米水離子吹風機 EH-NA9N-H,NA
+APPL-002,momo,tw_pec_momoshop-13277461,OK,retrieved,6,1,2024-10-25 20:46,2026-09-22 13:30,【Panasonic 國際牌】奈米水離子吹風機-銀(EH-NA7M-H),NA
+APPL-002,pchome,tw_ec_pchome24h-DMAH4C-A900HTGJZ,OK,retrieved,4,1,2024-10-25 20:46,2026-04-01 20:41,Panasonic 國際牌 奈米水離子吹風機 EH-NA7M-H,NA
+APPL-002,coupang,tw_pec_coupang-493192495398912,OK,retrieved,13,1,2025-06-04 00:11,2026-10-23 23:15,Panasonic 奈米水離子吹風機 獨家保濕科技 EH-NA7M-H 柔霧銀,NA
+APPL-003,momo,tw_pec_momoshop-3668721,OK,retrieved,2,1,2024-10-25 20:46,2026-09-15 14:08,【國際牌Panasonic】負離子大風量吹風機(EH-NE57-A藍色),NA
+APPL-003,pchome,tw_ec_pchome24h-DMAH02-A900AN6MB,OK,retrieved,1,1,2024-10-25 20:46,2026-05-06 22:35,Panasonic 國際牌 負離子吹風機 EH-NE57-A,NA
+APPL-003,coupang,tw_pec_coupang-451592771846147,MISMATCH,retrieved,30,1,2025-06-06 00:10,2026-10-25 16:15,Panasonic 負離子吹風機 EH-NE57-P 粉紅色,"Coverage MISMATCH (2026-10-22): Coupang title says EH-NE57-P pink; product is EH-NE57-A blue (colour variant, different model code)"
+APPL-004,momo,tw_pec_momoshop-13575021,OK,retrieved,31,1,2024-12-31 04:07,2026-10-14 02:06,【Philips 飛利浦】星樂視透視海星氣炸鍋4.2L_NA221_黑白兩色任選,NA
+APPL-004,pchome,tw_ec_pchome24h-DMAC0E-A900I6WNL,OK,retrieved,21,1,2024-12-31 12:43,2026-10-23 20:09,PHILIPS 飛利浦 星樂視透視海星氣炸鍋4.2L(NA221黑),NA
+APPL-005,momo,tw_pec_momoshop-14370503,OK,retrieved,22,1,2025-08-29 01:36,2026-10-19 00:22,【Philips 飛利浦】旋鈕海星氣炸鍋3.2L_黑皮小星_NA110,NA
+APPL-005,pchome,tw_ec_pchome24h-DMAC0E-A900J5TC3,OK,retrieved,16,1,2025-08-29 14:49,2026-10-23 20:09,PHILIPS 飛利浦 旋鈕式海星氣炸鍋3.2L-黑皮小星(NA110),NA
+APPL-006,momo,tw_pec_momoshop-3891112,OK,retrieved,28,1,2024-10-25 20:47,2026-10-19 13:24,【ZOJIRUSHI 象印】日本製 4公升*寬廣視窗微電腦電動熱水瓶(CD-LGF40),NA
+APPL-006,pchome,tw_ec_pchome24h-DMAG0F-A65835140,OK,retrieved,1,1,2024-10-25 20:47,2026-10-22 22:42,ZOJIRUSHI 象印 4L寬廣視窗微電腦熱水瓶CD-LGF40,NA
+APPL-007,momo,tw_pec_momoshop-12049650,OK,retrieved,30,1,2024-10-25 20:47,2026-10-22 22:41,【HITACHI 日立】HITACHI日立 1級能效11公升舒適節電除濕機 RD-22FJ,NA
+APPL-007,pchome,tw_ec_pchome24h-DMBQ01-A900GSFG3,OK,retrieved,13,1,2024-10-25 20:47,2026-10-22 19:08,HITACHI 日立 11公升適節電除濕機 RD-22FJ,NA
+APPL-007,coupang,tw_pec_coupang-450876296626178,OK,retrieved,32,1,2025-06-04 00:09,2026-10-25 09:15,HITACHI 日立 除濕機 11L RD-22FJ ,NA
+APPL-008,momo,tw_pec_momoshop-12651020,OK,retrieved,18,1,2024-10-25 20:47,2026-10-16 00:09,【SHARP 夏普】15坪PCI自動除菌離子空氣清淨機(FP-J60T-W),NA
+APPL-008,pchome,tw_ec_pchome24h-DMAU6T-A900H6XDW,OK,retrieved,17,1,2024-10-25 20:47,2026-10-16 13:58,SHARP 夏普 15坪自動除菌離子空氣清淨機 FP-J60T-W,NA
+APPL-009,momo,tw_pec_momoshop-10553953,OK,retrieved,12,1,2024-10-25 20:47,2026-10-23 01:56,【Honeywell】淨味空氣清淨機 HPA5150WTWV1(適用5-10坪｜小淨★寵物 幼兒 友善),NA
+APPL-009,pchome,tw_ec_pchome24h-DMAU00-A900FHWVG,OK,retrieved,5,1,2024-10-25 20:47,2026-10-23 13:26,Honeywell 淨味空氣清淨機 HPA5150WTWV1 (適用5-10坪 小淨),NA
+APPL-009,coupang,tw_pec_coupang-268229108793353,OK,retrieved,15,1,2024-12-02 07:46,2026-10-24 19:35,Honeywell 淨味空氣清淨機 HPA5150WTWV1 白色,NA
+APPL-010,momo,tw_pec_momoshop-13583749,OK,retrieved,23,1,2025-01-02 20:37,2026-10-25 01:22,【Philips 飛利浦】1.5L不鏽鋼快煮壺/熱水壺/煮水壺_HD9389/80,NA
+APPL-010,pchome,tw_ec_pchome24h-DMAC7N-A900JE1X8,SHORT,retrieved,5,0,2025-10-30 21:15,2026-10-19 14:45,PHILIPS 飛利浦 1.5L 不鏽鋼煮水壺 電茶壺 快煮壼 電熱水壼 HD9389,Coverage SHORT (2026-10-22): first point 2025-10-30 is after 2025-10-01 | No historical baseline before 2025-10-01; first observed 2025-10-30 21:15
+APPL-010,coupang,tw_pec_coupang-555515218214912,OK,retrieved,32,1,2025-06-18 00:10,2026-10-25 03:15,PHILIPS 飛利浦 不鏽鋼快煮壺 1.5L HD9389/80,NA
+APPL-011,momo,tw_pec_momoshop-12286162,OK,retrieved,2,1,2024-10-25 20:48,2026-10-23 04:26,【dyson 戴森】V8 Cyclone SV55 無線吸塵器(全新升級版),NA
+APPL-011,pchome,tw_ec_pchome24h-DMAX00-A900J52LH,OK,retrieved,5,1,2025-08-19 12:28,2026-10-23 14:10,Dyson 戴森 V8 Cyclone SV55 無線吸塵器 入門首選 (長達60分鐘續航力/可換電池式/單鍵電源控制/二年保固),Baseline is first observed point in available history; earlier change time unknown
+APPL-012,momo,tw_pec_momoshop-14263614,OK,retrieved,11,1,2025-07-25 08:46,2026-10-23 14:54,【小米】官方旗艦館 Xiaomi 掃拖機器人 H40(小空間入門高CP首選/90天免倒塵/雙刷抗毛髮纏繞/10000Pa強吸力),Baseline is first observed point in available history; earlier change time unknown
+APPL-012,pchome,tw_ec_pchome24h-DMBL53-A900J1M46,OK,retrieved,2,1,2025-07-29 16:18,2026-10-19 17:52,Xiaomi 小米 掃拖機器人 H40(10000Pa吸力/4L塵袋/精巧尺寸/米家APP/智慧控水/一年保固/掃地機器人),Baseline is first observed point in available history; earlier change time unknown
+APPL-013,momo,tw_pec_momoshop-5786780,OK,retrieved,6,1,2024-10-25 20:48,2026-10-22 21:27,【Panasonic 國際牌】蒸氣電熨斗(NI-M300T藍色),NA
+APPL-013,pchome,tw_ec_pchome24h-DMAL0F-A90092IYU,OK,retrieved,7,1,2024-10-25 20:48,2026-07-23 18:46,Panasonic 國際牌 蒸氣電熨斗NI-M300T (藍),Baseline is first observed point in available history; earlier change time unknown
+APPL-014,momo,tw_pec_momoshop-1840318,OK,retrieved,1,1,2024-10-25 20:48,2026-10-22 04:13,【國際牌】旋轉式電鬍刀(ES-6510),NA
+APPL-014,pchome,tw_ec_pchome24h-ACAD3H-A9005ACCK,OK,retrieved,7,1,2025-05-21 16:44,2026-07-25 04:16,Panasonic 國際牌 單刀頭電鬍刀 ES-6510-K,Baseline is first observed point in available history; earlier change time unknown
+APPL-014,coupang,tw_pec_coupang-455213366329353,UNCERTAIN,retrieved,20,1,2024-10-25 20:49,2026-10-19 02:15,Panasonic 旋轉式刀頭國際電壓充電式刮鬍刀,Coverage UNCERTAIN (2026-10-22): title has no model (ES-6510 not stated); price 498 vs momo 702
+APPL-015,momo,tw_pec_momoshop-13344415,OK,retrieved,8,1,2024-10-25 20:49,2026-10-21 00:39,【Oral-B 歐樂B】iO2 微磁電動牙刷 溫和清潔護牙齦 適用敏感牙齒 霧黑/玫瑰粉,NA
+APPL-015,pchome,tw_ec_pchome24h-DMBA0K-A900HZ0DY,OK,retrieved,4,1,2024-10-25 20:49,2026-10-15 13:52,Oral-B 歐樂B iO2 微震科技電動牙刷 (兩色可選),NA
+APPL-016,momo,tw_pec_momoshop-9621690,OK,retrieved,15,1,2024-10-25 20:49,2026-10-21 00:39,【Oral-B 歐樂B】PRO1 3D電動牙刷-簡約白/孔雀藍,NA
+APPL-016,pchome,tw_ec_pchome24h-DMBA0K-A900C1JM4,OK,retrieved,10,1,2024-10-25 20:49,2026-10-23 13:19,Oral-B 歐樂B PRO1 德製單模式入門小白刷  簡約白 (電動牙刷),NA
+APPL-016,coupang,tw_pec_coupang-252928212287488,UNCERTAIN,retrieved,59,1,2024-10-25 20:49,2026-10-25 18:15,Oral-B 歐樂B 3D電動牙刷,"Coverage UNCERTAIN (2026-10-22): title ""Oral-B 3D"" only; price 869 vs momo 1490"
+APPL-017,momo,tw_pec_momoshop-13150537,OK,retrieved,1,1,2024-10-25 20:49,2026-10-25 01:31,【小米】官方旗艦館 Xiaomi 聲波電動牙刷 T302(銀灰色/藍黑色),NA
+APPL-017,pchome,tw_ec_pchome24h-DYBB14-A900GSJ25,OK,retrieved,1,1,2024-10-25 20:49,2026-10-24 16:56,Xiaomi 小米 聲波電動牙刷 T302 銀灰色,NA
+APPL-017,coupang,tw_pec_coupang-467832001216514,OK,retrieved,29,1,2024-11-04 11:44,2026-10-25 18:15,mijia 米家 聲波電動牙刷 T302,NA
+APPL-018,momo,tw_pec_momoshop-13095437,OK,retrieved,3,1,2024-10-25 20:49,2026-10-23 07:51,【Sodastream】GAIA 快扣機型氣泡水機(2色可選),NA
+APPL-018,pchome,tw_ec_pchome24h-DMAWGY-A900GGI5T,OK,retrieved,7,1,2024-10-25 20:49,2026-10-23 16:59,Sodastream 【快扣鋼瓶機型】GAIA｜快扣機型氣泡水機(黑),NA
+APPL-019,momo,tw_pec_momoshop-6198895,OK,blocked_login,0,0,NA,NA,【Nespresso】膠囊咖啡機 Essenza Mini 咖啡機_多色,"HTTP 429; {""result"":false,""require_login"":true}"
+APPL-019,pchome,tw_ec_pchome24h-QBBA02-A900AISM5,OK,not_attempted,0,0,NA,NA,Nespresso 膠囊咖啡機 Essenza Mini_四色可選,NA
+APPL-020,momo,tw_pec_momoshop-13903670,OK,not_attempted,0,0,NA,NA,【TATUNG 大同】6人份不鏽鋼電鍋TAC-06L-M CW (TAC,NA
+APPL-020,pchome,tw_ec_pchome24h-DMBI4K-A900INYCB,OK,not_attempted,0,0,NA,NA,TATUNG 大同 6人份不鏽鋼電鍋(經典白)TAC-06L-M CW/,NA
+APPL-020,coupang,tw_pec_coupang-532770338029568,SHORT,not_attempted,0,0,NA,NA,TATUNG 大同 不鏽鋼簡配電鍋 6人用,first point 2025-10-03 is after 2025-10-01
+APPL-021,momo,tw_pec_momoshop-8224072,OK,not_attempted,0,0,NA,NA,【國際牌】雙負離子吹風機(EH-NE43/EH-NE43-K黑),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+APPL-021,pchome,tw_ec_pchome24h-DMAH02-A900AYRZ6,OK,not_attempted,0,0,NA,NA,Panasonic 國際牌 雙負離子吹風機(黑) EH-NE43-K,NA
+APPL-022,momo,tw_pec_momoshop-7624448,OK,not_attempted,0,0,NA,NA,【SAMPO 聲寶】家用型吸入式UV捕蚊燈(ML-JA03E),NA
+APPL-022,pchome,tw_ec_pchome24h-DMAL07-A900ALMIN,UNCERTAIN,not_attempted,0,0,NA,NA,SAMPO 聲寶 家用型吸入式UV捕蚊燈 ML-JA03E,last point 2025-11-08 is before 2025-11-25; cannot tell unchanged price from stopped tracking
+APPL-023,momo,tw_pec_momoshop-13424233,OK,not_attempted,0,0,NA,NA,【小米】官方旗艦館 Xiaomi 桌面暖風機(原廠公司貨/含一年保固/P,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+APPL-023,pchome,tw_ec_pchome24h-DMALG2-A900I0P4P,OK,not_attempted,0,0,NA,NA,Xiaomi 小米 桌面暖風機/電暖器,NA
+APPL-024,momo,tw_pec_momoshop-9166250,OK,not_attempted,0,0,NA,NA,【TATUNG 大同】10人份蘋果白不鏽鋼電鍋TAC-10L-MCS同款(TAC-10L-MCW),NA
+APPL-024,pchome,tw_ec_pchome24h-DMBI61-A900GFVXI,OK,not_attempted,0,0,NA,NA,TATUNG 大同 10人份全不鏽鋼電鍋 蘋果白【TAC-10L-MCW】,NA
+APPL-025,momo,tw_pec_momoshop-9858841,OK,not_attempted,0,0,NA,NA,【Panasonic 國際牌】1.5L雙層防燙不鏽鋼快煮壺(NC-KD3,NA
+APPL-025,pchome,tw_ec_pchome24h-DMAWDA-A900CNMFI,OK,not_attempted,0,0,NA,NA,Panasonic 國際牌 1.5L雙層防燙不鏽鋼快煮壺 NC-KD30,NA
+APPL-026,momo,tw_pec_momoshop-13150543,OK,not_attempted,0,0,NA,NA,【小米】官方旗艦館 負離子吹風機 H300 白色,NA
+APPL-026,pchome,tw_ec_pchome24h-DYAN6U-A900GGFEZ,OK,not_attempted,0,0,NA,NA,Xiaomi 小米 負離子吹風機 H300,NA
+APPL-027,momo,tw_pec_momoshop-5788810,OK,not_attempted,0,0,NA,NA,【TATUNG 大同】1.5公升(L)果汁機(TJC-1518A),NA
+APPL-027,pchome,tw_ec_pchome24h-DMAY44-A900G8OZW,OK,not_attempted,0,0,NA,NA,TATUNG 大同 果汁機 TJC-1518A,NA
+APPL-028,momo,tw_pec_momoshop-13527636,OK,not_attempted,0,0,NA,NA,【小米官方旗艦館】Xiaomi 電動刮鬍刀 S200(灰色/銀色),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+APPL-028,pchome,tw_ec_pchome24h-DDAXM7-A900I4Z13,OK,not_attempted,0,0,NA,NA,Xiaomi 小米 電動刮鬍刀 S200,NA
+APPL-029,momo,tw_pec_momoshop-10821716,OK,not_attempted,0,0,NA,NA,【Panasonic 國際牌】14吋微電腦DC直流電風扇 F-S14KM,NA
+APPL-029,pchome,tw_ec_pchome24h-DMAB1F-A900B4HHE,OK,not_attempted,0,0,NA,NA,Panasonic 國際牌 國際牌14吋微電腦DC直流電風扇F-S14K,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+APPL-030,momo,tw_pec_momoshop-7437144,OK,not_attempted,0,0,NA,NA,【KINYO】超大網面 分離式充電電蚊拍 捕蚊拍(CM-3370),NA
+APPL-030,pchome,tw_ec_pchome24h-DMAL08-A900AHQIP,OK,not_attempted,0,0,NA,NA,KINYO 鋰電池充電蚊拍 CM-3370,NA
+BEAU-002,momo,tw_pec_momoshop-12953180,OK,not_attempted,0,0,NA,NA,【Biore 蜜妮】含水防曬保濕水凝乳(70g),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+BEAU-002,pchome,tw_ec_pchome24h-DDABEV-A900H2WYX,UNCERTAIN,not_attempted,0,0,NA,NA,Biore 蜜妮 含水防曬保濕水凝乳 70g,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat); last point 2025-02-10 is before 2025-11-25; cannot tell unchanged price from stopped tracking
+BEAU-004,momo,tw_pec_momoshop-8962223,OK,not_attempted,0,0,NA,NA,【理膚寶水】多容安舒緩保濕面霜 40ml(滋潤保濕),NA
+BEAU-004,pchome,tw_ec_pchome24h-DDCA10-A9009EG79,OK,not_attempted,0,0,NA,NA,LA ROCHE-POSAY 理膚寶水 多容安舒緩保濕面霜 40ml,NA
+BEAU-005,momo,tw_pec_momoshop-10566860,OK,not_attempted,0,0,NA,NA,【SK-II】官方直營 青春露230ml(緊緻/透亮/臉部保養),NA
+BEAU-005,pchome,tw_ec_pchome24h-DDADP5-A900I0N3N,UNCERTAIN,not_attempted,0,0,NA,NA,SK-II SK-II 青春露(230ml)★神仙水 (國際航空版),"title says SK-II 230ml but marked international air version (grey import); price 2799 vs momo official 6072, not clearly the same offer"
+BEAU-006,momo,tw_pec_momoshop-12694668,UNCERTAIN,not_attempted,0,0,NA,NA,【Estee Lauder 雅詩蘭黛】特潤超導全方位修護露50ml(No.1小棕瓶/週年慶限定組),momo title includes anniversary limited set (週年慶限定組); momo price 4050 vs PChome 1635 for same 50ml
+BEAU-006,pchome,tw_ec_pchome24h-DDAD2P-A900BR0Y6,OK,not_attempted,0,0,NA,NA,ESTEE LAUDER 雅詩蘭黛 特潤超導全方位修護露50ml - 小棕瓶 (正統公司貨),NA
+BEAU-007,momo,tw_pec_momoshop-11583891,OK,not_attempted,0,0,NA,NA,【DR.WU 達爾膚】玻尿酸保濕精華化妝水150ML(經典款 2入組),NA
+BEAU-007,pchome,tw_ec_pchome24h-DDAFQN-A900GQZOB,OK,not_attempted,0,0,NA,NA,DR.WU 達爾膚 玻尿酸保濕精華化妝水150ML(2入組)-共2入,NA
+BEAU-007,coupang,tw_pec_coupang-498274595160069,UNCERTAIN,not_attempted,0,0,NA,NA,DR.WU 達爾膚 玻尿酸保濕精華化妝水 經典款,"title lacks the 2-pack/150ml; in-period price 360-2400, current 295 vs momo 800"
+BEAU-008,momo,tw_pec_momoshop-11109663,OK,not_attempted,0,0,NA,NA,【NIVEA 妮維雅】輕柔潤膚霜200ml(保濕潤膚霜),NA
+BEAU-008,pchome,tw_ec_pchome24h-DDDJ00-A900H8QB5,OK,not_attempted,0,0,NA,NA,NIVEA 妮維雅 輕柔潤膚霜200ml,NA
+BEAU-009,momo,tw_pec_momoshop-10782382,OK,not_attempted,0,0,NA,NA,【專科】超微米潔顏乳 120g,NA
+BEAU-009,pchome,tw_ec_pchome24h-DDAID0-A900GGH2J,OK,not_attempted,0,0,NA,NA,SENKA 專科 超微米潔顏乳 120g,NA
+BEAU-010,momo,tw_pec_momoshop-8068032,OK,not_attempted,0,0,NA,NA,【肌研】官方直營 極潤保濕化粧水 170ml,NA
+BEAU-010,pchome,tw_ec_pchome24h-DDAIGE-A900G1ZFD,OK,not_attempted,0,0,NA,NA,ROHTO 樂敦 【 肌研】極潤保濕化妝水 170ml,NA
+BEAU-011,momo,tw_pec_momoshop-11890119,UNCERTAIN,not_attempted,0,0,NA,NA,【CeraVe 適樂膚】momo限定組★長效潤澤修護霜 340g_A(臉部身體乳霜),momo-limited set (momo限定組 _A) of CeraVe 340g; may be a bundle rather than single jar
+BEAU-011,pchome,tw_ec_pchome24h-DDCN00-A900HXNVZ,OK,not_attempted,0,0,NA,NA,CeraVe 適樂膚 長效潤澤修護霜 340g,NA
+BEAU-012,momo,tw_pec_momoshop-14349667,OK,not_attempted,0,0,NA,NA,【Avene 雅漾】舒護活泉水300ml(四入組),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+BEAU-012,pchome,tw_ec_pchome24h-DDAFXE-1900J5LCZ,OK,not_attempted,0,0,NA,NA,Avene 雅漾 官方直營舒護活泉水-300mlx4入組,NA
+BEAU-012,coupang,tw_pec_coupang-268641647968259,UNCERTAIN,not_attempted,0,0,NA,NA,Avene 雅漾 舒護活泉水,"title lacks 300ml x4; in-period price 145-1440, current 139 vs momo 1350"
+BEAU-015,momo,tw_pec_momoshop-8283076,OK,not_attempted,0,0,NA,NA,【肌研】極潤保濕化妝水大容量 400ml(平輸商品),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+BEAU-015,pchome,tw_ec_pchome24h-DDCBE8-A900B8PJY,OK,not_attempted,0,0,NA,NA,ROHTO 樂敦 【 肌研】極潤保濕化妝水 大容量 400ml,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+BEAU-016,momo,tw_pec_momoshop-11616015,OK,not_attempted,0,0,NA,NA,【Shu uemura 植村秀】官方直營 山茶花精萃奢養潔顏油450ml,NA
+BEAU-016,pchome,tw_ec_pchome24h-DDBH2F-A900GK68Y,OK,not_attempted,0,0,NA,NA,Shu Uemura 植村秀 山茶花精萃奢養潔顏油450ml (正統公司,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+BEAU-017,momo,tw_pec_momoshop-4290168,OK,not_attempted,0,0,NA,NA,【KOSE 高絲】雪肌精化妝水500ml-限量版 - 一般型/極潤型-任,NA
+BEAU-017,pchome,tw_ec_pchome24h-DDADP3-A900IFP1R,OK,not_attempted,0,0,NA,NA,KOSE 高絲 雪肌精化妝水 500ml (一般型/極潤型),NA
+BEAU-017,coupang,tw_pec_coupang-224384132268051,UNCERTAIN,not_attempted,0,0,NA,NA,KOSE 高絲 SEKKISEI 雪肌精,title lacks 500ml; in-period price 350-1899
+BEAU-020,momo,tw_pec_momoshop-12738520,OK,not_attempted,0,0,NA,NA,【KOSE SOFTYMO 絲芙蒂】卸妝油補充包210ml(全新改款/成,NA
+BEAU-020,pchome,tw_ec_pchome24h-DDAB4W-A900HAV8C,OK,not_attempted,0,0,NA,NA,KOSE絲芙蒂 卸粧油補充包210ml -乾濕兩用/深層潔顏,NA
+BEAU-020,coupang,tw_pec_coupang-564640522092545,UNCERTAIN,not_attempted,0,0,NA,NA,KOSE 高絲 softymo 絲芙蒂 台灣公司貨 乾濕兩用極淨卸粧油補充包,title lacks 210ml; current 139 vs momo 199
+BEAU-021,momo,tw_pec_momoshop-8341628,UNCERTAIN,not_attempted,0,0,NA,NA,【DHC】純欖護唇膏1.5g,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat); last point 2025-09-13 is before 2025-11-25; cannot tell unchanged price from stopped tracking
+BEAU-021,pchome,tw_ec_pchome24h-DDBT69-A900G6NGL,OK,not_attempted,0,0,NA,NA,DHC 日本純欖護唇膏 1.5g,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+BEAU-022,momo,tw_pec_momoshop-7586989,OK,not_attempted,0,0,NA,NA,【理膚寶水】深層控油泡沫洗面乳 125ml(深層清潔),NA
+BEAU-022,pchome,tw_ec_pchome24h-DDCA10-A900AQJQ5,OK,not_attempted,0,0,NA,NA,LA ROCHE-POSAY 理膚寶水 深層控油泡沫洗面乳 125ml,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+BEAU-023,momo,tw_pec_momoshop-7545610,OK,not_attempted,0,0,NA,NA,【曼秀雷敦】男士抗痘淨涼洗面乳100g,NA
+BEAU-023,pchome,tw_ec_pchome24h-DDABL0-A75700472,OK,not_attempted,0,0,NA,NA,Mentholatum 曼秀雷敦 男士抗痘淨涼洗面乳 100g,NA
+BEAU-024,momo,tw_pec_momoshop-12774575,OK,not_attempted,0,0,NA,NA,【Cetaphil】溫和潔膚乳 591ml 兩入組(台灣公司貨),NA
+BEAU-024,pchome,tw_ec_pchome24h-DAAM0E-A900IW2ZC,OK,not_attempted,0,0,NA,NA,Cetaphil 舒特膚 2入組-溫和潔膚乳 591毫升,NA
+BEAU-025,momo,tw_pec_momoshop-8068033,OK,not_attempted,0,0,NA,NA,【肌研】官方直營 極潤保濕乳液 140ml,NA
+BEAU-025,pchome,tw_ec_pchome24h-DDABMY-A900IHOHD,OK,not_attempted,0,0,NA,NA,ROHTO 肌研 極潤保濕乳液140ml,NA
+BEAU-026,momo,tw_pec_momoshop-13166093,OK,not_attempted,0,0,NA,NA,【曼秀雷敦】Acnes抗痘柔珠洗面乳100g,NA
+BEAU-026,pchome,tw_ec_pchome24h-DAAM0E-A900IRTHU,OK,not_attempted,0,0,NA,NA,Mentholatum 曼秀雷敦 Acnes抗痘柔珠洗面乳 100g,NA
+BEAU-027,momo,tw_pec_momoshop-9996853,OK,not_attempted,0,0,NA,NA,【日本牛乳石鹼】無添加卸妝乳 150ml,NA
+BEAU-027,pchome,tw_ec_pchome24h-DDAIIX-A900ASKZB,OK,not_attempted,0,0,NA,NA,牛乳石鹼 【日本】無添加卸妝乳150ml(好沖洗),NA
+BEAU-028,momo,tw_pec_momoshop-10793216,OK,not_attempted,0,0,NA,NA,【專科】彈潤護唇膏 4.5g,NA
+BEAU-028,pchome,tw_ec_pchome24h-DDAB7N-A900HDVFF,OK,not_attempted,0,0,NA,NA,SENKA 專科 彈潤護唇膏 4.5g,NA
+BEAU-029,momo,tw_pec_momoshop-4679559,OK,not_attempted,0,0,NA,NA,【Neutrogena露得清】深層淨化洗面乳(100g),NA
+BEAU-029,pchome,tw_ec_pchome24h-DDABUO-A900HDBJP,OK,not_attempted,0,0,NA,NA,Neutrogena 露得清 深層淨化洗面乳100g(任選_深層淨化/抗,NA
+BEAU-030,momo,tw_pec_momoshop-11298485,OK,not_attempted,0,0,NA,NA,【曼秀雷敦】水潤肌超保濕水感防曬精華80g,NA
+BEAU-030,pchome,tw_ec_pchome24h-DDABC5-A900IXD9J,OK,not_attempted,0,0,NA,NA,Mentholatum 曼秀雷敦 水潤肌超保濕水感防曬精華 80g SP,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+BEAU-031,momo,tw_pec_momoshop-6878486,OK,not_attempted,0,0,NA,NA,【雪芙蘭】淨肌礦物泥洗面乳《清爽控油》120g,NA
+BEAU-031,pchome,tw_ec_pchome24h-DAAM16-A61222296,OK,not_attempted,0,0,NA,NA,雪芙蘭 淨肌礦物泥洗面乳《清爽控油》120g,NA
+BEAU-032,momo,tw_pec_momoshop-11420495,OK,not_attempted,0,0,NA,NA,【曼秀雷敦】AD高效抗乾修復乳液120g(敏感肌 身體乳),NA
+BEAU-032,pchome,tw_ec_pchome24h-DDABTX-A9009O71A,OK,not_attempted,0,0,NA,NA,Mentholatum 曼秀雷敦 AD高效抗乾修復乳液 120g,NA
+BEAU-033,momo,tw_pec_momoshop-11076832,OK,not_attempted,0,0,NA,NA,【NIVEA 妮維雅】絲滑瑩亮乳液400ml(保濕身體潤膚乳),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+BEAU-033,pchome,tw_ec_pchome24h-DDDJ00-A900H8QSE,OK,not_attempted,0,0,NA,NA,NIVEA 妮維雅 絲滑瑩亮乳液400ml(保濕身體潤膚乳),NA
+BEAU-034,momo,tw_pec_momoshop-7570197,OK,not_attempted,0,0,NA,NA,【曼秀雷敦】薄荷修護潤唇膏 3.5g,NA
+BEAU-034,pchome,tw_ec_pchome24h-DDABTX-A900AFQ3J,OK,not_attempted,0,0,NA,NA,Mentholatum 曼秀雷敦 薄荷修護潤唇膏 3.5g,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+BEAU-035,momo,tw_pec_momoshop-14192538,OK,not_attempted,0,0,NA,NA,【Loshi】馬油保濕潤膚乳液 485ml(日本北海道馬油),NA
+BEAU-035,pchome,tw_ec_pchome24h-DDAID1-A900GMIYH,OK,not_attempted,0,0,NA,NA,loshi 馬油保濕乳液 485ml,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+BEAU-036,momo,tw_pec_momoshop-13017028,OK,not_attempted,0,0,NA,NA,【KUM 熊野】日本 麗白 薏仁保濕化妝水 1000ml(平輸商品),NA
+BEAU-036,pchome,tw_ec_pchome24h-DDABS2-A900HOF7V,OK,not_attempted,0,0,NA,NA,KUM 熊野 日本 麗白薏仁保濕化妝水 1000ml,NA
+FOOD-001,momo,tw_pec_momoshop-5360118,OK,not_attempted,0,0,NA,NA,【NONG SHIM 農心】農心 辛拉麵超值包5入(600g),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+FOOD-001,pchome,tw_ec_pchome24h-DBAY48-A900DWS5R,OK,not_attempted,0,0,NA,NA,農心 辛拉麵5包入(超值包)600g,NA
+FOOD-002,momo,tw_pec_momoshop-13431867,OK,not_attempted,0,0,NA,NA,【三養火辣雞】火辣雞肉風味鐵板炒麵 經典(140g),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+FOOD-002,pchome,tw_ec_pchome24h-DBAY5B-A900J35DD,OK,not_attempted,0,0,NA,NA,SamYang 三養 火辣雞肉風味鐵板炒麵 (單包) (原味/奶油白醬風,NA
+FOOD-003,momo,tw_pec_momoshop-4059805,OK,not_attempted,0,0,NA,NA,【NISSIN 日清】出前一丁麻油味速食麵100gX5入(泡麵),NA
+FOOD-003,pchome,tw_ec_pchome24h-DBAY4Q-A900HLDH7,UNCERTAIN,not_attempted,0,0,NA,NA,Nissin 日清 出前一丁速食麵 (口味多選/5入) 袋,"title lacks the sesame-oil flavour and the 100g size (""口味多選/5入"")"
+FOOD-004,momo,tw_pec_momoshop-7535816,OK,not_attempted,0,0,NA,NA,【維力】炸醬麵5入/包,NA
+FOOD-004,pchome,tw_ec_pchome24h-DBAY13-A9008620V,OK,not_attempted,0,0,NA,NA,維力 炸醬麵90g(5包/袋),NA
+FOOD-004,coupang,tw_pec_coupang-210545999331331,UNCERTAIN,not_attempted,0,0,NA,NA,維力 維力炸醬麵 90g,"title ""90g"" without pack count; price 52 vs momo 75 for 5-pack"
+FOOD-005,momo,tw_pec_momoshop-10076882,OK,not_attempted,0,0,NA,NA,【可口可樂】纖維+ 隨行罐330ml x24入/箱(無糖),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+FOOD-005,pchome,tw_ec_pchome24h-DBABB0-A9009SJJ5,OK,not_attempted,0,0,NA,NA,可口可樂 【Coca-Cola 】纖維+隨型罐330ml (24入/箱),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+FOOD-005,coupang,tw_pec_coupang-283756745179139,UNCERTAIN,not_attempted,0,0,NA,NA,Coca-Cola 可口可樂 纖維+,title lacks 330ml x24; in-period price 318-1040
+FOOD-006,momo,tw_pec_momoshop-7023831,OK,not_attempted,0,0,NA,NA,【Nespresso】Original訂製咖啡時光50顆咖啡膠囊(5條/,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+FOOD-006,pchome,tw_ec_pchome24h-DMBN1A-B900EOLEW,OK,not_attempted,0,0,NA,NA,Nespresso 訂製咖啡時光50顆組 - 3 款可選(5條*10顆僅,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+FOOD-007,momo,tw_pec_momoshop-11145334,OK,not_attempted,0,0,NA,NA,【STARBUCKS 星巴克】咖啡膠囊10顆x5盒組(口味任選) 僅適用,NA
+FOOD-007,pchome,tw_ec_pchome24h-DBAT95-1900JC7DK,SHORT,not_attempted,0,0,NA,NA,STARBUCKS 星巴克 咖啡膠囊 (口味任選/盒)(10顆)x5盒(,first point 2025-10-13 is after 2025-10-01
+FOOD-009,momo,tw_pec_momoshop-10076881,OK,not_attempted,0,0,NA,NA,【可口可樂】易開罐330ml x24入/箱,NA
+FOOD-009,pchome,tw_ec_pchome24h-DBAB12-A900GYGQM,UNCERTAIN,not_attempted,0,0,NA,NA,可口可樂 【Coca-Cola 】/【Sprite 雪碧】易開罐330m,title covers Coca-Cola AND Sprite cans (variant listing)
+FOOD-009,coupang,tw_pec_coupang-258457538084870,UNCERTAIN,not_attempted,0,0,NA,NA,Coca-Cola 可口可樂 汽水,"title lacks 330ml x24; in-period price 201-878, current 155 vs momo 323"
+FOOD-010,momo,tw_pec_momoshop-7169147,OK,not_attempted,0,0,NA,NA,【Coca-Cola 可口可樂ZERO SUGAR】無糖零卡易開罐330ml x2箱(共48入;24入/箱),NA
+FOOD-010,pchome,tw_ec_pchome24h-DBAB12-1900BP494,OK,not_attempted,0,0,NA,NA,可口可樂 【Coca-Cola  ZERO SUGAR】無糖零卡易開罐330ml  (24入X2箱),NA
+FOOD-010,coupang,tw_pec_coupang-278736582705161,UNCERTAIN,not_attempted,0,0,NA,NA,Coca-Cola 可口可樂 Zero,"title lacks 330ml x48; in-period price 270-598, current 158 vs momo 646"
+FOOD-011,momo,tw_pec_momoshop-3974750,OK,not_attempted,0,0,NA,NA,【寶礦力水得】寶礦力水得-原味580ml(共24入 ),NA
+FOOD-011,pchome,tw_ec_pchome24h-DBAB5F-A900ADUAS,OK,not_attempted,0,0,NA,NA,寶礦力水得 -580ml(24入/箱),NA
+FOOD-011,coupang,tw_pec_coupang-318594076344323,UNCERTAIN,not_attempted,0,0,NA,NA,POCARI SWEAT 寶礦力水得,title lacks 580ml x24; in-period price 306-878
+FOOD-013,momo,tw_pec_momoshop-3796872,OK,not_attempted,0,0,NA,NA,【QUAKER 桂格】即沖即食大燕麥片800gx1罐,NA
+FOOD-013,pchome,tw_ec_pchome24h-DBAB0I-A40292777,OK,not_attempted,0,0,NA,NA,Quaker 桂格 即沖即食大燕麥片(800g/罐),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+FOOD-014,momo,tw_pec_momoshop-13434475,OK,not_attempted,0,0,NA,NA,【Pringles 品客】Pringles 品客 洋芋片MINIS經典原,NA
+FOOD-014,pchome,tw_ec_pchome24h-DBAEGG-A900I6DKC,OK,not_attempted,0,0,NA,NA,PRINGLES 品客 洋芋片 MINIS 經典原味x2箱(19gx30,NA
+FOOD-015,momo,tw_pec_momoshop-13091845,OK,not_attempted,0,0,NA,NA,【OREO 奧利奧】奧利奧 夾心餅乾 隨手包_(多口味可選、含BTS 聯,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+FOOD-015,pchome,tw_ec_pchome24h-DBAEHM-A900HQOF5,OK,not_attempted,0,0,NA,NA,奧利奧 奧利奧 夾心餅乾隨手包 9小包/袋_新舊包裝隨機出貨,NA
+FOOD-016,momo,tw_pec_momoshop-3974761,OK,not_attempted,0,0,NA,NA,【寶礦力水得】寶礦力水得-ION WATER低卡580ml(共24入 ),NA
+FOOD-016,pchome,tw_ec_pchome24h-DBAB5F-A900AASJ2,OK,not_attempted,0,0,NA,NA,寶礦力水得 ion water 低卡/低熱量運動飲料580ml(24入),NA
+FOOD-016,coupang,tw_pec_coupang-337841619943428,UNCERTAIN,not_attempted,0,0,NA,NA,POCARI SWEAT 寶礦力水得 ion water,"title lacks 580ml x24; in-period price 424-912, current 373"
+FOOD-017,momo,tw_pec_momoshop-11153876,OK,not_attempted,0,0,NA,NA,【Meiji 明治】巧克力效果CACAO黑巧克力 72%/86%(26枚,NA
+FOOD-017,pchome,tw_ec_pchome24h-DBAEGQ-A900G3RO6,OK,not_attempted,0,0,NA,NA,MEIJI 明治 巧克力效果CACAO 72%黑巧克力(26枚盒裝),NA
+FOOD-018,momo,tw_pec_momoshop-13348982,OK,not_attempted,0,0,NA,NA,【Glico 格力高】官方直營 Pocky百奇 巧克力棒X10盒入(巧克,NA
+FOOD-018,pchome,tw_ec_pchome24h-DBAEF0-A900J4FWZ,OK,not_attempted,0,0,NA,NA,Glico 格力高 Pocky百奇 巧克力棒 10盒入(巧克力/草莓/抹,NA
+FOOD-019,momo,tw_pec_momoshop-7373730,OK,not_attempted,0,0,NA,NA,【Lay’s 樂事】樂事洋芋片隨手包12g/50包(原味/海苔),NA
+FOOD-019,pchome,tw_ec_pchome24h-DBAC02-A900AGS9A,OK,not_attempted,0,0,NA,NA,Lay's 樂事 樂事洋芋片-經典原味(12g/50包),NA
+FOOD-020,momo,tw_pec_momoshop-11691199,OK,not_attempted,0,0,NA,NA,【Airwaves】超涼無糖口香糖 62g*10入(提神/潔牙/口腔清潔,NA
+FOOD-020,pchome,tw_ec_pchome24h-DBAE8X-A900GJHF2,OK,not_attempted,0,0,NA,NA,Airwaves 超涼無糖口香糖 62g*10入 (提神/潔牙/口腔清潔,NA
+FOOD-020,coupang,tw_pec_coupang-312120478498817,UNCERTAIN,not_attempted,0,0,NA,NA,Airwaves 超涼無糖口香糖 超涼薄荷口味,"title lacks 62g x10; in-period price 113-1002, current 80 vs momo 639"
+FOOD-021,momo,tw_pec_momoshop-10144533,OK,not_attempted,0,0,NA,NA,【舒跑】運動飲料590mlx24入/箱(包裝轉換中新舊包裝隨機出貨-官方,NA
+FOOD-021,pchome,tw_ec_pchome24h-DBAB05-A64054137,OK,not_attempted,0,0,NA,NA,舒跑 維他露 運動飲料590ml(24入/箱),NA
+FOOD-022,momo,tw_pec_momoshop-10915575,OK,not_attempted,0,0,NA,NA,【保力達】蠻牛維他命飲料 200mlx24入/箱,NA
+FOOD-022,pchome,tw_ec_pchome24h-DBABGW-A900FY3N2,OK,not_attempted,0,0,NA,NA,保力達 蠻牛維他命飲料 (200mlx24入),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+FOOD-023,momo,tw_pec_momoshop-3885815,OK,not_attempted,0,0,NA,NA,【泰山】純水1500mlx12入/箱(官方直營),NA
+FOOD-023,pchome,tw_ec_pchome24h-DBAG0K-A78018646,OK,not_attempted,0,0,NA,NA,TAISUN 泰山 純水1500ml (12入/箱),NA
+FOOD-024,momo,tw_pec_momoshop-3984783,OK,not_attempted,0,0,NA,NA,【茶裏王】日式無糖綠茶600mlx24入/箱,NA
+FOOD-024,pchome,tw_ec_pchome24h-DBABB9-A9009TAPJ,OK,not_attempted,0,0,NA,NA,茶裏王 日式無糖綠茶600ml(24入),NA
+FOOD-025,momo,tw_pec_momoshop-1219005,OK,not_attempted,0,0,NA,NA,【貝納頌】經典咖啡375ml(24入/箱),NA
+FOOD-025,pchome,tw_ec_pchome24h-DBAB3K-A90068I9Q,OK,not_attempted,0,0,NA,NA,貝納頌 貝納頌 咖啡375ml(24入/箱),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+FOOD-026,momo,tw_pec_momoshop-11175708,UNCERTAIN,not_attempted,0,0,NA,NA,【Monster Energy 魔爪】超越仙境碳酸能量飲料 易開罐355ml x24入/箱(無糖),title says 超越仙境 (Ultra Paradise) while products.csv model says Ultra white zero-sugar; verify the item is the intended flavour
+FOOD-026,pchome,tw_ec_pchome24h-DBABGX-A900G60U7,UNCERTAIN,not_attempted,0,0,NA,NA,Monster Energy 魔爪 超越仙境碳酸能量飲料 易開罐355ml (24入/箱)(無糖),title says 超越仙境 (Ultra Paradise) while products.csv model says Ultra white zero-sugar; verify the item is the intended flavour
+FOOD-027,momo,tw_pec_momoshop-8808316,OK,not_attempted,0,0,NA,NA,【Mocca 摩卡】精典即溶咖啡(170公克/瓶),NA
+FOOD-027,pchome,tw_ec_pchome24h-DBAT8Q-A900FQQYI,OK,not_attempted,0,0,NA,NA,MOCCA 摩卡咖啡 精典即溶咖啡(170公克/瓶),NA
+FOOD-028,momo,tw_pec_momoshop-11027133,OK,not_attempted,0,0,NA,NA,【每朝健康】無糖綠茶650mlx24入/箱(EX健康四認證;官方直營),NA
+FOOD-028,pchome,tw_ec_pchome24h-DBABB8-A9009RFNP,OK,not_attempted,0,0,NA,NA,每朝健康 綠茶650ml (24入/箱),NA
+FOOD-029,momo,tw_pec_momoshop-13504406,OK,not_attempted,0,0,NA,NA,【KIRIN 麒麟】午後紅茶-皇家特調奶茶500mlx24入(日本原裝進,NA
+FOOD-029,pchome,tw_ec_pchome24h-DBAJ8U-A900I4YLX,OK,not_attempted,0,0,NA,NA,KIRIN 麒麟 午後紅茶-皇家特調奶茶(500ml*24入),NA
+FOOD-030,momo,tw_pec_momoshop-12960259,OK,not_attempted,0,0,NA,NA,【義美】小泡芙享樂夾鏈包234g(經典巧克力+香濃牛奶),NA
+FOOD-030,pchome,tw_ec_pchome24h-DBACCR-A900HIZIN,OK,not_attempted,0,0,NA,NA,義美 小泡芙享樂夾鏈包234g x1包 (39g x6小包/包),NA
+FOOD-031,momo,tw_pec_momoshop-1031763,OK,not_attempted,0,0,NA,NA,【光泉】茉莉茶園-茉莉蜜茶585mlx24入/箱,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+FOOD-031,pchome,tw_ec_pchome24h-DBAB7J-A49755622,OK,not_attempted,0,0,NA,NA,光泉 茉莉茶園-蜜茶585ml(24入/箱),NA
+FOOD-032,momo,tw_pec_momoshop-5399842,OK,not_attempted,0,0,NA,NA,【統一麵】統一調合米粉肉燥風味碗64gx12入/箱,NA
+FOOD-032,pchome,tw_ec_pchome24h-DBAA00-A90056WL6,OK,not_attempted,0,0,NA,NA,統一 調合米粉 肉燥風味(12碗/箱),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-001,momo,tw_pec_momoshop-12126133,OK,not_attempted,0,0,NA,NA,【Kleenex 舒潔】6串-棉柔舒適抽取衛生紙(100抽x12包*6串,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-001,pchome,tw_ec_pchome24h-DAAG0S-A900H02AZ,OK,not_attempted,0,0,NA,NA,Kleenex 舒潔 棉柔舒適抽取衛生紙100抽x12包x6串/箱,NA
+HOME-002,momo,tw_pec_momoshop-3252331,OK,not_attempted,0,0,NA,NA,【MAY FLOWER 五月花】新柔韌抽取式衛生紙(110抽x72包),NA
+HOME-002,pchome,tw_ec_pchome24h-DAAG0U-A90062AZM,OK,not_attempted,0,0,NA,NA,五月花 新柔韌抽取衛生紙 (110抽x12包x6袋/箱),NA
+HOME-002,coupang,tw_pec_coupang-278377957130250,UNCERTAIN,not_attempted,0,0,NA,NA,五月花 新柔韌抽取衛生紙 110張,"title ""110張"" without 72-pack count; in-period price 171-934, current 714"
+HOME-003,momo,tw_pec_momoshop-5495959,OK,not_attempted,0,0,NA,NA,【一匙靈】ATTACK抗菌EX洗衣精補充包 1.5kgX6包/箱(強力消,NA
+HOME-003,pchome,tw_ec_pchome24h-DAAK04-A900GQOCJ,OK,not_attempted,0,0,NA,NA,一匙靈 抗菌EX洗衣精補充包1.5kgx6包(強力消臭/極淨除垢/防蹣成,NA
+HOME-004,momo,tw_pec_momoshop-13181515,OK,not_attempted,0,0,NA,NA,【白蘭】4X極淨酵素抗病毒洗衣精補充包 1.5kg 6入組 箱購(共9k,NA
+HOME-004,pchome,tw_ec_pchome24h-DAAK0O-A900HSW7V,OK,not_attempted,0,0,NA,NA,白蘭 4X酵素極淨超濃縮洗衣精補充包_箱購1.5kgx6(三款任選),NA
+HOME-005,momo,tw_pec_momoshop-13178734,UNCERTAIN,not_attempted,0,0,NA,NA,【熊寶貝】柔軟護衣精補充包 1.84L/1.75L(柔軟持香 溫和低敏,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat); last point 2025-01-01 is before 2025-11-25; cannot tell unchanged price from stopped tracking
+HOME-005,pchome,tw_ec_pchome24h-DAAK07-A900HX37G,OK,not_attempted,0,0,NA,NA,熊寶貝 柔軟護衣精補充包_單入1.75L/1.84L(10款任選),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-006,momo,tw_pec_momoshop-9985926,OK,not_attempted,0,0,NA,NA,【Kleenex 舒潔】食安級便利抽取式廚房紙巾110抽x3包x4串,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-006,pchome,tw_ec_pchome24h-DAAG8M-A900GSQGA,OK,not_attempted,0,0,NA,NA,Kleenex 舒潔 食安級便利抽廚房紙巾 110抽x3包x4串,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-008,momo,tw_pec_momoshop-13178723,UNCERTAIN,not_attempted,0,0,NA,NA,【白蘭】含熊寶貝馨香精華超濃縮洗衣精補充包 1.6kg(8款任選),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat); last point 2025-08-09 is before 2025-11-25; cannot tell unchanged price from stopped tracking
+HOME-008,pchome,tw_ec_pchome24h-DAAK0O-A900HSWG2,OK,not_attempted,0,0,NA,NA,白蘭 含熊寶貝馨香精華超濃縮洗衣精補充包_單入1.6KG(7款任選),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-009,momo,tw_pec_momoshop-12832872,OK,not_attempted,0,0,NA,NA,【3M】百利細緻餐具/茶杯專用好握型海綿菜瓜布5片裝(小黃海綿),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-009,pchome,tw_ec_pchome24h-DAAN88-A900HH13P,OK,not_attempted,0,0,NA,NA,3M 百利海綿菜瓜布-細緻餐具/茶杯專用 好握型 (5片裝/小黃海綿),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-009,coupang,tw_pec_coupang-596986931609602,SHORT,not_attempted,0,0,NA,NA,3M Scotch-Brite 百利 菜瓜布 細緻餐具茶杯專用,first point 2025-10-04 is after 2025-10-01
+HOME-010,momo,tw_pec_momoshop-6307076,OK,not_attempted,0,0,NA,NA,【3M】無痕透明活動掛鉤 免釘免鑽隱形掛勾,NA
+HOME-010,pchome,tw_ec_pchome24h-DAAN0O-A74299979,OK,not_attempted,0,0,NA,NA,3M 【-無痕】透明活動掛鉤,NA
+HOME-011,momo,tw_pec_momoshop-12485150,OK,not_attempted,0,0,NA,NA,【Colgate 高露潔】全效牙膏150g/110gX2入(專業潔淨/抗,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-011,pchome,tw_ec_pchome24h-DAAL6H-A900IBXKW,OK,not_attempted,0,0,NA,NA,高露潔 全效 - 專業潔淨(膏狀)牙膏150g2入,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-012,momo,tw_pec_momoshop-12481831,OK,not_attempted,0,0,NA,NA,【DARLIE 好來】雙重功效牙膏200gX3入(口腔保健/口氣清新),NA
+HOME-012,pchome,tw_ec_pchome24h-DAAL6H-A900IBRQO,OK,not_attempted,0,0,NA,NA,DARLIE 好來 雙重功效牙膏 200g 2+1 超值組,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-013,momo,tw_pec_momoshop-5761557,OK,not_attempted,0,0,NA,NA,【Listerine 李施德霖】全效護理漱口水750ml(溫和/抗敏感/,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-013,pchome,tw_ec_pchome24h-DAAL1D-A900GB2P1,OK,not_attempted,0,0,NA,NA,LISTERINE 李施德霖 全效護理防蛀漱口水750ml,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-013,coupang,tw_pec_coupang-301209210552330,SHORT,not_attempted,0,0,NA,NA,LISTERINE 李施德霖 全效護理防蛀漱口水,first point 2025-10-06 is after 2025-10-01
+HOME-014,momo,tw_pec_momoshop-13179895,OK,not_attempted,0,0,NA,NA,【Dove 多芬】滋養柔膚-燕麥舒敏新上市/GOFRESH系列沐浴乳90,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-014,pchome,tw_ec_pchome24h-DAAJ03-A900HT05F,UNCERTAIN,not_attempted,0,0,NA,NA,Dove 多芬 滋養柔膚/gofresh沐浴露(沐浴乳) 900G (多,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat); last point 2025-09-05 is before 2025-11-25; cannot tell unchanged price from stopped tracking
+HOME-015,momo,tw_pec_momoshop-13884790,OK,not_attempted,0,0,NA,NA,【head＆shoulders 海倫仙度絲】新升級 去屑洗髮精680g(,NA
+HOME-015,pchome,tw_ec_pchome24h-DAAA1N-A900IX4EX,UNCERTAIN,not_attempted,0,0,NA,NA,海倫仙度絲 全新升級 去屑洗髮精/潤髮乳680g (止癢/絲滑/薄荷/深,last point 2025-11-17 is before 2025-11-25; cannot tell unchanged price from stopped tracking
+HOME-016,momo,tw_pec_momoshop-14462088,UNCERTAIN,not_attempted,0,0,NA,NA,【PANTENE 潘婷】洗髮精/潤髮乳650g,listing covers shampoo/conditioner 650g; product is shampoo
+HOME-016,pchome,tw_ec_pchome24h-DAAA09-A900JAPDS,UNCERTAIN,not_attempted,0,0,NA,NA,PANTENE 潘婷 洗髮露/潤髮精華素650g,"series starts exactly on 2025-10-01: Oct-1 price known, no earlier change available; listing covers shampoo/conditioner 650g (product is shampoo); series starts exactly 2025-10-01"
+HOME-017,momo,tw_pec_momoshop-3943649,OK,not_attempted,0,0,NA,NA,【泡舒】洗潔精補充包-800gx12包(洗碗精任選),NA
+HOME-017,pchome,tw_ec_pchome24h-DAAZ43-A900IFTV4,OK,not_attempted,0,0,NA,NA,泡舒 泡舒洗潔精800g*12入組/箱購(綠茶去油除腥/檸檬去味清新/小,NA
+HOME-018,momo,tw_pec_momoshop-13407361,OK,not_attempted,0,0,NA,NA,【Ziploc 密保諾】雙層夾鏈冷凍保鮮袋-大(38入x2盒),NA
+HOME-018,pchome,tw_ec_pchome24h-DEAGDS-A900G80QK,OK,not_attempted,0,0,NA,NA,【Ziploc 密保諾】雙層夾鏈冷凍保鮮袋x2盒-大(38入),NA
+HOME-019,momo,tw_pec_momoshop-9991963,OK,not_attempted,0,0,NA,NA,【GLAD】Glad Press’n Seal 強力保鮮膜(30公分x43公尺*3入/組),NA
+HOME-019,pchome,tw_ec_pchome24h-DEBMOE-A900IO5QT,OK,not_attempted,0,0,NA,NA,GLAD 佳能 Pressn Seal 強力保鮮膜(30公分x43.4公尺*3入/組),NA
+HOME-020,momo,tw_pec_momoshop-13179901,OK,not_attempted,0,0,NA,NA,【LUX 麗仕】山茶花新上市-精油香氛沐浴乳900/1000ml(多款任,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-020,pchome,tw_ec_pchome24h-DAAJCC-A900HSSDV,UNCERTAIN,not_attempted,0,0,NA,NA,LUX 麗仕 柔膚/清爽/精油香氛沐浴乳 (1L or 900ml/瓶),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat); last point 2025-09-02 is before 2025-11-25; cannot tell unchanged price from stopped tracking
+HOME-021,momo,tw_pec_momoshop-8967858,OK,not_attempted,0,0,NA,NA,【DURACELL】金頂 鹼性電池 3號AA(18入裝),NA
+HOME-021,pchome,tw_ec_pchome24h-DCABCV-A900BEYAQ,OK,not_attempted,0,0,NA,NA,金頂 Duracell 鹼性電池-3號AA (18入裝),NA
+HOME-022,momo,tw_pec_momoshop-8990597,OK,not_attempted,0,0,NA,NA,【倍潔雅】好韌真3層抽取式衛生紙PEFC(100抽12包6袋/箱),NA
+HOME-022,pchome,tw_ec_pchome24h-DAAG5L-A900BG6GD,OK,not_attempted,0,0,NA,NA,倍潔雅 好韌真三層抽取式衛生紙PEFC(100抽x12包x6袋/箱),NA
+HOME-023,momo,tw_pec_momoshop-9343963,OK,not_attempted,0,0,NA,NA,【Panasonic 國際牌】鈦元素添加 EVOLTA超世代鹼性電池3號-10入,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-023,pchome,tw_ec_pchome24h-DCABCT-A900A60OX,UNCERTAIN,not_attempted,0,0,NA,NA,Panasonic 國際牌 鈦元素添加 EVOLTA超世代鹼性電池(3號10入),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat); last point 2025-07-27 is before 2025-11-25; cannot tell unchanged price from stopped tracking
+HOME-024,momo,tw_pec_momoshop-7081512,OK,not_attempted,0,0,NA,NA,【Savlon 沙威隆】清爽抗菌濕巾 80抽X24包(箱購/官方直營),NA
+HOME-024,pchome,tw_ec_pchome24h-DAAT0W-A900A9DFF,UNCERTAIN,not_attempted,0,0,NA,NA,沙威隆 清爽抗菌濕巾-80抽x24/箱,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat); last point 2025-01-01 is before 2025-11-25; cannot tell unchanged price from stopped tracking
+HOME-025,momo,tw_pec_momoshop-12495626,OK,not_attempted,0,0,NA,NA,【Colgate 高露潔】強效潔淨牙刷9入(家庭組/口腔清潔),NA
+HOME-025,pchome,tw_ec_pchome24h-DAAL6I-A900IBRT3,OK,not_attempted,0,0,NA,NA,高露潔 強效潔淨牙刷9入,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-026,momo,tw_pec_momoshop-5951760,OK,not_attempted,0,0,NA,NA,【美琪】抗菌洗手乳3785mlx1(淨萃青桔),NA
+HOME-026,pchome,tw_ec_pchome24h-DAAJ2U-A900HPP7E,OK,not_attempted,0,0,NA,NA,美琪 抗菌洗手乳3785mlx1(淨萃青桔),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-027,momo,tw_pec_momoshop-5371229,OK,not_attempted,0,0,NA,NA,【妙管家】茶樹油配方洗手乳(一加侖),NA
+HOME-027,pchome,tw_ec_pchome24h-DAAJ9G-A9007YXBX,OK,not_attempted,0,0,NA,NA,妙管家 抗菌洗手乳 (植萃茶樹) 一加侖,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-028,momo,tw_pec_momoshop-6092206,UNCERTAIN,not_attempted,0,0,NA,NA,【Ora2 愛樂齒】me 微觸感牙刷6支-盒(中性毛/顏色隨機出),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat); last point 2025-03-13 is before 2025-11-25; cannot tell unchanged price from stopped tracking
+HOME-028,pchome,tw_ec_pchome24h-DAAL4I-A9009GTIJ,UNCERTAIN,not_attempted,0,0,NA,NA,Ora2 me 微觸感牙刷-中性毛-6支(盒),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat); last point 2025-01-01 is before 2025-11-25; cannot tell unchanged price from stopped tracking
+HOME-029,momo,tw_pec_momoshop-14182211,OK,not_attempted,0,0,NA,NA,【Kleenex 舒潔】蓬柔舒膚抽取衛生紙100抽*64包**箱售**,NA
+HOME-029,pchome,tw_ec_pchome24h-DAAG0S-A900F4C0P,OK,not_attempted,0,0,NA,NA,Kleenex 舒潔 蓬柔舒膚抽取衛生紙(100抽x64包),NA
+HOME-030,momo,tw_pec_momoshop-3838382,OK,not_attempted,0,0,NA,NA,【楓康】撕取式環保超大垃圾袋 15張(86x100cm),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-030,pchome,tw_ec_pchome24h-DAAC09-A900ICDQ8,OK,not_attempted,0,0,NA,NA,楓康 撕取式環保超大垃圾袋 (15張/86x100cm),no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)
+HOME-031,momo,tw_pec_momoshop-12920294,OK,not_attempted,0,0,NA,NA,【魔術靈】浴室水垢瞬潔清潔劑(噴槍瓶 500ml),NA
+HOME-031,pchome,tw_ec_pchome24h-DAAZ7R-A900FIGDG,OK,not_attempted,0,0,NA,NA,魔術靈 浴室清潔劑 水垢瞬潔 噴槍瓶500ml,no points inside Oct 1-Nov 25 (price presumably unchanged since last pre-period point; see report caveat)

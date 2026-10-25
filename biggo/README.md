@@ -1,5 +1,79 @@
 # BigGo price history
 
+## Current 2025 partial deliverable
+
+The CSV contains **1,397 rows from 115 listings with relevant history**. In total,
+116 listings were retrieved: **72 Electronics (3C), 44 Appliances (APPL), and zero
+Beauty (BEAU), Food (FOOD) or Home (HOME)**. It is not representative coverage of
+all five categories. Collection remains stopped on the explicit login blocker;
+the project decision is to retain the no-login scope. Independent verification is
+still only **one visible-chart check out of 34 planned**, with no repeat requests.
+
+### Validate a fresh checkout (no raw directory needed)
+
+From the repository root, using Python's standard library and Node.js:
+
+```sh
+python biggo/validate_2025.py
+node --test biggo/test_collect_2025.cjs
+python biggo/test_validate_2025.py
+```
+
+The default validator reports `validation_mode: csv_only` and
+`raw_to_csv_verified: false`. It checks the CSV schema, IDs, dates, chronology,
+price changes, duplicates, metadata, UTF-8 and consistency with the saved status
+inventory. It cannot certify source completeness, UTC conversion, actual collection
+dates or request pacing. Saved chart/repeat counts are reported, not re-performed.
+By default validation prints a report without modifying any file.
+
+### Verify source evidence or rebuild offline
+
+Raw evidence is gitignored. Restore `biggo/raw/2025/` from the delivered evidence
+bundle before using these commands; a clean Git checkout alone does not contain it:
+
+```sh
+python biggo/validate_2025.py --raw
+node biggo/collect_2025.cjs rebuild
+```
+
+`--raw` explicitly requires the histories for every previously retrieved listing
+and the request log, reconstructs all exported records, and reports
+`validation_mode: raw_to_csv`. Missing evidence fails with a clear error; it never
+falls back to CSV-only success. Use `--output <path>` to explicitly save a report.
+`validation_2025.json` records the executed local full-evidence verification.
+
+Rebuild checks all existing rows and retrieved-listing statuses before writing any
+output. Absent, incomplete, corrupt or truncated evidence that would remove or
+change a record causes a nonzero exit and leaves the CSV and status file unchanged,
+including retrieved listings that contributed zero rows. It never replaces a
+populated CSV with a header-only file. The eight-column schema is unchanged.
+
+### Collector implementation (currently blocked)
+
+The collector requires Node.js, Playwright and Google Chrome. Online `probe`,
+`collect` and `verify` modes stop while `access_blocker_2025.json` exists. No further
+collection is authorized by this deliverable.
+
+Set `SCRAPER_CONTACT` in the environment or the ignored root `.Renviron`. Install
+Playwright locally if needed (`npm install --no-save playwright`), or set
+`PLAYWRIGHT_MODULE` to an existing Playwright module directory. No browser download
+is needed when Google Chrome is installed. The collector uses a fresh signed-out
+browser context, the NFR-2 user agent, and 5.2-second request spacing. It stops on
+an explicit login requirement or HTTP 403, and retries transient failures once
+after 60 seconds. It never uses an existing signed-in profile.
+
+Each successful response is saved under ignored `biggo/raw/2025/`, then the CSV
+and `collection_status_2025.csv` are atomically rebuilt after preservation checks.
+Keep the raw folder with the local deliverable for provenance and full verification.
+The response covers 730 days to obtain the baseline and detect stopped tracking;
+only the 2025 study window and its last preceding change enter the dataset.
+Same-minute changes retain their source
+milliseconds in `note` when needed to distinguish records.
+
+The unexecuted `verify` plan covers 34 listings, including all SHORT, MISMATCH and
+stopped-series cases. `verification_2025.csv` remains header-only.
+See `AUDIT_2025.md` for the executed run and outstanding data-quality limitations.
+
 Owner: **Albert** · 2025 history due **Sun Oct 25** (Milestone 2) · 2026 history due **Sun Nov 29**
 
 ## The task

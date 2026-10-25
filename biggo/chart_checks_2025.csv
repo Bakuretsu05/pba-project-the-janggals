@@ -1,0 +1,2 @@
+product_id,platform,history_id,method,result,rows_checked,checked_on,note
+3C-003,momo,tw_pec_momoshop-8697108,"Signed-out browser; selected exact platform ID, then 最近2年; compared displayed table with exported baseline and 7 changes",match,8,2026-10-25,"Independent visible-table check completed before login restriction; all eight exported timestamps/prices matched. This is one listing, not the planned 34."

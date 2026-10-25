@@ -1,0 +1,12 @@
+{
+  "product_id": "APPL-019",
+  "platform": "momo",
+  "history_id": "tw_pec_momoshop-6198895",
+  "sent_at": "2026-10-25T12:50:03.094Z",
+  "status": 429,
+  "response": {
+    "result": false,
+    "require_login": true
+  },
+  "action": "Stopped; spec section 3 excludes login-only data. Authorized project scope decision required before any login or further collection."
+}
