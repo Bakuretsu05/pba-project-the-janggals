@@ -1,0 +1,148 @@
+{
+  "checked_on_tw": "2026-10-26",
+  "scope": "Four exact missing histories plus HOME-013 Coupang, 3C-010 momo and APPL-003 Coupang only",
+  "authorization": {
+    "evidence": "Earlier direct user message explicitly states the team approved authenticated BigGo history collection using their own account.",
+    "attribution": "User-reported team approval; no separate team decision record independently reviewed.",
+    "continuing_user_permission": true
+  },
+  "tooling": {
+    "browser": "Existing manually authenticated in-app browser",
+    "available": "UI controls, read-only DOM inspection, page assets",
+    "not_available": "Authenticated arbitrary POST/network request interface; page reports no WebMCP tools",
+    "project_endpoint": "POST https://biggo.com.tw/api/v1/spa/product/history",
+    "project_payload": {
+      "history_id": "<exact history ID>",
+      "days": 730
+    },
+    "direct_post_attempts": 0,
+    "broad_searches": 0,
+    "bounded_ui_history_reopens": 2,
+    "retailer_detail_attempts": 1,
+    "retries": 0,
+    "pace_seconds": 5.2
+  },
+  "historically_successful_missing_histories": [
+    {
+      "product_id": "APPL-020",
+      "platform": "momo",
+      "history_id": "tw_pec_momoshop-13903670",
+      "prior_http_status": 200,
+      "prior_points": 76,
+      "prior_in_window_points": 35,
+      "current_exact_post": "not_attempted_tool_unavailable",
+      "disposition": "not_retrieved_by_UI; endpoint availability remains untested"
+    },
+    {
+      "product_id": "APPL-020",
+      "platform": "pchome",
+      "history_id": "tw_ec_pchome24h-DMBI4K-A900INYCB",
+      "prior_http_status": 200,
+      "prior_points": 30,
+      "prior_in_window_points": 9,
+      "current_exact_post": "not_attempted_tool_unavailable",
+      "disposition": "not_retrieved_by_UI; endpoint availability remains untested"
+    },
+    {
+      "product_id": "BEAU-020",
+      "platform": "pchome",
+      "history_id": "tw_ec_pchome24h-DDAB4W-A900HAV8C",
+      "prior_http_status": 200,
+      "prior_points": 50,
+      "prior_in_window_points": 16,
+      "current_exact_post": "not_attempted_tool_unavailable",
+      "disposition": "not_retrieved_by_UI; endpoint availability remains untested"
+    },
+    {
+      "product_id": "FOOD-002",
+      "platform": "pchome",
+      "history_id": "tw_ec_pchome24h-DBAY5B-A900J35DD",
+      "prior_http_status": 200,
+      "prior_points": 35,
+      "prior_in_window_points": 3,
+      "current_exact_post": "not_attempted_tool_unavailable",
+      "disposition": "not_retrieved_by_UI; endpoint availability remains untested"
+    }
+  ],
+  "ssd": {
+    "history_id": "tw_pec_momoshop-14533852",
+    "saved_parent_points": 32,
+    "saved_parent_in_window_changes": 6,
+    "variant_ids": [
+      {
+        "title": "靛青藍 ",
+        "model_id": "14533852_001",
+        "history_id": "tw_pec_momoshop-14533852-14533852_001"
+      },
+      {
+        "title": "深空灰 ",
+        "model_id": "14533852_002",
+        "history_id": "tw_pec_momoshop-14533852-14533852_002"
+      }
+    ],
+    "gray_ui_observed_at": "2026-10-25T16:54:29.517Z",
+    "gray_ui_points": 9,
+    "gray_ui_earliest": "2026-04-01 11:00",
+    "finding": "Inference: saved parent history versus selected-variant UI history may explain the coverage difference. The actual UI request ID was not observable; this is not a proven cause or proof that parent history belongs to gray.",
+    "decision_required": "Keep flagged parent records, exclude them from gray-specific analysis, or provide matching gray child-history evidence; original six rows preserved."
+  },
+  "hair_dryer": {
+    "history_id": "tw_pec_coupang-451592771846147",
+    "saved_title": "Panasonic 負離子吹風機 EH-NE57-P 粉紅色",
+    "catalog_model": "EH-NE57-A blue",
+    "saved_model": "EH-NE57-P pink",
+    "has_saved_multiple_product_options": false,
+    "finding": "Exact product ID identifies pink; no blue alternative established in saved evidence.",
+    "decision_required": "Correct catalog/link mapping or exclude mismatched history from blue-specific analysis; do not relabel pink prices."
+  },
+  "mouthwash": {
+    "history_id": "tw_pec_coupang-301209210552330",
+    "menu_observed_at": "2026-10-25T16:54:58.198Z",
+    "displayed_title": "LISTERINE 李施德霖 全效護理防蛀漱口水 不含酒精 500mL",
+    "observed_options": [
+      "2瓶",
+      "1瓶",
+      "3瓶",
+      "750ml 2瓶",
+      "4瓶",
+      "750ml 3瓶",
+      "5瓶",
+      "500ml 6瓶",
+      "750ml 4瓶",
+      "750ml 5瓶",
+      "750ml 6瓶"
+    ],
+    "catalog_item_id": "301207012720650",
+    "catalog_vendor_item_id": "301209210552326",
+    "visible_link_item_id": "305561811779590",
+    "visible_link_vendor_item_id": "305559567810571",
+    "retailer_detail_result": "Access-denied page with error403 container; no retry or bypass",
+    "finding": "750ml x1 remains unconfirmed. Generic 1-bottle label does not establish volume, and the displayed item/vendor IDs differ from catalog. Parent history alone cannot establish the correct SKU.",
+    "decision_required": "Confirm catalog SKU and correct exact variant history or leave excluded."
+  },
+  "preservation": {
+    "price_changes_sha256": "b684d8e7ae09294867003c6c67fcce97542452f8acf6b5514d8bbac56a7e46a1",
+    "all_2867_existing_rows_unchanged": true,
+    "original_1397_rows_unchanged": true,
+    "new_price_rows": 0
+  },
+  "resolved": [
+    "Corrected search absence versus endpoint unavailability claim",
+    "Identified a parent/selected-variant scope ambiguity; exact cause and gray attribution remain unproven",
+    "Verified direct user authorization statement and clarified attribution"
+  ],
+  "unresolved": [
+    "Four exact authenticated POST recoveries require a supported request interface or manually obtained source evidence",
+    "750ml single-bottle identity/history",
+    "Gray-specific attribution of six saved SSD changes",
+    "Pink/blue catalog mismatch"
+  ],
+  "attempted_definition": "335 inventory targets processed, including search attempts; not 335 direct endpoint requests",
+  "validation": {
+    "node_tests_passed": 23,
+    "python_tests_passed": 9,
+    "csv_only": "PASS",
+    "raw_to_csv": "PASS",
+    "offline_rebuild_byte_identical": true
+  }
+}

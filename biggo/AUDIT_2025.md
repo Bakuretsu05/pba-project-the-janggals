@@ -3,10 +3,13 @@
 Albert collected the data on **2026-10-25 and 2026-10-26, Taiwan time (UTC+8)**.
 This continues draft PR #11 from `b1c5e77d9f576ee5a794c7dc7e758d01b00677c4`.
 Collection/review continued after midnight; dates were not backdated to the Oct 25
-milestone deadline. **Milestone 2 remains incomplete:** five listings have no usable
+milestone deadline. **Milestone 2 remains incomplete:** five listings remain without accepted collected
 history, and independent review retains unresolved findings.
 
 ## Executed results
+
+Targets attempted means processed by the collection workflow, including exact-ID
+UI search attempts. It does not mean 335 exact history endpoint requests were made.
 
 | Platform | Targets attempted | Accepted histories | With relevant 2025 records | CSV rows |
 |---|---:|---:|---:|---:|
@@ -52,7 +55,7 @@ HTTP 429
 
 `access_blocker_2025.json` and `raw/2025/APPL-019_momo_attempt1.json.gz` remain
 unchanged. The original no-login decision applied to that partial delivery.
-The user subsequently explicitly confirmed team approval for authenticated
+The user subsequently explicitly reported team approval and authorized authenticated
 collection using their own account; see `collection_authorization_2025.md`.
 Specification section 3 itself was **not modified**. The signed-out HTTP collector
 still refuses online collection while the marker exists.
@@ -84,6 +87,10 @@ paced log; history-to-history collection requests were paced.
 | FOOD-002 pchome | Exact platform item ID absent in original and focused-title searches |
 | HOME-013 coupang | Exact listing defaults to 500ml; catalog asks for 750ml x1; no confirmed matching option |
 
+The first four are search misses, not proven endpoint failures. Marvin's Oct 22
+report records successful HTTP 200 histories for all four. Their exact authenticated
+endpoint availability was not tested by the UI-only continuation.
+
 Initial exact-ID searches missed 29 listings. One focused retry per listing using
 the prior recorded title recovered 25. Four remained absent; no first-result or
 other-product substitution was made. HOME-013 was separately excluded during
@@ -105,7 +112,7 @@ records actual results, not a blanket success claim:
 | Catalog variant corrected and accepted with chart/table review | 6 |
 | Flat baseline qualified by moving-window boundary | 1 |
 | Unresolved saved-history discrepancy | 1 |
-| Catalog option unavailable; excluded | 1 |
+| Catalog option unconfirmed; excluded | 1 |
 
 The six corrected newly collected Coupang histories are BEAU-007 (150ml x2),
 BEAU-012 (300ml x4), FOOD-009 (330ml x24), FOOD-010 (330ml x48), FOOD-011 (580ml
@@ -118,7 +125,7 @@ is exclusion, not acceptance of that attempted correction. The option-selection
 factory now requires an explicit catalog option before accepting a selectable SKU.
 A separate post-correction network retrieval of each corrected option is not claimed.
 
-Two reviews require further resolution:
+The targeted follow-up below qualifies these findings. Two reviews require further resolution:
 
 - **3C-010 momo:** the catalog's gray option currently shows only 2026 points,
   whereas the saved original API evidence has six 2025 changes. Both default blue
@@ -193,3 +200,30 @@ full-evidence run; it does not imply that raw files are committed.
 Only BigGo deliverables/scripts/tests/docs are changed. The product catalog,
 project specification, ignored contact configuration and browser profiles are not
 part of the PR. Draft PR #11 targets main and must not be merged by this task.
+
+## Final targeted QC, 2026-10-26
+
+[TARGETED_QC_2026-10-26.md](TARGETED_QC_2026-10-26.md) and
+`targeted_qc_2026-10-26.json` record the bounded follow-up. No prices or CSV rows
+changed. Four historical HTTP 200 successes are confirmed, but exact POST recovery
+could not be executed through the available signed-in browser tool. Those four
+remain unretrieved, with current endpoint availability untested. Two exact-ID UI
+histories were reopened with 5.2-second controlled pacing; no broad search was
+repeated. One exact Coupang SKU detail link was denied, so no retry was made.
+
+The SSD raw parent response lists separate blue/gray child history IDs. The selected-variant UI table may have a different scope from
+that parent series. This is a plausible explanation, not a proven wire-level cause:
+the actual UI request ID was not observable, and the six parent changes are not
+thereby established as gray prices. The original rows and warning remain. The pink/blue mismatch is confirmed
+from the saved model/title; no blue replacement is established. HOME-013's selected
+visible item/vendor IDs differ from the catalog IDs, and the generic single-bottle
+label does not confirm 750ml. It remains excluded rather than claimed unavailable
+in every history representation.
+
+Authorization wording now attributes team approval to the user's explicit earlier
+statement; no independent team decision record was reviewed. This is a factual
+attribution clarification, not a withdrawal of the user's authorized scope.
+
+Following this targeted pass, all 23 Node and nine Python tests were rerun and
+passed. CSV-only validation, full raw reconstruction and byte-identical offline
+rebuild passed again. No software rewrite or new test framework was needed.

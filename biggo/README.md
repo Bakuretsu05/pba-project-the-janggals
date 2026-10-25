@@ -2,9 +2,10 @@
 
 ## Current 2025 deliverable
 
-All **335 listings were attempted**. The dataset contains **2,867 rows from 327
+All **335 target listings were processed** (including UI search attempts, not
+335 exact endpoint requests). The dataset contains **2,867 rows from 327
 listings with relevant 2025 records**; 330 exact listing histories were accepted.
-Five listings remain without usable evidence, so Milestone 2 is **not complete**.
+Five listings remain without accepted collected evidence, so Milestone 2 is **not complete**.
 All original 1,397 rows remain a byte-for-byte unchanged prefix of the CSV.
 
 | Category | Accepted histories |
@@ -17,14 +18,14 @@ All original 1,397 rows remain a byte-for-byte unchanged prefix of the CSV.
 
 The original partial collection covered only Electronics (72) and Appliances (44),
 with zero retrieved Beauty, Food or Home listings. The later authenticated run
-extended coverage to all five categories under the user's explicit team approval
+extended coverage to all five categories under the user's explicit authorization and reported team approval
 in [collection_authorization_2025.md](collection_authorization_2025.md). The project
 specification is unchanged. The original HTTP 429 `require_login: true` blocker is
 retained; the fresh signed-out HTTP collector remains disabled by that marker.
 
 The **34-listing visible-chart review** found 25 exact matches, six catalog pack
 corrections, one moving-window baseline qualification, one unresolved SSD history
-discrepancy, and one unavailable catalog variant. This is **not 34 clean matches**.
+discrepancy, and one unconfirmed catalog variant. This is **not 34 clean matches**.
 Independent verification still has unresolved findings. See [AUDIT_2025.md](AUDIT_2025.md)
 and [chart_checks_2025.csv](chart_checks_2025.csv).
 
@@ -132,3 +133,15 @@ The original run checked robots.txt (`Allow: /`, `Disallow: /r/`) and the public
 terms page. Redirect links were read for identity without following `/r/`. The
 original source investigation used signed-in access; spec section 3's restriction
 was later addressed by the user's explicit team exception, without editing the spec.
+
+## Final targeted QC (2026-10-26)
+
+See [TARGETED_QC_2026-10-26.md](TARGETED_QC_2026-10-26.md). Marvin's report proves
+the four search misses previously returned valid histories; their exact endpoint
+availability is currently **untested**, not established unavailable. The existing
+signed-in browser control exposes no arbitrary POST interface or site request tool.
+No broad searches or direct POST retries were performed. All 2,867 existing rows
+remain byte-for-byte unchanged. The SSD saved parent history has distinct child
+variant IDs; its gray-specific attribution and the pink/blue hair-dryer mapping
+require resolution. HOME-013's exact retailer SKU link returned access denied;
+the 750ml single-bottle history remains unconfirmed.
