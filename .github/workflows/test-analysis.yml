@@ -1,0 +1,25 @@
+name: test analysis pipeline
+
+on:
+  pull_request:
+    paths: [analysis/**, .github/workflows/*analysis*, .github/workflows/combined-snapshots.yml]
+  push:
+    branches: [main, codex/automated-analysis-datasets]
+    paths: [analysis/**, .github/workflows/*analysis*, .github/workflows/combined-snapshots.yml]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.6.1'
+      - run: python -m unittest discover -s analysis/tests -p 'test_*.py' -v
+      - run: Rscript analysis/tests/test_analysis.R

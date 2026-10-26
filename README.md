@@ -39,6 +39,13 @@ Run `Rscript scrapers/momo/scrape_momo.R` from the project root. The default inp
 
 ## Data
 
+The **combined snapshots** and **final analysis** Actions workflows automatically
+build cumulative observations and the product-platform-year analysis table after
+scraping. Historical production artifacts are backfilled, and missing evidence is
+flagged rather than filled. Download `combined-snapshots` and `final-analysis` from
+their respective Actions runs. See [`analysis/README.md`](analysis/README.md) for
+schemas, calculation rules, review inputs and local rebuild commands.
+
 Scraper output and raw pages stay out of git (`output/` and `raw/` folders are ignored). BigGo
 history is collected from biggo.com.tw into `biggo/price_changes.csv`, which is tracked. Download
 links will be added at Milestone 2.

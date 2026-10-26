@@ -1,0 +1,71 @@
+name: combined snapshots
+
+on:
+  workflow_run:
+    workflows: [scrape]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - analysis/collect_snapshots.py
+      - products/products.csv
+      - .github/workflows/combined-snapshots.yml
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: combined-snapshots
+  cancel-in-progress: false
+
+jobs:
+  combine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Check for a collection, rather than a skipped scheduled backup
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_RUN: ${{ github.event.workflow_run.id }}
+        shell: bash
+        run: |
+          collect=true
+          if [ -n "$SOURCE_RUN" ]; then
+            count=$(gh api --paginate "repos/$GITHUB_REPOSITORY/actions/runs/$SOURCE_RUN/artifacts?per_page=100" \
+              --jq '[.artifacts[] | select(.name | test("^(momo|pchome)_[0-9]{4}-[0-9]{2}-[0-9]{2}_[0-9]{4}$"))] | length')
+            if [ "${count:-0}" -eq 0 ]; then collect=false; fi
+          fi
+          echo "collect=$collect" >> "$GITHUB_OUTPUT"
+      - name: Recover historical CSVs and append new snapshots
+        if: steps.gate.outputs.collect == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_RUN: ${{ github.event.workflow_run.id }}
+        shell: bash
+        run: |
+          args=()
+          if [ -n "$SOURCE_RUN" ]; then args+=(--required-run "$SOURCE_RUN"); fi
+          python analysis/collect_snapshots.py --repo "$GITHUB_REPOSITORY" "${args[@]}"
+      - name: Summarize coverage
+        if: steps.gate.outputs.collect == 'true'
+        shell: bash
+        run: |
+          echo '## Cumulative snapshot coverage' >> "$GITHUB_STEP_SUMMARY"
+          cat output/combined/snapshot_runs.csv >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: steps.gate.outputs.collect == 'true'
+        with:
+          name: combined-snapshots
+          path: output/combined/
+          if-no-files-found: error
+          retention-days: 90
