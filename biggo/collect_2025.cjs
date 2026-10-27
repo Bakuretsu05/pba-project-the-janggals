@@ -10,7 +10,8 @@ const RAW = path.join(DIR, 'raw', '2025');
 const BLOCKER = path.join(DIR, 'access_blocker_2025.json');
 const HEADER = ['product_id','platform','biggo_url','changed_at','price','entered_by','entered_on','note'];
 const SHOPS = {momo:'tw_pec_momoshop',pchome:'tw_ec_pchome24h',coupang:'tw_pec_coupang'};
-const START = Date.parse('2025-10-01T00:00:00+08:00');
+const START = Date.parse('2025-09-01T00:00:00+08:00');
+const PRIOR_START = Date.parse('2025-10-01T00:00:00+08:00');
 const END = Date.parse('2025-11-26T00:00:00+08:00');
 const PACE = 5200;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -93,7 +94,7 @@ function visibleData(t,record) {
   if(!points.length||!record.title)throw Error('Visible history is empty');
   return {result:true,history_id:t.history_id,oid:t.platform_item_id,nindex:SHOPS[t.platform],purl,currency:'TWD',title:record.title,price_history:points.reverse()};
 }
-function extract(t, record) {
+function extract(t, record, start=START) {
   if(record.source==='biggo_visible_error')throw Error(record.error);
   const visible=record.source==='biggo_visible_table';
   const b=visible?visibleData(t,record):record.data;
@@ -106,32 +107,34 @@ function extract(t, record) {
     return {x:p.x,y:p.y};
   }).sort((a,b)=>a.x-b.x);
   const changes=points.filter((p,i)=>i===0||p.y!==points[i-1].y);
-  const before=changes.filter(p=>p.x<START).slice(-1);
-  const selected=[...before,...changes.filter(p=>p.x>=START&&p.x<END)];
+  const before=changes.filter(p=>p.x<start).slice(-1);
+  const selected=[...before,...changes.filter(p=>p.x>=start&&p.x<END)];
   const notes=[];
   if(visible)notes.push('Source: signed-in BigGo visible history table; Taiwan time at displayed minute precision');
   if(record.catalog_variant)notes.push('Selected catalog variant: '+record.catalog_variant);
+  if(record.quality_warning)notes.push(record.quality_warning);
   if(visible) {
-    const period=points.filter(p=>p.x>=START&&p.x<END).map(p=>p.y);
+    // Marvin's reference summary still describes Oct 1-Nov 25, not the new window.
+    const period=points.filter(p=>p.x>=PRIOR_START&&p.x<END).map(p=>p.y);
     if(period.length!==Number(t.coverage.n_points_2025_10_01_to_11_25)||(period.length&&(Math.min(...period)!==Number(t.coverage.min_price_in_period)||Math.max(...period)!==Number(t.coverage.max_price_in_period))))notes.push('Visible 2025 history differs from prior coverage summary; verify coverage/selected variant');
   }
   if(t.coverage.class!=='OK')notes.push('Coverage '+t.coverage.class+' (2026-10-22): '+t.coverage.note);
-  if(!before.length)notes.push('No historical baseline before 2025-10-01; first observed '+(points[0]?tw(points[0].x):'NA'));
+  if(!before.length)notes.push('No historical baseline before '+tw(start,true)+'; first observed '+(points[0]?tw(points[0].x):'NA'));
   if(points.length&&points.at(-1).x<END-60000)notes.push('Tracking last observed '+tw(points.at(-1).x)+'; do not carry price through 2025-11-25 without evidence');
   if(before.length===1&&before[0].x===points[0]?.x)notes.push('Baseline is first observed point in available history; earlier change time unknown');
   const minuteCounts=new Map();for(const p of selected)minuteCounts.set(tw(p.x),(minuteCounts.get(tw(p.x))||0)+1);
   const rows=selected.map((p,eventIndex)=>({product_id:t.product_id,platform:t.platform,biggo_url:t.biggo_url,changed_at:tw(p.x),price:p.y,entered_by:'Albert',entered_on:tw(Date.parse(record.collected_at),true),note:[...notes,...(minuteCounts.get(tw(p.x))>1?[visible?'Distinct visible change in table order='+eventIndex:'Distinct source change UTC milliseconds='+p.x]:[])].join(' | ')||'NA'}));
   return {rows,points,changes,baseline:before.length,first:points[0]?tw(points[0].x):'NA',last:points.length?tw(points.at(-1).x):'NA',title:b.title,note:notes.join(' | ')||'NA'};
 }
-function rebuild(list) {
+function rebuild(list, extendWindow=false) {
   if(!fs.existsSync(RAW))throw Error('Refusing rebuild: required raw/2025 evidence is unavailable; existing CSV and status files were not changed.');
-  const rows=[], coverage=[];
+  const rows=[], coverage=[], priorRows=[];
   const chartFile=path.join(DIR,'chart_checks_2025.csv');
   const chartReviews=fs.existsSync(chartFile)?readCSV(chartFile):[];
   for(const t of list) {
     let c={product_id:t.product_id,platform:t.platform,history_id:t.history_id,prior_class:t.coverage.class,status:'not_attempted',rows:0,baseline:0,title:t.coverage.title,note:t.coverage.note||'NA'};
     if(fs.existsSync(rawFile(t))) {
-      try {const record=readRaw(rawFile(t));const d=extract(t,record);rows.push(...d.rows);c={...c,status:d.points.length?'retrieved':'empty',rows:d.rows.length,baseline:d.baseline,first_point_tw:d.first,last_point_tw:d.last,title:d.title,note:d.note};}
+      try {const record=readRaw(rawFile(t));const d=extract(t,record);rows.push(...d.rows);if(extendWindow)priorRows.push(...extract(t,record,PRIOR_START).rows);c={...c,status:d.points.length?'retrieved':'empty',rows:d.rows.length,baseline:d.baseline,first_point_tw:d.first,last_point_tw:d.last,title:d.title,note:d.note};}
       catch(e){c={...c,status:'failed',note:e.message};}
     } else if(fs.existsSync(path.join(RAW,key(t)+'_attempt1.json.gz'))) {
       const attempt=readRaw(path.join(RAW,key(t)+'_attempt1.json.gz'));
@@ -150,10 +153,18 @@ function rebuild(list) {
     const fingerprint=r=>JSON.stringify(HEADER.map(c=>String(r[c]??'NA')));
     const available=new Map();
     for(const row of rows) {const k=fingerprint(row);available.set(k,(available.get(k)||0)+1);}
+    // Explicit September migration may regenerate window-dependent notes only.
+    // Old rows must still match their old-window raw reconstruction exactly, and
+    // every non-note field must remain present in the expanded reconstruction.
+    const facts=r=>JSON.stringify(HEADER.filter(c=>c!=='note').map(c=>String(r[c]??'NA')));
+    const factCounts=new Map(),legacy=new Map();
+    for(const row of rows){const k=facts(row);factCounts.set(k,(factCounts.get(k)||0)+1);}
+    for(const row of priorRows){const k=fingerprint(row);legacy.set(k,(legacy.get(k)||0)+1);}
     for(const row of readCSV(csv)) {
-      const k=fingerprint(row);
-      if(!available.get(k))throw Error('Refusing rebuild: missing, invalid or incomplete raw evidence would remove or change existing records ('+row.product_id+' '+row.platform+'); no files changed.');
-      available.set(k,available.get(k)-1);
+      const k=fingerprint(row),f=facts(row);
+      if(!factCounts.get(f)||(!available.get(k)&&!legacy.get(k)))throw Error('Refusing rebuild: missing, invalid or incomplete raw evidence would remove or change existing records ('+row.product_id+' '+row.platform+'); no files changed.');
+      factCounts.set(f,factCounts.get(f)-1);
+      if(available.get(k))available.set(k,available.get(k)-1);else legacy.set(k,legacy.get(k)-1);
     }
   }
   const statusFile=path.join(DIR,'collection_status_2025.csv');
@@ -197,8 +208,8 @@ function contact() {
 }
 async function collect(mode='collect') {
   const list=targets();
-  if(mode==='rebuild'){console.log(JSON.stringify(rebuild(list)));verifySaved(list);return;}
-  if(fs.existsSync(BLOCKER))throw Error('Unresolved login restriction. See biggo/access_blocker_2025.json and obtain an authorized project scope decision before further collection.');
+  if(mode==='rebuild'){console.log(JSON.stringify(rebuild(list,process.argv.includes('--extend-window'))));verifySaved(list);return;}
+  if(fs.existsSync(BLOCKER))throw Error('Historical signed-out login restriction. Spec section 3 now permits signed-in BigGo collection; use the authorized browser session, not this fresh signed-out collector. See biggo/access_blocker_2025.json.');
   // Resolve before browser startup, and keep contact out of saved evidence.
   const userAgent=`PBA-Double11-study (NTHU ISS4066; contact: ${contact()})`;
   let pw;try{pw=require('playwright');}catch(e){if(!process.env.PLAYWRIGHT_MODULE)throw e;pw=require(process.env.PLAYWRIGHT_MODULE);}
@@ -228,7 +239,7 @@ async function collect(mode='collect') {
       atomic(path.join(RAW,key(t)+(verify?'_verify':'')+'_attempt'+(attempt+1)+'.json.gz'),zlib.gzipSync(JSON.stringify(record)));
       log({kind:verify?'verify':'history',history_id:t.history_id,sent_at,status:r.status,attempt:attempt+1,require_login:data.require_login===true});
       if(data.require_login===true||r.status===403) {
-        atomic(BLOCKER,JSON.stringify({product_id:t.product_id,platform:t.platform,history_id:t.history_id,sent_at,status:r.status,response:data,action:'Stopped; spec section 3 excludes login-only data. Authorized project scope decision required before any login or further collection.'},null,2)+'\n');
+        atomic(BLOCKER,JSON.stringify({product_id:t.product_id,platform:t.platform,history_id:t.history_id,sent_at,status:r.status,response:data,action:'Signed-out collection stopped. Spec section 3 permits collection in an authorized signed-in team browser; retain this response as historical evidence and do not retry restricted access in this context.'},null,2)+'\n');
         throw Error('Access restricted: '+r.status+' '+t.history_id+'; no login or bypass attempted');
       }
       if(r.status===200&&data.result===true) {extract(t,record);atomic(rawFile(t,verify),zlib.gzipSync(JSON.stringify(record)));return;}

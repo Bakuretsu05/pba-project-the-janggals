@@ -144,5 +144,7 @@
     "csv_only": "PASS",
     "raw_to_csv": "PASS",
     "offline_rebuild_byte_identical": true
-  }
+  },
+  "historical_report": true,
+  "superseded_by": "Current spec section 3/11/13 (main 3531549) and recovery_2026-10-28.json; four exact histories recovered, flagged listings retained by team decision"
 }

@@ -1,0 +1,48 @@
+{
+  "collected_on_tw": "2026-10-28",
+  "method": "One direct POST per exact ID, manually signed-in ordinary Chrome, requests spaced at least 5.2 seconds; no credential extraction",
+  "records": [
+    {
+      "product_id": "APPL-020",
+      "platform": "momo",
+      "history_id": "tw_pec_momoshop-13903670",
+      "status": 200,
+      "points": 76,
+      "collected_at": "2026-10-27T18:12:39.894Z",
+      "sent_at": "2026-10-27T18:12:39.183Z",
+      "exported_rows": 15
+    },
+    {
+      "product_id": "APPL-020",
+      "platform": "pchome",
+      "history_id": "tw_ec_pchome24h-DMBI4K-A900INYCB",
+      "status": 200,
+      "points": 30,
+      "collected_at": "2026-10-27T18:12:46.493Z",
+      "sent_at": "2026-10-27T18:12:45.104Z",
+      "exported_rows": 14
+    },
+    {
+      "product_id": "BEAU-020",
+      "platform": "pchome",
+      "history_id": "tw_ec_pchome24h-DDAB4W-A900HAV8C",
+      "status": 200,
+      "points": 50,
+      "collected_at": "2026-10-27T18:12:52.626Z",
+      "sent_at": "2026-10-27T18:12:51.704Z",
+      "exported_rows": 19
+    },
+    {
+      "product_id": "FOOD-002",
+      "platform": "pchome",
+      "history_id": "tw_ec_pchome24h-DBAY5B-A900J35DD",
+      "status": 200,
+      "points": 35,
+      "collected_at": "2026-10-27T18:12:58.392Z",
+      "sent_at": "2026-10-27T18:12:57.832Z",
+      "exported_rows": 4
+    }
+  ],
+  "rows_added": 52,
+  "remaining_zero_row_case": "HOME-013 Coupang: retain recorded reason, no further variant work under spec section 11"
+}

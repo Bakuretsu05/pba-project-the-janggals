@@ -8,5 +8,5 @@
     "result": false,
     "require_login": true
   },
-  "action": "Stopped; spec section 3 excludes login-only data. Authorized project scope decision required before any login or further collection."
+  "action": "Historical signed-out HTTP 429 retained. Spec section 3 now permits signed-in BigGo collection (team decision 2026-10-27, main 8827ffa). Use an authorized signed-in team browser; do not retry restricted access in the old signed-out context."
 }

@@ -1,27 +1,27 @@
-# Authenticated 2025 collection authorization
+# Signed-in collection authority
 
-On 2026-10-25 the user stated directly in this task: “Yes, the team has explicitly
-approved authenticated BigGo history collection using my own account.”
+Current authority is the project specification, not just account permission:
 
-The user manually signed into BigGo in the in-app browser and confirmed successful
-login. The previously blocked APPL-019 momo history then displayed a
-two-year table with real history. This authorizes using that ordinary browser session for the 2025
-collection and independent checks. The project specification itself is unchanged.
+- Section 3, updated on main in `8827ffa` (team decision 2026-10-27), explicitly
+  permits reading BigGo history while signed into a team member's BigGo account.
+- Sections 11 and 13, updated in `3531549`, define the September 1-November 25
+  window, tracking coverage, retained flagged listings and acceptance checks.
+- The team leader confirmed these changes in PR #11 comments 6445197409,
+  6446252989 and 6446598452. No additional team scope decision is pending.
 
-No passwords, cookies, JWTs or session tokens are requested, extracted, copied or
-committed. The original unauthenticated HTTP 429 evidence remains retained.
-The fresh-session HTTP collector stays blocked; the authorized continuation uses
-ordinary UI history controls and saves only public product/price-table evidence.
-The browser keeps its ordinary identity; its authenticated session is not moved
-into the separate HTTP collector or the failed Chrome login profile.
+The user separately authorized their own account and manually signed in on Oct 25
+and again in ordinary Chrome for the Oct 28 targeted recovery. Their earlier
+statement reporting team approval was user-reported at that time; the later merged
+specification is now independent documented authority. The original October 25
+partial-delivery no-login decision is historical and does not override current main.
 
-Missing exact item IDs are recorded as search failures, with no substitution of
-another product. Any authentication refusal or CAPTCHA requires stopping for the
-user. Controlled BigGo actions are spaced at least 5.2 seconds apart, with immediate
-local checkpoints after each listing.
+No passwords, cookies, JWTs or session tokens are requested, extracted, transferred
+between browser contexts or committed. The four Oct 28 history requests ran once
+per exact ID in the user's signed-in ordinary Chrome tab, with at least 5.2 seconds
+between starts. Chrome's console warning was handled manually by the user; the
+agent did not dismiss it. All four responses were HTTP 200 and are saved as public
+product/price evidence, with actual Taiwan collection dates.
 
-Attribution clarified during the 2026-10-26 targeted QC: this is the user's explicit
-authorization and report of team approval. No separate team resolution, minutes,
-or approval from another team member was independently reviewed. The quoted user
-message is present in this conversation; the permission was not inferred from
-Marvin's earlier signed-in activity or from the fact that login succeeded.
+The old signed-out HTTP 429 response is retained in `access_blocker_2025.json`.
+Its action describes the current signed-in policy. It prevents accidental use of
+the legacy signed-out collector; it is not a prohibition on approved signed-in work.

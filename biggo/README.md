@@ -1,37 +1,60 @@
 # BigGo price history
 
-## Current 2025 deliverable
+## Current 2025 delivery (updated 2026-10-28)
 
-All **335 target listings were processed** (including UI search attempts, not
-335 exact endpoint requests). The dataset contains **2,867 rows from 327
-listings with relevant 2025 records**; 330 exact listing histories were accepted.
-Five listings remain without accepted collected evidence, so Milestone 2 is **not complete**.
-All original 1,397 rows remain a byte-for-byte unchanged prefix of the CSV.
+The dataset contains **3,908 change-point rows** from **331 listings with relevant
+2025 records**. **334 histories are retrieved** across all 335 processed targets:
+150 momo, 150 PChome and 34 Coupang. HOME-013 Coupang remains without accepted
+2025 rows; its recorded reason is retained and the team requires no further work.
 
-| Category | Accepted histories |
-|---|---:|
-| Electronics (3C) | 72 |
-| Appliances (APPL) | 67 |
-| Beauty (BEAU) | 63 |
-| Food (FOOD) | 66 |
-| Home (HOME) | 62 |
+The current study window is **September 1-November 25, 2025**, plus the last real
+change before September 1 (spec section 11, updated on main in `3531549`). The
+September expansion adds 989 rows from already-saved evidence. One direct request
+for each of APPL-020 momo/PChome, BEAU-020 PChome and FOOD-002 PChome then recovered
+all four histories (HTTP 200), adding another 52 rows. No search or full collection
+rerun was needed. The four new response collection dates are October 28 Taiwan time.
 
-The original partial collection covered only Electronics (72) and Appliances (44),
-with zero retrieved Beauty, Food or Home listings. The later authenticated run
-extended coverage to all five categories under the user's explicit authorization and reported team approval
-in [collection_authorization_2025.md](collection_authorization_2025.md). The project
-specification is unchanged. The original HTTP 429 `require_login: true` blocker is
-retained; the fresh signed-out HTTP collector remains disabled by that marker.
+All **2,867 previous price records remain present**, including the original 1,397.
+No existing price, timestamp, product/platform link or entry date changed. Window
+baseline wording and same-minute event-order notes changed on 153 existing rows.
+Inserting September rows means the old bytes are no longer a prefix; preservation
+now compares all seven non-note fields and their multiplicities. See
+[preservation_2025.json](preservation_2025.json) for hashes and the correction record.
 
-The **34-listing visible-chart review** found 25 exact matches, six catalog pack
-corrections, one moving-window baseline qualification, one unresolved SSD history
-discrepancy, and one unconfirmed catalog variant. This is **not 34 clean matches**.
-Independent verification still has unresolved findings. See [AUDIT_2025.md](AUDIT_2025.md)
-and [chart_checks_2025.csv](chart_checks_2025.csv).
+**286 tracking coverage rows** in
+[history_coverage.csv](../analysis/config/history_coverage.csv) allow the analysis to
+carry unchanged prices through November 25 only for momo/PChome series observed
+past that date. None of the 14 stopped series receives a coverage extension. This
+includes the 13 known stopped series and FOOD-006 momo. Coverage is not a fabricated
+price-change row, and never supplies a price before a listing's first observation.
 
-### Validate a fresh checkout
+### Team decisions now recorded in the specification
 
-From the repository root, with Python's standard library and Node.js:
+Spec section 3 explicitly permits signed-in BigGo collection using a team member's
+account (`8827ffa`, 2026-10-27). Passwords, cookies and session tokens stay out of Git.
+The old HTTP 429 marker is historical evidence of signed-out access; its `action`
+now points to the approved signed-in workflow. It is not a scope prohibition.
+
+The team leader's Oct 27 decisions are now in section 11:
+
+- Keep every product and all collected rows, with SHORT/MISMATCH/UNCERTAIN warnings.
+  Do not replace products or silently relabel variants.
+- Keep the six 3C-010 momo 2025 rows flagged; no further gray-variant work is required.
+- Coupang is excluded from the analysis. Its APPL-003 pink/blue, HOME-013 and vague
+  title flags require no further collection or product replacement.
+- The title-variant listings remain in the data. H1-H4 sensitivity checks will compare
+  results with and without BEAU-005 PChome, BEAU-006 momo, BEAU-011 momo, FOOD-003
+  PChome, FOOD-009 PChome, FOOD-026 momo/PChome and HOME-016 momo/PChome.
+- A series ending before November 25 receives no tracking coverage row.
+
+There are **34 saved independent chart reviews**, accepted by the team leader as
+the approximately 10% check. They cover the original October-November window;
+September rows were reconstructed from saved full histories, without claiming new
+website checks. Review differences and the team's disposition remain documented.
+FOOD-002 PChome's recovered parent title offers several flavours; its rows carry
+an explicit warning rather than claiming proven original-flavour attribution.
+
+### Reproduce and validate
 
 ```sh
 python biggo/validate_2025.py
@@ -39,73 +62,38 @@ node --test biggo/test_collect_2025.cjs
 python biggo/test_validate_2025.py
 ```
 
-Default validation is read-only. It reports `validation_mode: csv_only` and
-`raw_to_csv_verified: false`, checking schema, identifiers, dates, chronology,
-price changes, duplicates, metadata, UTF-8 and status inventory. Saved chart counts
-and unresolved findings are reported; no new website checks are performed.
-Source completeness, source timestamp conversion, collection dates and pacing
-require local raw evidence. CSV line endings are pinned to LF for stable checkout bytes.
-
-### Verify evidence or rebuild offline
-
-Raw evidence is gitignored. Restore `biggo/raw/2025/` from the delivered evidence
-bundle first; a Git checkout alone does not include it.
+Default validation is read-only and explicitly **CSV-only**; it verifies schema,
+identity, chronology, metadata, changes, flags and tracking coverage without raw
+files. It does not claim raw reconstruction. Restore `biggo/raw/2025/` from the
+separate evidence bundle for full offline verification or rebuild:
 
 ```sh
 python biggo/validate_2025.py --raw
 node biggo/collect_2025.cjs rebuild
 ```
 
-Raw mode explicitly requires evidence for every accepted history and the request
-log. It independently reconstructs every exported timestamp/price. Missing raw
-files cause a clear failure, with no CSV-only fallback. `--output <path>` explicitly
-saves a report; the default only prints one. `validation_2025.json` records the
-executed full-evidence check, including source types and unresolved coverage.
+Missing, incomplete, corrupt or truncated raw evidence cannot delete/change existing
+CSV records or withdraw retrieved zero-row statuses. Refusal leaves both outputs
+unchanged. The one-time `rebuild --extend-window` migration additionally reconstructs
+the old October export from the same evidence before permitting window-dependent
+note changes; it still requires every existing price record in the September export.
+Ordinary rebuild keeps its strict full-record guard. No migration is required after
+restoring the current CSV. Raw verification also checks the status continuation
+dates supporting the coverage file. CSV checkout line endings are pinned to LF.
 
-Rebuild refuses before writing either CSV or status when absent, incomplete,
-corrupt or truncated evidence would remove/change existing records. This includes
-retrieved histories contributing zero rows. A populated CSV cannot silently become
-header-only. Rebuilding the final evidence reproduces the final CSV byte-for-byte.
+Signed-in UI collection helpers are `collect_visible_2025.cjs` and the loopback-only
+`visible_checkpoint_server.cjs`. The legacy fresh signed-out HTTP collector stays
+stopped on its historical restriction; it must not be mistaken for the user's
+signed-in browser. No browser profile or authentication state is copied. The four
+recovered response bodies are saved under their exact product/platform raw filenames;
+earlier UI search failures are archived. See [recovery_2026-10-28.json](recovery_2026-10-28.json).
 
-### Authorized browser continuation
-
-The user manually logged into the in-app browser. Collection used ordinary search
-cards selected by exact platform product ID and visible two-year history tables;
-no credentials, cookies, JWTs or session tokens were exported. The failed separate
-Chrome login was not used. Browser identity remained ordinary; the configured team
-contact was reused by the earlier dedicated signed-out collector, but the in-app
-browser did not expose a custom user-agent setting. Contact configuration stays in
-ignored `.Renviron` and out of Git/evidence bundles.
-
-`collect_visible_2025.cjs` contains the browser collection factory and pacing;
-`visible_checkpoint_server.cjs` supplies a loopback-only form for saving public
-product evidence incrementally. It requires an already manually authenticated
-browser automation tab; it does not create or automate login. Start the local
-server with `node biggo/visible_checkpoint_server.cjs`, bind the signed-in tab and
-`http://127.0.0.1:8766/` in the browser REPL, and use the factory. `/retry` provides
-focused exact-ID searches and `/audit` prioritizes summary differences and known
-ambiguities. Controlled BigGo actions use at least 5.2 seconds between starts.
-
-Before accepting a selectable option, inspect its title and the catalog model,
-size, pack count and color, then supply its exact `catalog_variant` label. The
-factory stops if that choice is missing or unavailable. A listing ID alone does
-not identify its physical variant. The table must finish updating after selection.
-One focused retry was used for missing IDs; no replacement listing was substituted.
-
-`apply_catalog_variants.cjs <original-1397-row-CSV>` applies explicit, archived
-corrections to newly collected listings only. It requires the exact protected
-snapshot hash and refuses to alter any listing represented in the original rows. Ordinary rebuild cannot
-perform deletions/corrections. `variant_corrections_2025.json` documents every
-correction, including the final exclusion of HOME-013 Coupang. Earlier wrong-option
-evidence remains in the local bundle. `summarize_chart_checks_2025.cjs` reconstructs
-the chart-review report from saved review evidence; it performs no new browser checks.
-
-The original eight-column schema is retained. UTC-millisecond API histories and
-Taiwan-minute visible histories are distinguished in provenance. Only consecutive
-equal prices are removed; reversals remain. Only Oct 1–Nov 25, 2025 and the last
-observed preceding change enter the CSV. Full two-year tables include other years
-solely as source evidence. No 2026 dataset has been created.
-
+`apply_catalog_variants.cjs` accepts a recognized protected CSV snapshot and checks
+record containment instead of an obsolete byte prefix. The team's current decision
+is to retain flagged listings, so no further variant substitutions are performed.
+[Audit](AUDIT_2025.md) records reviewer feedback, validation and remaining limits.
+The older [Oct 26 QC report](TARGETED_QC_2026-10-26.md) is historical and is superseded
+by the current specification and the successful Oct 28 exact-ID recovery.
 
 Owner: **Albert** · 2025 history due **Sun Oct 25** (Milestone 2) · 2026 history due **Sun Nov 29**
 

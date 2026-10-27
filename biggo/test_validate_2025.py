@@ -24,6 +24,8 @@ class ValidationTests(unittest.TestCase):
                      'chart_checks_2025.csv','access_blocker_2025.json','validation_2025.json']:
             shutil.copyfile(validator.BASE/name,self.base/name)
         shutil.copyfile(validator.BASE.parent/'products/products.csv',self.root/'products/products.csv')
+        (self.root/'analysis/config').mkdir(parents=True)
+        shutil.copyfile(validator.BASE.parent/'analysis/config/history_coverage.csv',self.root/'analysis/config/history_coverage.csv')
 
     def cli(self,*args):
         return subprocess.run([sys.executable,str(self.base/'validate_2025.py'),*args],capture_output=True,text=True,encoding='utf-8')
@@ -97,5 +99,12 @@ class ValidationTests(unittest.TestCase):
         report=json.loads(result.stdout)
         self.assertIn([rows[0]['product_id']+'_'+rows[0]['platform'],'discrepancy'],report['unresolved_chart_reviews'])
         self.assertFalse(report['raw_to_csv_verified'])
+
+    def test_tracking_coverage_cannot_claim_a_stopped_series(self):
+        path=self.root/'analysis/config/history_coverage.csv'
+        with path.open('a',encoding='utf-8',newline='') as f:
+            csv.writer(f).writerow(['3C-004','pchome','2025-09-01','2025-11-25','Stopped series'])
+        result=self.cli();self.assertEqual(result.returncode,1)
+        self.assertIn('Tracking coverage differs',result.stderr)
 
 if __name__=='__main__':unittest.main()

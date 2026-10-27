@@ -12,7 +12,8 @@ from urllib.parse import urlparse, parse_qs, urljoin
 
 BASE = Path(__file__).resolve().parent
 TW = timezone(timedelta(hours=8))
-START = datetime(2025, 10, 1, tzinfo=TW)
+START = datetime(2025, 9, 1, tzinfo=TW)
+PRIOR_START = datetime(2025, 10, 1, tzinfo=TW)
 END = datetime(2025, 11, 26, tzinfo=TW)
 HEADER = ['product_id','platform','biggo_url','changed_at','price','entered_by','entered_on','note']
 SHOPS = {'momo':'tw_pec_momoshop','pchome':'tw_ec_pchome24h','coupang':'tw_pec_coupang'}
@@ -74,13 +75,22 @@ def audit(base=BASE, raw=False):
     for k,listing_rows in grouped.items():
         times=[r['changed_at'] for r in listing_rows]
         assert times==sorted(times), f'Chronology: {k}'
-        assert sum(t<'2025-10-01 00:00' for t in times)<=1, f'Extra baseline rows: {k}'
+        assert sum(t<'2025-09-01 00:00' for t in times)<=1, f'Extra baseline rows: {k}'
         assert all(a['price']!=b['price'] for a,b in zip(listing_rows,listing_rows[1:])), f'Consecutive equal prices: {k}'
         if old[k]['class']!='OK': assert all(old[k]['class'] in r['note'] for r in listing_rows)
     declared={(r['product_id'],r['platform']):r for r in status}
     assert len(declared)==len(status) and set(declared)==set(targets), 'Status inventory differs from targets'
     for k,r in declared.items():
         assert int(r['rows'])==len(grouped[k]), f'Status/CSV row count differs: {k}'
+    coverage=read(BASE.parent/'analysis/config/history_coverage.csv')
+    eligible={k for k,r in declared.items() if k[1] in ('momo','pchome') and r['status']=='retrieved' and r['last_point_tw']>'2025-11-25 23:59'}
+    current=[r for r in coverage if r['coverage_start'].startswith('2025-')]
+    keys=[(r['product_id'],r['platform']) for r in current]
+    assert len(keys)==len(set(keys)) and set(keys)==eligible, 'Tracking coverage differs from continuing histories'
+    for r in current:
+        k=(r['product_id'],r['platform'])
+        assert r['coverage_start']=='2025-09-01' and r['coverage_end']=='2025-11-25', 'Tracking coverage window'
+        assert declared[k]['last_point_tw'] in r['note'], 'Tracking coverage lacks source continuation date'
     verification=read(BASE/'verification_2025.csv') if (BASE/'verification_2025.csv').exists() else []
     chart_checks=read(BASE/'chart_checks_2025.csv') if (BASE/'chart_checks_2025.csv').exists() else []
     allowed={'match','corrected_variant_match','baseline_window_clip','discrepancy','catalog_variant_unavailable'}
@@ -94,6 +104,7 @@ def audit(base=BASE, raw=False):
             'reported_retrieved':sum(r['status']=='retrieved' for r in status),
             'retrieved_counts_source':'collection_status_2025.csv (declared inventory)',
             'reported_retrieved_by_category':categories,
+            'tracking_coverage_rows':len(current),
             'with_2025_records':sum(bool(r) for r in grouped.values()),
             'independently_retrieved_twice':len(verification),'independently_chart_checked':len(chart_checks),
             'chart_review_results':dict(Counter(r['result'] for r in chart_checks)),
@@ -150,7 +161,11 @@ def audit(base=BASE, raw=False):
         assert d['history_id']==SHOPS[k[1]]+'-'+ident
         assert d['oid']==ident and d['nindex']==SHOPS[k[1]]
         points=sorted(d['price_history'],key=lambda p:p['x'])
-        period=[q['y'] for q in points if START.timestamp()*1000<=q['x']<END.timestamp()*1000]
+        first=datetime.fromtimestamp(points[0]['x']/1000,TW).strftime('%Y-%m-%d %H:%M') if points else 'NA'
+        last=datetime.fromtimestamp(points[-1]['x']/1000,TW).strftime('%Y-%m-%d %H:%M') if points else 'NA'
+        assert declared[k]['first_point_tw']==first, 'Status first point differs from raw evidence'
+        assert declared[k]['last_point_tw']==last, 'Status continuation point differs from raw evidence'
+        period=[q['y'] for q in points if PRIOR_START.timestamp()*1000<=q['x']<END.timestamp()*1000]
         previous=old[k]
         if len(period)!=int(previous['n_points_2025_10_01_to_11_25']) or (period and (min(period)!=int(previous['min_price_in_period']) or max(period)!=int(previous['max_price_in_period']))):
             prior_differences.append(k)
@@ -165,9 +180,10 @@ def audit(base=BASE, raw=False):
         actual=[(r['changed_at'],r['price']) for r in grouped[k]]
         assert expect==actual, f'Independent raw-to-CSV mismatch: {k}'
         assert actual==sorted(actual,key=lambda r:r[0]), f'Chronology: {k}'
-        assert sum(r['changed_at']<'2025-10-01 00:00' for r in grouped[k])<=1
+        assert sum(r['changed_at']<'2025-09-01 00:00' for r in grouped[k])<=1
         date=datetime.fromisoformat(record['collected_at'].replace('Z','+00:00')).astimezone(TW).strftime('%Y-%m-%d')
         assert all(r['entered_on']==date for r in grouped[k]), 'Actual collection date'
+        if record.get('quality_warning'): assert all(record['quality_warning'] in r['note'] for r in grouped[k]), 'Source variant warning was lost'
         if old[k]['class']!='OK': assert all(old[k]['class'] in r['note'] for r in grouped[k])
         if not before: counts['without_preperiod_baseline']+=1
         if points and datetime.fromtimestamp(points[-1]['x']/1000,TW)<END-timedelta(minutes=1):

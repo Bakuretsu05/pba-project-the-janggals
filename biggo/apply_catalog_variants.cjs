@@ -1,14 +1,16 @@
 // Explicit, audited correction of newly collected default-option histories.
-// The original 1397-row CSV must be supplied and remains byte-for-byte protected.
+// Supply a recognized preserved snapshot. September insertion means protection
+// compares record fields, not a byte prefix; window-dependent notes may differ.
 const fs=require('node:fs'),path=require('node:path'),zlib=require('node:zlib'),crypto=require('node:crypto');
 const c=require('./collect_2025.cjs');
 function apply(protectedFile,dir=__dirname) {
   const protectedBytes=fs.readFileSync(protectedFile);
   const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-  if(hash(protectedBytes)!=='6a888791005a1a6818f01753e5bccfdcdf764446f184fb350a9c14cc08851842')throw Error('Wrong protected original CSV');
+  const preservation=JSON.parse(fs.readFileSync(path.join(dir,'preservation_2025.json'),'utf8'));
+  if(!preservation.protected_snapshot_sha256.includes(hash(protectedBytes)))throw Error('Wrong protected CSV snapshot');
   const file=path.join(dir,'price_changes.csv'),before=fs.readFileSync(file);
-  if(!before.subarray(0,protectedBytes.length).equals(protectedBytes))throw Error('Protected original rows have changed');
   const rows=c.parseCSV(before.toString('utf8')),protectedRows=c.parseCSV(protectedBytes.toString('utf8'));
+  assertProtected(protectedRows,rows);
   const raw=path.join(dir,'raw/2025'),list=c.targets(),changes=[],replacements=new Map();
   const read=f=>JSON.parse(zlib.gunzipSync(fs.readFileSync(f)).toString('utf8'));
   for(const target of list) {
@@ -29,7 +31,7 @@ function apply(protectedFile,dir=__dirname) {
   for(const target of list){const key=target.product_id+'_'+target.platform;output.push(...(replacements.get(key)||rows.filter(r=>r.product_id===target.product_id&&r.platform===target.platform)));}
   const quote=v=>/[",\r\n]/.test(String(v))?'"'+String(v).replace(/"/g,'""')+'"':String(v);
   const bytes=Buffer.from(c.HEADER.join(',')+'\n'+output.map(r=>c.HEADER.map(k=>quote(r[k])).join(',')).join('\n')+'\n','utf8');
-  if(!bytes.subarray(0,protectedBytes.length).equals(protectedBytes))throw Error('Correction would alter protected original bytes');
+  assertProtected(protectedRows,output);
   fs.writeFileSync(path.join(raw,'variant_correction_manifest.json'),JSON.stringify({before_sha256:hash(before),after_sha256:hash(bytes),protected_sha256:hash(protectedBytes),changes},null,2)+'\n');
   for(const change of changes){const key=change.product_id+'_'+change.platform,canonical=path.join(raw,key+'.json.gz'),archive=path.join(raw,key+'_excluded_default_option.json.gz');if(!fs.existsSync(archive))fs.copyFileSync(canonical,archive);fs.copyFileSync(path.join(raw,key+'_catalog_variant.json.gz'),canonical);}
   fs.writeFileSync(file+'.tmp',bytes);fs.renameSync(file+'.tmp',file);
@@ -49,4 +51,9 @@ function apply(protectedFile,dir=__dirname) {
   return changes;
 }
 if(require.main===module){try{if(!process.argv[2])throw Error('Supply the original pre-authentication CSV snapshot');console.log(JSON.stringify(apply(process.argv[2])));}catch(e){console.error(e.message);process.exitCode=1;}}
-module.exports={apply};
+function assertProtected(protectedRows,rows) {
+  const key=r=>JSON.stringify(c.HEADER.filter(k=>k!=='note').map(k=>String(r[k]))),counts=new Map();
+  for(const r of rows)counts.set(key(r),(counts.get(key(r))||0)+1);
+  for(const r of protectedRows){const k=key(r);if(!counts.get(k))throw Error('Protected price record has changed or is missing');counts.set(k,counts.get(k)-1);}
+}
+module.exports={apply,assertProtected};

@@ -1,5 +1,7 @@
 const fs=require('node:fs'),zlib=require('node:zlib');
 const c=require('./collect_2025.cjs'),dir=__dirname;
+// These saved website checks were performed for the original October window.
+const REVIEW_START=Date.parse('2025-10-01T00:00:00+08:00');
 const read=f=>JSON.parse(zlib.gunzipSync(fs.readFileSync(f)));
 const path=require('node:path');
 const file=path.join(dir,'chart_checks_2025.csv');
@@ -14,7 +16,7 @@ for(const t of c.targets()) {
  let result='match',note='Exact platform product ID checked; visible chart and two-year table reviewed. ';let n=0;
  if(check.catalog_variant_unavailable){result='catalog_variant_unavailable';note+=check.error;}
  else {
-  const canonical=read(base+'.json.gz'),a=c.extract(t,canonical),b=c.extract(t,check);
+  const canonical=read(base+'.json.gz'),a=c.extract(t,canonical,REVIEW_START),b=c.extract(t,check,REVIEW_START);
   const vals=d=>d.rows.map(r=>[r.changed_at,r.price]);n=b.rows.length;
   if(JSON.stringify(vals(a))!==JSON.stringify(vals(b))) {
    const av=vals(a),bv=vals(b);

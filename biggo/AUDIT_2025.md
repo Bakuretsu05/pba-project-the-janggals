@@ -1,229 +1,159 @@
-# 2025 BigGo collection audit — all targets attempted, gaps remain
+# BigGo 2025 audit — reviewer fixes, 2026-10-28
 
-Albert collected the data on **2026-10-25 and 2026-10-26, Taiwan time (UTC+8)**.
-This continues draft PR #11 from `b1c5e77d9f576ee5a794c7dc7e758d01b00677c4`.
-Collection/review continued after midnight; dates were not backdated to the Oct 25
-milestone deadline. **Milestone 2 remains incomplete:** five listings remain without accepted collected
-history, and independent review retains unresolved findings.
+## Current results
 
-## Executed results
+The current specification on main (`3531549`) requires **September 1-November 25,
+2025**, plus the latest real change before September 1. All 335 inventory targets
+were processed; **334 histories were retrieved**, and **331 contribute 3,908 rows**.
 
-Targets attempted means processed by the collection workflow, including exact-ID
-UI search attempts. It does not mean 335 exact history endpoint requests were made.
-
-| Platform | Targets attempted | Accepted histories | With relevant 2025 records | CSV rows |
+| Platform | Targets | Retrieved histories | Relevant histories | CSV rows |
 |---|---:|---:|---:|---:|
-| momo | 150 | 149 | 148 | 917 |
-| pchome | 150 | 147 | 147 | 873 |
-| coupang | 35 | 34 | 32 | 1077 |
-| Total | 335 | 330 | 327 | 2867 |
+| momo | 150 | 150 | 149 | 1270 |
+| PChome | 150 | 150 | 150 | 1144 |
+| Coupang | 35 | 34 | 32 | 1494 |
+| Total | 335 | 334 | 331 | 3908 |
 
-“Relevant” means an observed in-window change or a preceding observed baseline;
-it does not certify correct physical variant, uninterrupted tracking or complete
-period coverage. Of the accepted histories, 233 contain an actual in-window change.
-Three accepted series have no usable 2025 observation: 3C-002 momo, FOOD-004 Coupang
-and HOME-009 Coupang. Their selected current variants have only later history;
-no 2025 rows were invented from another option.
+HOME-013 Coupang has no accepted 2025 rows; its reason and product are retained.
+Three retrieved histories have only later observations and contribute no 2025 row:
+3C-002 momo, FOOD-004 Coupang and HOME-009 Coupang. Fifteen retrieved histories
+lack a pre-September baseline, and 14 series stop before November 25. These are
+source limits; no daily prices, replacement products or baselines were fabricated.
 
-| Category | Original retrieved | Current accepted |
-|---|---:|---:|
-| Electronics (3C) | 72 | 72 |
-| Appliances (APPL) | 44 | 67 |
-| Beauty (BEAU) | 0 | 63 |
-| Food (FOOD) | 0 | 66 |
-| Home (HOME) | 0 | 62 |
+## Reviewer feedback and fixes
 
-The original 116-listing partial bundle covered **Electronics and Appliances only**,
-with zero Beauty, Food or Home histories. Its **1,397 rows remain byte-for-byte
-unchanged as the first 224,745 bytes** of the expanded CSV. Their SHA-256 is
-`6a888791005a1a6818f01753e5bccfdcdf764446f184fb350a9c14cc08851842`.
-The final CSV has 748,126 bytes and SHA-256
-`b684d8e7ae09294867003c6c67fcce97542452f8acf6b5514d8bbac56a7e46a1`.
-Full-evidence rebuild produced identical final bytes. CSV LF line endings are
-explicitly pinned for fresh checkouts.
+All three conversation comments by the team leader were read, including the later
+corrections and decisions:
 
-## Authorization and retained login blocker
+- [6445197409](https://github.com/Bakuretsu05/pba-project-the-janggals/pull/11#issuecomment-6445197409):
+  README conflict/deleted collection notes; stale signed-in scope claims; missing
+  analysis coverage; flags and four histories needing direct lookup.
+- [6446252989](https://github.com/Bakuretsu05/pba-project-the-janggals/pull/11#issuecomment-6446252989):
+  retain all products/rows and warnings, no coverage for stopped series, no further
+  3C-010 momo or Coupang variant work, and one direct attempt for each missing ID.
+- [6446598452](https://github.com/Bakuretsu05/pba-project-the-janggals/pull/11#issuecomment-6446598452):
+  merge main, start September 1, populate coverage, recover exact IDs and run the R build.
 
-The original signed-out collector stopped at **2026-10-25 20:50:03.094 Taiwan time**:
+There were **no inline review comments, formal review submissions, unresolved
+review threads or failed checks** at inspection. No feedback was inferred from the
+older audit. The entire current PR diff was checked against main, including data
+reconstruction and integration with the analysis added by #12/#13.
 
-```text
-POST https://biggo.com.tw/api/v1/spa/product/history
-{"history_id":"tw_pec_momoshop-6198895","days":730}
-HTTP 429
-{"result":false,"require_login":true}
-```
+### Main and collection guidance
 
-`access_blocker_2025.json` and `raw/2025/APPL-019_momo_attempt1.json.gz` remain
-unchanged. The original no-login decision applied to that partial delivery.
-The user subsequently explicitly reported team approval and authorized authenticated
-collection using their own account; see `collection_authorization_2025.md`.
-Specification section 3 itself was **not modified**. The signed-out HTTP collector
-still refuses online collection while the marker exists.
+Merged main and resolved the README conflict by taking main's collection notes and
+placing the new delivery sections above them. The task, shop-code/history-ID table,
+request endpoint/body, token-expiry note, 10% review rule and Conduct section remain.
+Section 3 now explicitly permits signed-in BigGo history (team decision 2026-10-27,
+`8827ffa`). README, authorization documentation and the historical blocker's action
+were updated. No formal scope change is inferred solely from account permission.
+The prior Oct 26 report is marked historical/superseded rather than current policy.
 
-The user manually signed into the in-app browser after the separate Chrome login
-failed. APPL-019 momo then displayed real history. The remaining 219 listings were
-attempted through ordinary UI controls in that authorized session. No passwords,
-cookies, JWTs or session tokens were read/exported. No authentication, CAPTCHA or
-rate-limit bypass was used. Source redirect links were read for identity without
-following `/r/`.
+### September rebuild and preservation
 
-The dedicated signed-out collector reused the configured team contact in its
-study user agent. The authenticated in-app browser retained its ordinary browser
-identity because custom user-agent configuration was unavailable. The contact is
-kept only in ignored configuration and excluded from Git and the evidence bundle.
-Controlled BigGo navigations, history openings, retries and option changes were
-paced at least 5.2 seconds apart. The combined logged history-action minimum is
-5.199 seconds. Browser asset requests are not individually controlled or logged.
-The earlier setup diagnostic's homepage/robots calls were not included in that
-paced log; history-to-history collection requests were paced.
+Rebuilt from the already-saved full histories, adding **989 September/baseline
+rows** with no new collection. The generator and independent validator now use
+September 1. Comparisons with Marvin's Oct 22 summary still use **October 1**, the
+window that summary actually measured, avoiding false discrepancy flags.
 
-## Five listings without usable evidence
+All **2,867 previous price records** remain, including all original 1,397. No
+existing price, timestamp, product/platform link, author or entry date changed.
+**153 note fields** were regenerated for the September baseline boundary or shifted
+same-minute selected-event ordinals. The original 224,745-byte block is no longer a
+prefix after chronological September insertion. `preservation_2025.json` records
+old/new hashes, additions and the seven-field multiset containment check.
 
-| Listing | Reason |
-|---|---|
-| APPL-020 momo | Exact platform item ID absent in original and focused-title searches |
-| APPL-020 pchome | Exact platform item ID absent in original and focused-title searches |
-| BEAU-020 pchome | Exact platform item ID absent in original and focused-title searches |
-| FOOD-002 pchome | Exact platform item ID absent in original and focused-title searches |
-| HOME-013 coupang | Exact listing defaults to 500ml; catalog asks for 750ml x1; no confirmed matching option |
+Ordinary rebuild still refuses missing/incomplete/corrupt/truncated evidence before
+changing either output, including a previously retrieved zero-row listing. The
+explicit one-time `--extend-window` path permits note changes only when the old row
+matches the old-window reconstruction from the same raw evidence and all seven
+non-note fields remain in the expanded export. Tests cover both successful
+migration and refusal with missing evidence. The catalog-correction helper now
+protects records by containment, not an obsolete byte-prefix check.
 
-The first four are search misses, not proven endpoint failures. Marvin's Oct 22
-report records successful HTTP 200 histories for all four. Their exact authenticated
-endpoint availability was not tested by the UI-only continuation.
+### Tracking coverage fixes the analysis blanks
 
-Initial exact-ID searches missed 29 listings. One focused retry per listing using
-the prior recorded title recovered 25. Four remained absent; no first-result or
-other-product substitution was made. HOME-013 was separately excluded during
-variant review. Attempt/error evidence is saved for every one of the 335 targets.
-All target statuses, including zero-row series, remain explicit in
-`collection_status_2025.csv`.
+Added **286 rows** to `analysis/config/history_coverage.csv`: one for each retrieved
+momo/PChome series whose saved last point is after November 25. They cover
+September 1-November 25 and cite the actual continuation timestamp. **No stopped
+series receives coverage**: all 13 previously flagged cases and FOOD-006 momo are
+excluded. Coverage never invents a change point or supplies a price before the
+first source observation.
 
-## Independent chart review and variant corrections
+The validator checks coverage inventory, dates and continuation notes, and raw mode
+cross-checks the status first/last timestamps against the source. The real-data R
+smoke build produces **600 rows** with no error. Missing 2025 Nov 11 prices are now
+**15** (reviewer's original count: 149); incomplete pre-sale histories are **22**
+(original count: 151). Remaining blanks reflect source coverage, not absent
+continuation declarations.
 
-**34 distinct listings were reviewed**: 33 separate authenticated browser visits,
-plus the earlier signed-out 3C-003 momo review. The sample spans all five categories
-and all platforms, prioritizing summary differences, selectable Coupang variants,
-SHORT histories, the known mismatch and stopped series. `chart_checks_2025.csv`
-records actual results, not a blanket success claim:
+### Four exact histories recovered
 
-| Review result | Listings |
-|---|---:|
-| Exact saved timestamp/price match | 25 |
-| Catalog variant corrected and accepted with chart/table review | 6 |
-| Flat baseline qualified by moving-window boundary | 1 |
-| Unresolved saved-history discrepancy | 1 |
-| Catalog option unconfirmed; excluded | 1 |
+After the user manually signed into ordinary Chrome and handled Chrome's console
+warning, the approved same-origin history request ran **once per exact ID**. Request
+starts were 5.921, 6.600 and 6.128 seconds apart; no retry, search sweep, proxy,
+credential export or broad rerun was used. Each response is saved as gzip raw
+evidence; the earlier UI search failures are archived.
 
-The six corrected newly collected Coupang histories are BEAU-007 (150ml x2),
-BEAU-012 (300ml x4), FOOD-009 (330ml x24), FOOD-010 (330ml x48), FOOD-011 (580ml
-x24), and FOOD-020 (62g x10). The correct listing ID had initially opened a
-nonmatching default size/pack. Only those new rows were replaced via an explicit
-correction command requiring the protected original snapshot hash. Earlier
-wrong-option evidence is archived; `variant_corrections_2025.json` records the
-changes. HOME-013's single-bottle review still showed 500ml, so its final disposition
-is exclusion, not acceptance of that attempted correction. The option-selection
-factory now requires an explicit catalog option before accepting a selectable SKU.
-A separate post-correction network retrieval of each corrected option is not claimed.
+| Listing | Exact history ID | HTTP | Raw points | Added change/baseline rows |
+|---|---|---:|---:|---:|
+| APPL-020 momo | `tw_pec_momoshop-13903670` | 200 | 76 | 15 |
+| APPL-020 PChome | `tw_ec_pchome24h-DMBI4K-A900INYCB` | 200 | 30 | 14 |
+| BEAU-020 PChome | `tw_ec_pchome24h-DDAB4W-A900HAV8C` | 200 | 50 | 19 |
+| FOOD-002 PChome | `tw_ec_pchome24h-DBAY5B-A900J35DD` | 200 | 35 | 4 |
 
-The targeted follow-up below qualifies these findings. Two reviews require further resolution:
+The **52 new rows** use the actual **2026-10-28 Taiwan collection date**. History ID,
+shop, product ID, URL and TWD currency were checked before accepting evidence.
+The problem was the UI search-discovery route, not unavailable exact histories.
+Repeated equal observations were collapsed, explaining why raw point counts exceed
+exported change counts. FOOD-002's title spans original/cream/cheese flavours; its
+parent-ID rows explicitly flag that ambiguity rather than claiming a proven flavour.
 
-- **3C-010 momo:** the catalog's gray option currently shows only 2026 points,
-  whereas the saved original API evidence has six 2025 changes. Both default blue
-  and selected gray were inspected. The UI identity is exact but coverage differs.
-  All six original rows remain intact, flagged SHORT; the unresolved discrepancy
-  is explicit in the chart report and status note. Do not call this verified history.
-- **HOME-013 Coupang:** the catalog's 750ml single-bottle option was not confirmed.
-  The 500ml history is excluded; the source mismatch remains unresolved.
+## Retained flags and team disposition
 
-For **3C-004 PChome**, the constant NT$590 series' first visible observation moved
-from 2024-10-25 20:40 to 2024-10-26 00:07 with the moving two-year window. The
-original baseline is retained, with its existing warning that the real earlier
-change time is unknown. This is a qualified comparison, not an exact timestamp match.
+These are retained source/catalog limitations, **not pending team decisions**:
 
-The known **APPL-003 Coupang pink/blue mismatch** remains: the chart matches the
-saved pink EH-NE57-P history, while the catalog specifies blue EH-NE57-A. Its 30
-original rows retain MISMATCH warnings and cannot establish blue-variant prices.
-Other original UNCERTAIN flags remain unresolved. Independent verification has
-completed its sample review count, but unresolved findings prevent clean sign-off.
-`verification_2025.csv` remains header-only because the old direct-API repeat plan
-was not executed; visible-chart reviews are recorded separately.
+- **3C-010 momo:** retain its six 2025 rows and SHORT/variant notes; no further work.
+  Saved parent metadata lists blue and gray child IDs, while the selected gray UI
+  has only 2026 points. Parent-versus-variant scope is a possible explanation, not
+  a proven request-level cause; the data is not relabeled as verified gray history.
+- **APPL-003 Coupang:** the saved listing is EH-NE57-P pink while the catalog says
+  EH-NE57-A blue. Its original 30 October-window rows and warnings remain; no
+  substitution or relabeling. Coupang is outside the analysis.
+- **HOME-013 Coupang:** 750ml x1 remains unconfirmed; the saved selected link differs
+  from the catalog SKU and a prior retailer detail check was denied. Keep the
+  recorded zero-row reason; no more collection is requested for Coupang flags.
+- All SHORT, MISMATCH and UNCERTAIN products stay. The nine title-variant listings
+  named by the team are listed in README for later H1-H4 sensitivity checks.
+- Stopped series stay unknown after their last observation; no coverage extension.
 
-## Coverage and precision limitations
+**34 distinct chart reviews** remain recorded: 25 exact matches, six catalog-option
+corrections, one moving-window baseline qualification, one SSD discrepancy and one
+unconfirmed Coupang option. The team accepted these as the approximately 10% check.
+They describe the original October-November website review; September reconstruction
+is not misrepresented as a new browser review. The old API repeat file remains
+header-only. The original 116-history partial bundle covered Electronics (72) and
+Appliances (44) only, with zero Beauty, Food or Home; current coverage spans all five.
 
-Twelve accepted histories have **no observed pre-Oct-1 baseline**: 3C-002 momo;
-3C-010 momo/pchome; 3C-011 momo/pchome; APPL-010 pchome; APPL-020 coupang;
-FOOD-004 coupang; FOOD-007 pchome; HOME-009 coupang; HOME-016 momo/pchome.
-Nine of these contribute 2025 rows; the other three are the zero-row series above.
-Series first seen on Oct 1 also have no earlier baseline.
+## Verification and reproducibility
 
-Fourteen accepted series stop before the window ends. Their row notes explicitly
-say not to carry the last price through Nov 25 without evidence. All eight original
-SHORT, one MISMATCH and 38 UNCERTAIN classifications remain in the inventory;
-current selected variants can have different coverage from those earlier summaries.
-Twenty-one accepted histories differ from the Oct 22 point-count or min/max
-summaries. Each is flagged in row/status notes and listed in `validation_2025.json`.
-A stable current UI recheck does not resolve which earlier variant was summarized.
+- **26 Node tests passed**, including the original destructive-rebuild regressions,
+  new September baseline/migration guards and protected-record containment.
+- **10 BigGo Python tests passed**, including clean-checkout CSV-only mode,
+  explicit raw-mode failure without evidence and rejection of stopped-series coverage.
+- **6 analysis Python tests and the complete R analysis regression suite passed.**
+- CSV-only and independent raw-to-CSV validation pass for **3,908 rows / 334 histories**.
+  Status and failure evidence account for all 335 targets; minimum logged gap 5.199s.
+- Ordinary full-evidence rebuild leaves the current CSV byte-for-byte unchanged.
+- Exact Section 11 schema/order, Taiwan time, collection dates, UTF-8, identifiers,
+  chronology, integer prices, changes/reversals, baselines and warnings are checked.
+- Saved evidence includes **120 UTC-millisecond API responses** and **214 visible
+  Taiwan-minute tables**. Visible observations do not claim hidden milliseconds.
+- No 2026 study dataset, products/catalog definitions or secrets were added.
 
-Original evidence comprises 116 API histories with UTC millisecond timestamps.
-Continuation evidence comprises 214 accepted visible tables displaying Taiwan
-minute timestamps. The two sources are distinguished explicitly. Visible timestamps
-are parsed as UTC+8, without claiming access to hidden milliseconds or HTTP status.
-Only consecutive equal observations collapse. Reversals remain, including distinct
-same-minute changes with their source order in notes. The last real preceding
-change is the baseline; no daily values are filled. The CSV contains only the 2025
-study period plus baselines. Full two-year source evidence is not a 2026 dataset.
-
-## Validation and reproduction
-
-- **23/23 Node tests passed**, including missing/empty/partial/corrupt/truncated
-  raw evidence, missing raw for a zero-row retrieved series, successful fixture
-  rebuild, visible timestamps/identity, and protected-original correction refusal.
-- **9/9 Python tests passed**, including fresh-checkout CSV-only validation,
-  explicit raw-mode failure without evidence, malformed data rejection and honest
-  reporting of unresolved chart findings. Windows sandbox temporary-file rename
-  restrictions required running the test suites outside that sandbox.
-- `python biggo/validate_2025.py`: CSV-only validation passes and is read-only.
-- `python biggo/validate_2025.py --raw`: all **330 accepted histories and 2,867 rows**
-  pass independent raw-to-CSV reconstruction; all **335 attempt records** are
-  accounted for. Saved source verification does not resolve physical variants or
-  independently prove that the website exposes every historical event.
-- `node biggo/collect_2025.cjs rebuild`: final CSV is byte-for-byte unchanged;
-  original 1,397-row prefix hash remains unchanged. The explicit correction path
-  did not touch those original rows.
-
-In a fresh Git checkout, CSV-only validation requires no raw directory. Rebuild
-and `--raw` fail clearly without the ignored evidence and preserve the populated
-CSV/status files. Restore the evidence bundle's `biggo/raw/2025/` for full offline
-reconstruction. The committed `validation_2025.json` describes the executed local
-full-evidence run; it does not imply that raw files are committed.
-
-Only BigGo deliverables/scripts/tests/docs are changed. The product catalog,
-project specification, ignored contact configuration and browser profiles are not
-part of the PR. Draft PR #11 targets main and must not be merged by this task.
-
-## Final targeted QC, 2026-10-26
-
-[TARGETED_QC_2026-10-26.md](TARGETED_QC_2026-10-26.md) and
-`targeted_qc_2026-10-26.json` record the bounded follow-up. No prices or CSV rows
-changed. Four historical HTTP 200 successes are confirmed, but exact POST recovery
-could not be executed through the available signed-in browser tool. Those four
-remain unretrieved, with current endpoint availability untested. Two exact-ID UI
-histories were reopened with 5.2-second controlled pacing; no broad search was
-repeated. One exact Coupang SKU detail link was denied, so no retry was made.
-
-The SSD raw parent response lists separate blue/gray child history IDs. The selected-variant UI table may have a different scope from
-that parent series. This is a plausible explanation, not a proven wire-level cause:
-the actual UI request ID was not observable, and the six parent changes are not
-thereby established as gray prices. The original rows and warning remain. The pink/blue mismatch is confirmed
-from the saved model/title; no blue replacement is established. HOME-013's selected
-visible item/vendor IDs differ from the catalog IDs, and the generic single-bottle
-label does not confirm 750ml. It remains excluded rather than claimed unavailable
-in every history representation.
-
-Authorization wording now attributes team approval to the user's explicit earlier
-statement; no independent team decision record was reviewed. This is a factual
-attribution clarification, not a withdrawal of the user's authorized scope.
-
-Following this targeted pass, all 23 Node and nine Python tests were rerun and
-passed. CSV-only validation, full raw reconstruction and byte-identical offline
-rebuild passed again. No software rewrite or new test framework was needed.
+Current CSV SHA-256: `8ee9dfd4a75baedd2d2c74762213457f225e0b819c7dbfb7d493946a633a4e9a` (1,029,090 bytes).
+Raw evidence remains gitignored and is distributed separately. A fresh checkout
+supports CSV-only validation; full reconstruction requires restoring `biggo/raw/2025/`.
+The evidence bundle also includes the tracking-coverage file required by validation.
+The current merged specification is unchanged by this PR; only BigGo deliverables
+and the requested analysis coverage differ from main. PR #11 is never merged by
+this task.

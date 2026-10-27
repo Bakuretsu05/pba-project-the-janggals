@@ -1,18 +1,19 @@
 {
   "target_listings": 335,
-  "price_change_rows": 2867,
+  "price_change_rows": 3908,
   "attempted_listings": 335,
   "all_listings_attempted": true,
-  "reported_retrieved": 330,
+  "reported_retrieved": 334,
   "retrieved_counts_source": "collection_status_2025.csv (declared inventory)",
   "reported_retrieved_by_category": {
     "3C": 72,
-    "APPL": 67,
-    "BEAU": 63,
-    "FOOD": 66,
+    "APPL": 69,
+    "BEAU": 64,
+    "FOOD": 67,
     "HOME": 62
   },
-  "with_2025_records": 327,
+  "tracking_coverage_rows": 286,
+  "with_2025_records": 331,
   "independently_retrieved_twice": 0,
   "independently_chart_checked": 34,
   "chart_review_results": {
@@ -44,33 +45,17 @@
       "result": false,
       "require_login": true
     },
-    "action": "Stopped; spec section 3 excludes login-only data. Authorized project scope decision required before any login or further collection."
+    "action": "Historical signed-out HTTP 429 retained. Spec section 3 now permits signed-in BigGo collection (team decision 2026-10-27, main 8827ffa). Use an authorized signed-in team browser; do not retry restricted access in the old signed-out context."
   },
   "validation_mode": "raw_to_csv",
   "raw_to_csv_verified": true,
   "attempt_evidence_verified": 335,
   "source_evidence_counts": {
-    "api_utc_milliseconds": 116,
+    "api_utc_milliseconds": 120,
     "visible_table_tw_minute": 214
   },
-  "retrieved": 330,
+  "retrieved": 334,
   "missing": [
-    [
-      "APPL-020",
-      "momo"
-    ],
-    [
-      "APPL-020",
-      "pchome"
-    ],
-    [
-      "BEAU-020",
-      "pchome"
-    ],
-    [
-      "FOOD-002",
-      "pchome"
-    ],
     [
       "HOME-013",
       "coupang"
@@ -175,7 +160,7 @@
     ]
   ],
   "tests": "PASS (raw-to-CSV comparison covers every retrieved listing)",
-  "without_preperiod_baseline": 12,
-  "with_in_window_changes": 233,
+  "without_preperiod_baseline": 15,
+  "with_in_window_changes": 249,
   "tracking_ends_before_window_end": 14
 }

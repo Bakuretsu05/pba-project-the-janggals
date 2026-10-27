@@ -1,4 +1,8 @@
-# Final targeted recovery and QC — 2026-10-26
+# Historical targeted recovery and QC — 2026-10-26
+
+> Superseded: main now permits signed-in collection and starts the study on Sep 1.
+> All four exact histories were recovered on Oct 28; the team has decided to retain
+> flagged listings without further variant work. See AUDIT_2025.md for current results.
 
 This pass investigated only the five requested missing histories, 3C-010 momo,
 APPL-003 Coupang and the authorization statement. **No price rows were added,
@@ -118,7 +122,7 @@ and reported team approval**. No separate team minutes, resolution or another te
 member's approval was independently reviewed. The authorization document and audit
 now make that attribution explicit. Permission was not inferred from Marvin's prior
 signed-in activity or from successful login. No additional approval is being claimed,
-and the project specification remains unchanged.
+and the specification had not yet changed at that time; current section 3 permits signed-in BigGo.
 
 ## Disposition
 
