@@ -111,6 +111,6 @@ the SHORT and MISMATCH products is the team's call.
 - BigGo's terms of use were not read (team decision, 2026-10-22).
 - Follow the scrapers' pace and identity rules (spec NFR-1 and NFR-2): 5 seconds between requests,
   and the team's contact in the user agent. 335 listings at that pace is about 30 minutes.
-- Spec section 3 puts anything behind a login out of scope. The history calls above were made
-  from a Chrome signed in to BigGo; whether a signed-out browser works is untested. No personal
-  data is collected.
+- Spec section 3 allows reading BigGo's history while signed in to a team member's BigGo account
+  (team decision, 2026-10-27); signed out, the history call gets 429 `require_login`. Passwords,
+  cookies and session tokens stay out of the repo. No personal data is collected.

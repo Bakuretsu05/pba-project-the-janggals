@@ -38,13 +38,16 @@ Owners are in section 12 (assigned at the Oct 12 kickoff).
 **In scope**
 
 - momo and PChome product pages, for the products in the product table (section 6).
-- BigGo price history for the same products, on momo, PChome and Coupang.
+- BigGo price history for the same products, on momo, PChome and Coupang. BigGo shows it only to
+  a signed-in account (a signed-out request gets HTTP 429 `require_login`), so it is read while
+  signed in to a team member's BigGo account (team decision, 2026-10-27).
 
 **Out of scope**
 
 - Shopee (excluded by design: marketplace structure and anti-bot protection).
 - Any calculation: real discount, 30-day low, percentages. The analysis does this later in R.
-- Anything behind a login, and any personal data.
+- Anything else behind a login (momo and PChome pages are read signed out), and any personal
+  data. Passwords, cookies and session tokens never go into the repo.
 - Committing output to the repo. The scrapers write files locally (git ignores them); where
   they are stored long term is open question Q6.
 
