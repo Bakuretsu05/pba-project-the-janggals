@@ -1,0 +1,66 @@
+name: final analysis
+
+on:
+  workflow_run:
+    workflows: [combined snapshots]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - analysis/build_analysis.R
+      - analysis/config/**
+      - biggo/price_changes.csv
+      - .github/workflows/final-analysis.yml
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: final-analysis
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Locate the exact upstream dataset (or latest successful dataset)
+        id: source
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_RUN: ${{ github.event.workflow_run.id }}
+        shell: bash
+        run: |
+          args=()
+          if [ -n "$SOURCE_RUN" ]; then args+=(--run-id "$SOURCE_RUN"); fi
+          python analysis/download_combined.py --repo "$GITHUB_REPOSITORY" "${args[@]}"
+      - uses: r-lib/actions/setup-r@v2
+        if: steps.source.outputs.found == 'true'
+        with:
+          r-version: '4.6.1'
+      - name: Build the product-platform-year analysis table
+        if: steps.source.outputs.found == 'true'
+        shell: bash
+        run: |
+          Rscript analysis/build_analysis.R
+          python analysis/record_build.py
+          cp output/combined/snapshot_manifest.json output/analysis/snapshot_manifest.json
+          cp output/combined/upstream.json output/analysis/upstream.json
+          echo 'The analysis table includes readiness flags; missing history or unreviewed event dates are not imputed.' >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: steps.source.outputs.found == 'true'
+        with:
+          name: final-analysis
+          path: output/analysis/
+          if-no-files-found: error
+          retention-days: 90
