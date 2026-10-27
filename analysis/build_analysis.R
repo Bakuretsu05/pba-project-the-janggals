@@ -66,6 +66,56 @@ complete_prices <- function(daily, dates) {
   if (!length(prices) || anyNA(prices)) NULL else prices
 }
 
+# Current observations are useful before the event, but are never substituted
+# into the Nov 11 outcome columns or the historical BigGo benchmarks.
+snapshot_preview <- function(snapshots, product_id, platform, year, as_of) {
+  dates <- as.Date(snapshots$date)
+  eligible <- snapshots[snapshots$product_id == product_id & snapshots$platform == platform &
+    !is.na(dates) & format(dates, "%Y") == as.character(year) & dates <= as_of, , drop = FALSE]
+  preview <- data.frame(latest_snapshot_date = NA_character_, latest_scraped_at = NA_character_,
+    latest_run_id = NA_character_, latest_fetch_status = NA_character_,
+    latest_original_price = NA_real_, latest_sale_price = NA_real_, latest_extra_price = NA_real_,
+    latest_extra_price_label = NA_character_, latest_listed_price = NA_real_,
+    latest_advertised_discount = NA_real_, observed_snapshot_count = nrow(eligible),
+    observed_ok_count = 0L, observed_days = 0L, first_observed_date = NA_character_,
+    observed_min_listed_price = NA_real_, observed_max_listed_price = NA_real_,
+    stringsAsFactors = FALSE)
+  if (!nrow(eligible)) return(preview)
+  # Use actual product request time. Failed/bad-input rows without a request time
+  # fall back to their platform run timestamp; their missing prices stay missing.
+  time <- eligible$scraped_at
+  missing <- is.na(time) | !nzchar(time)
+  if ("run_started_at" %in% names(eligible)) {
+    stamp <- eligible$run_started_at
+    fallback <- paste0(substr(stamp, 1, 10), " ", substr(stamp, 12, 13), ":", substr(stamp, 14, 15), ":00")
+    time[missing] <- fallback[missing]
+  }
+  missing <- is.na(time) | !nzchar(time)
+  time[missing] <- paste(eligible$date[missing], "00:00:00")
+  latest <- eligible[order(time, as.numeric(eligible$source_run_id), decreasing = TRUE)[1], , drop = FALSE]
+  preview$latest_snapshot_date <- latest$date
+  preview$latest_scraped_at <- latest$scraped_at
+  preview$latest_run_id <- latest$source_run_id
+  preview$latest_fetch_status <- latest$fetch_status
+  if (!is.na(latest$fetch_status) && latest$fetch_status == "ok") {
+    preview$latest_original_price <- positive(latest$original_price)
+    preview$latest_sale_price <- positive(latest$sale_price)
+    preview$latest_extra_price <- positive(latest$extra_price)
+    preview$latest_extra_price_label <- latest$extra_price_label
+    preview$latest_listed_price <- payable_price(latest)
+    preview$latest_advertised_discount <- discount(preview$latest_original_price, preview$latest_listed_price)
+  }
+  prices <- vapply(seq_len(nrow(eligible)), function(i) payable_price(eligible[i, , drop = FALSE]), numeric(1))
+  preview$observed_ok_count <- sum(eligible$fetch_status == "ok", na.rm = TRUE)
+  preview$observed_days <- length(unique(eligible$date))
+  preview$first_observed_date <- min(eligible$date)
+  if (any(!is.na(prices))) {
+    preview$observed_min_listed_price <- min(prices, na.rm = TRUE)
+    preview$observed_max_listed_price <- max(prices, na.rm = TRUE)
+  }
+  preview
+}
+
 build_analysis <- function(snapshots_path = "output/combined/combined_snapshots.csv",
                            output_dir = "output/analysis", as_of = Sys.Date(),
                            products_path = "products/products.csv",
@@ -198,9 +248,10 @@ build_analysis <- function(snapshots_path = "output/combined/combined_snapshots.
     regular_discount <- discount(regular, listed)
     gap <- advertised - real
     gap_regular <- advertised - regular_discount
+    preview <- snapshot_preview(snapshots, pid, platform, year, as_of)
     row <- data.frame(product_id = pid, brand = metadata$brand, model = metadata$model,
       category = metadata$category, platform = platform, year = year,
-      analysis_as_of = as.character(as_of), event_date = as.character(event_day),
+      analysis_as_of = as.character(as_of), preview, event_date = as.character(event_day),
       selected_run_id = selected_run, selected_scraped_at = selected_time,
       price_start_date = as.character(start), price_start_date_candidate = as.character(candidate),
       original_price = original, listed_price = listed, low_30d = low, regular_price = regular,
