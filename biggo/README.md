@@ -10,8 +10,10 @@ platform it has a BigGo link for, in the format of section 11 of
 with its header line. How the rows are collected is up to Albert: by hand, a script, or browser
 automation.
 
-- One row per **price change**. Oct 1 to Nov 25, in 2025 and in 2026, plus the last change before
-  Oct 1 so the first day's price is known.
+- One row per **price change**. Sep 1 to Nov 25, in 2025 and in 2026, plus the last change before
+  Sep 1 so the first day's price is known.
+- Also fill `analysis/config/history_coverage.csv` (spec section 11). What makes the history
+  accepted is in spec section 13.
 - `entered_by` is `Albert`; `entered_on` is the day the row was collected.
 - Collect about 10% of listings a second time, or check them against BigGo's chart, and note any
   differences in `note`.
@@ -102,8 +104,8 @@ as flags to look at, not verdicts.
   PChome (flavour and size missing from the title).
 - **UNCERTAIN, Coupang titles without a model, size or pack count** (16): see the `note` column.
 
-Spec 6.4 says every product needs BigGo history back to October 2025. Whether to replace or drop
-the SHORT and MISMATCH products is the team's call.
+Spec 6.4 says every product needs BigGo history back to October 2025. Decided 2026-10-27: no
+SHORT, MISMATCH or UNCERTAIN product is replaced or dropped (spec section 11, "Flagged listings").
 
 ## Conduct
 

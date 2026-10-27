@@ -343,12 +343,28 @@ has what is known about BigGo's history data.
 | `entered_on` | `YYYY-MM-DD` | Date the row was collected |
 | `note` | text | Anything odd (gap in history, seller changed). Otherwise `NA` |
 
-- **Period:** Oct 1 to Nov 25, in 2025 and in 2026. 2025 is collected now; 2026 after collection
-  ends on Nov 25.
+- **Period:** Sep 1 to Nov 25, in 2025 and in 2026. 2025 is collected now; 2026 after collection
+  ends on Nov 25. (Changed 2026-10-27 from Oct 1: the 30-day low before a sale that starts in
+  October reaches back into September.)
 - Include the last change **before** the period starts, so the first day's price is known.
+- Each history is the one BigGo keeps for the product-table listing, looked up by the shop code
+  plus the platform's item ID (`biggo/README.md`), never by taking the first search result. When
+  the listing has options, use the product-table variant (model, size, pack, colour).
 - About 10% of listings are collected a second time, or checked against BigGo's chart, as a
   check; differences are resolved and noted. The owner does this (changed 2026-10-22: the whole
   of BigGo is one person's work).
+- **Flagged listings** (decided 2026-10-27). No product is dropped or replaced because its history
+  is short, stops early or looks like a different variant; its rows stay, with the reason in
+  `note`. Flagged Coupang listings need no further work, since the analysis covers momo and
+  PChome only. A listing with no history gets one direct request by its `history_id`; if that
+  fails too, it stays missing, with the reason recorded.
+
+**Tracking coverage: `analysis/config/history_coverage.csv`.** BigGo adds a point only when a
+price changes, so after a series' last point the analysis cannot tell an unchanged price from a
+listing BigGo stopped tracking, and leaves those days blank. For each momo and PChome listing
+whose series has a point after Nov 25 of that year, add one row: `product_id`, `platform`,
+`coverage_start` Sep 1 and `coverage_end` Nov 25 of that year, and in `note` the date of that
+later point. A series that ends before Nov 25 gets no row.
 
 ---
 
@@ -394,6 +410,20 @@ has what is known about BigGo's history data.
 - [ ] A manual run produces one artifact per platform, each holding the CSV and raw pages.
 - [ ] Rows in that CSV show Taiwan time, not UTC.
 - [ ] One platform's job failing leaves the other to finish.
+
+**BigGo history** (D8, D11) is accepted when:
+
+- [ ] `biggo/price_changes.csv` follows section 11: the columns in order, change points only,
+      Sep 1 to Nov 25 plus the change before Sep 1.
+- [ ] Every product-table listing with a `biggo_url_<platform>` link has rows, or a recorded
+      reason it has none.
+- [ ] `analysis/config/history_coverage.csv` has the rows described in section 11.
+- [ ] About 10% of listings were checked a second time, with the differences noted.
+- [ ] `build_analysis()` in `analysis/build_analysis.R` runs on the file without an error (a
+      snapshot file holding only its header line is enough).
+- [ ] `biggo/README.md` keeps the lookup notes the next collection needs (shop codes and
+      `history_id`, the history request, the token expiry), and nothing in `biggo/` still says
+      signed-in collection is outside this spec (section 3 allows it).
 
 ## 14. Open questions
 
