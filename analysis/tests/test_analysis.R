@@ -33,6 +33,30 @@ stopifnot(r$selected_run_id == "1", r$listed_price == 80, r$low_30d == 100,
           r$regular_price == 100, r$low_30d_days == 30L, r$ready_h1_h3,
           abs(r$advertised_discount - 0.6) < 1e-9, abs(r$gap - 0.4) < 1e-9,
           abs(r$presale_change - 0.1) < 1e-9)
+stopifnot(r$latest_run_id == "2", r$latest_listed_price == 70,
+          r$latest_sale_price == 90, r$observed_snapshot_count == 2L,
+          r$observed_ok_count == 2L, r$observed_days == 1L,
+          r$observed_min_listed_price == 70, r$observed_max_listed_price == 80)
+
+# The latest preview preserves failures; it never silently fills from an older
+# successful run, includes future observations, or borrows another year's prices.
+preview_input <- snapshots
+preview_input$date <- c("2026-10-25", "2026-10-26")
+preview_input$scraped_at <- c("2026-10-25 15:08:00", NA_character_)
+preview_input$run_started_at <- c("2026-10-25_1508", "2026-10-26_1508")
+preview_input$fetch_status[2] <- "parse_failure"
+future <- preview_input[1, ]
+future$date <- "2026-10-27"
+future$scraped_at <- "2026-10-27 15:08:00"
+future$source_run_id <- "3"
+p <- snapshot_preview(rbind(preview_input, future), "3C-001", "momo", 2026, as.Date("2026-10-26"))
+stopifnot(p$latest_snapshot_date == "2026-10-26", p$latest_run_id == "2",
+          p$latest_fetch_status == "parse_failure", is.na(p$latest_sale_price),
+          is.na(p$latest_listed_price), p$observed_snapshot_count == 2L,
+          p$observed_ok_count == 1L, p$observed_days == 2L,
+          p$observed_min_listed_price == 80)
+p <- snapshot_preview(preview_input, "3C-001", "momo", 2025, as.Date("2026-10-26"))
+stopifnot(p$observed_snapshot_count == 0L, is.na(p$latest_listed_price))
 
 # Missing original prices do not prevent real-discount analysis.
 snapshots$original_price <- NA_real_

@@ -51,6 +51,34 @@ key; use `(source_run_id, platform, product_id)`.
 
 ## Analysis rules and outstanding evidence
 
+### Current-price preview
+
+`final_analysis.csv` also contains the observations already collected, before
+the Nov 11 event is available. The preview columns appear immediately after
+`analysis_as_of`:
+
+- `latest_snapshot_date`, `latest_scraped_at`, `latest_run_id`, and
+  `latest_fetch_status` identify the latest actual observation for that listing-year.
+- `latest_original_price`, `latest_sale_price`, `latest_extra_price`, and
+  `latest_extra_price_label` copy its observed prices and offer label.
+- `latest_listed_price` applies the unconditional-price rule below;
+  `latest_advertised_discount` compares it with that observation's reference price.
+- `observed_snapshot_count`, `observed_ok_count`, `observed_days`, and
+  `first_observed_date` describe collection coverage so far.
+- `observed_min_listed_price` and `observed_max_listed_price` summarize valid prices
+  in the collected snapshots. They are not complete 30-day BigGo benchmarks.
+
+Only observations in the row's year, up to the build's as-of date, are included.
+A failed latest scrape keeps its failure status and missing prices; older prices
+are not presented as current. The observed minimum/maximum may still summarize
+earlier successful collections, with counts showing the available coverage.
+2025 rows have no snapshot preview unless actual 2025 snapshots are supplied.
+
+The existing unprefixed `original_price`, `listed_price`, discounts, gaps, and
+readiness flags continue to describe the Nov 11 research event. They do not
+borrow the preview prices. On an ongoing project, preview values can therefore
+be populated while the event outcomes correctly remain pending.
+
 The calculations live in base R, following the Milestone 2 proposal. Rates are
 fractions: `0.20` means 20%; a gap of `0.10` means 10 percentage points. No missing
 reference price is filled from another day, another platform or BigGo. Advertised
