@@ -1,0 +1,166 @@
+{
+  "target_listings": 335,
+  "price_change_rows": 3908,
+  "attempted_listings": 335,
+  "all_listings_attempted": true,
+  "reported_retrieved": 334,
+  "retrieved_counts_source": "collection_status_2025.csv (declared inventory)",
+  "reported_retrieved_by_category": {
+    "3C": 72,
+    "APPL": 69,
+    "BEAU": 64,
+    "FOOD": 67,
+    "HOME": 62
+  },
+  "tracking_coverage_rows": 286,
+  "with_2025_records": 331,
+  "independently_retrieved_twice": 0,
+  "independently_chart_checked": 34,
+  "chart_review_results": {
+    "match": 25,
+    "baseline_window_clip": 1,
+    "discrepancy": 1,
+    "corrected_variant_match": 6,
+    "catalog_variant_unavailable": 1
+  },
+  "unresolved_chart_reviews": [
+    [
+      "3C-010_momo",
+      "discrepancy"
+    ],
+    [
+      "HOME-013_coupang",
+      "catalog_variant_unavailable"
+    ]
+  ],
+  "independent_verification_source": "saved audit records; no new website checks performed",
+  "dataset_complete": false,
+  "login_blocker": {
+    "product_id": "APPL-019",
+    "platform": "momo",
+    "history_id": "tw_pec_momoshop-6198895",
+    "sent_at": "2026-10-25T12:50:03.094Z",
+    "status": 429,
+    "response": {
+      "result": false,
+      "require_login": true
+    },
+    "action": "Historical signed-out HTTP 429 retained. Spec section 3 now permits signed-in BigGo collection (team decision 2026-10-27, main 8827ffa). Use an authorized signed-in team browser; do not retry restricted access in the old signed-out context."
+  },
+  "validation_mode": "raw_to_csv",
+  "raw_to_csv_verified": true,
+  "attempt_evidence_verified": 335,
+  "source_evidence_counts": {
+    "api_utc_milliseconds": 120,
+    "visible_table_tw_minute": 214
+  },
+  "retrieved": 334,
+  "missing": [
+    [
+      "HOME-013",
+      "coupang"
+    ]
+  ],
+  "prior_ambiguous_or_mismatched_listings": 39,
+  "minimum_logged_request_gap_seconds": 5.199,
+  "access_restrictions": [
+    {
+      "kind": "history",
+      "history_id": "tw_pec_momoshop-6198895",
+      "sent_at": "2026-10-25T12:50:03.094Z",
+      "status": 429,
+      "attempt": 1,
+      "require_login": true
+    }
+  ],
+  "differences_from_prior_2025_point_counts_or_extrema": [
+    [
+      "BEAU-007",
+      "coupang"
+    ],
+    [
+      "BEAU-012",
+      "coupang"
+    ],
+    [
+      "BEAU-017",
+      "coupang"
+    ],
+    [
+      "BEAU-020",
+      "momo"
+    ],
+    [
+      "BEAU-020",
+      "coupang"
+    ],
+    [
+      "FOOD-004",
+      "coupang"
+    ],
+    [
+      "FOOD-005",
+      "coupang"
+    ],
+    [
+      "FOOD-009",
+      "coupang"
+    ],
+    [
+      "FOOD-010",
+      "coupang"
+    ],
+    [
+      "FOOD-011",
+      "coupang"
+    ],
+    [
+      "FOOD-016",
+      "coupang"
+    ],
+    [
+      "FOOD-017",
+      "momo"
+    ],
+    [
+      "FOOD-020",
+      "momo"
+    ],
+    [
+      "FOOD-020",
+      "coupang"
+    ],
+    [
+      "HOME-002",
+      "coupang"
+    ],
+    [
+      "HOME-003",
+      "momo"
+    ],
+    [
+      "HOME-004",
+      "momo"
+    ],
+    [
+      "HOME-009",
+      "coupang"
+    ],
+    [
+      "HOME-015",
+      "momo"
+    ],
+    [
+      "HOME-016",
+      "momo"
+    ],
+    [
+      "HOME-017",
+      "momo"
+    ]
+  ],
+  "tests": "PASS (raw-to-CSV comparison covers every retrieved listing)",
+  "without_preperiod_baseline": 15,
+  "with_in_window_changes": 249,
+  "tracking_ends_before_window_end": 14
+}

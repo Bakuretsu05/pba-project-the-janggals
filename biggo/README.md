@@ -1,5 +1,100 @@
 # BigGo price history
 
+## Current 2025 delivery (updated 2026-10-28)
+
+The dataset contains **3,908 change-point rows** from **331 listings with relevant
+2025 records**. **334 histories are retrieved** across all 335 processed targets:
+150 momo, 150 PChome and 34 Coupang. HOME-013 Coupang remains without accepted
+2025 rows; its recorded reason is retained and the team requires no further work.
+
+The current study window is **September 1-November 25, 2025**, plus the last real
+change before September 1 (spec section 11, updated on main in `3531549`). The
+September expansion adds 989 rows from already-saved evidence. One direct request
+for each of APPL-020 momo/PChome, BEAU-020 PChome and FOOD-002 PChome then recovered
+all four histories (HTTP 200), adding another 52 rows. No search or full collection
+rerun was needed. The four new response collection dates are October 28 Taiwan time.
+
+All **2,867 previous price records remain present**, including the original 1,397.
+No existing price, timestamp, product/platform link or entry date changed. Window
+baseline wording and same-minute event-order notes changed on 153 existing rows.
+Inserting September rows means the old bytes are no longer a prefix; preservation
+now compares all seven non-note fields and their multiplicities. See
+[preservation_2025.json](preservation_2025.json) for hashes and the correction record.
+
+**286 tracking coverage rows** in
+[history_coverage.csv](../analysis/config/history_coverage.csv) allow the analysis to
+carry unchanged prices through November 25 only for momo/PChome series observed
+past that date. None of the 14 stopped series receives a coverage extension. This
+includes the 13 known stopped series and FOOD-006 momo. Coverage is not a fabricated
+price-change row, and never supplies a price before a listing's first observation.
+
+### Team decisions now recorded in the specification
+
+Spec section 3 explicitly permits signed-in BigGo collection using a team member's
+account (`8827ffa`, 2026-10-27). Passwords, cookies and session tokens stay out of Git.
+The old HTTP 429 marker is historical evidence of signed-out access; its `action`
+now points to the approved signed-in workflow. It is not a scope prohibition.
+
+The team leader's Oct 27 decisions are now in section 11:
+
+- Keep every product and all collected rows, with SHORT/MISMATCH/UNCERTAIN warnings.
+  Do not replace products or silently relabel variants.
+- Keep the six 3C-010 momo 2025 rows flagged; no further gray-variant work is required.
+- Coupang is excluded from the analysis. Its APPL-003 pink/blue, HOME-013 and vague
+  title flags require no further collection or product replacement.
+- The title-variant listings remain in the data. H1-H4 sensitivity checks will compare
+  results with and without BEAU-005 PChome, BEAU-006 momo, BEAU-011 momo, FOOD-003
+  PChome, FOOD-009 PChome, FOOD-026 momo/PChome and HOME-016 momo/PChome.
+- A series ending before November 25 receives no tracking coverage row.
+
+There are **34 saved independent chart reviews**, accepted by the team leader as
+the approximately 10% check. They cover the original October-November window;
+September rows were reconstructed from saved full histories, without claiming new
+website checks. Review differences and the team's disposition remain documented.
+FOOD-002 PChome's recovered parent title offers several flavours; its rows carry
+an explicit warning rather than claiming proven original-flavour attribution.
+
+### Reproduce and validate
+
+```sh
+python biggo/validate_2025.py
+node --test biggo/test_collect_2025.cjs
+python biggo/test_validate_2025.py
+```
+
+Default validation is read-only and explicitly **CSV-only**; it verifies schema,
+identity, chronology, metadata, changes, flags and tracking coverage without raw
+files. It does not claim raw reconstruction. Restore `biggo/raw/2025/` from the
+separate evidence bundle for full offline verification or rebuild:
+
+```sh
+python biggo/validate_2025.py --raw
+node biggo/collect_2025.cjs rebuild
+```
+
+Missing, incomplete, corrupt or truncated raw evidence cannot delete/change existing
+CSV records or withdraw retrieved zero-row statuses. Refusal leaves both outputs
+unchanged. The one-time `rebuild --extend-window` migration additionally reconstructs
+the old October export from the same evidence before permitting window-dependent
+note changes; it still requires every existing price record in the September export.
+Ordinary rebuild keeps its strict full-record guard. No migration is required after
+restoring the current CSV. Raw verification also checks the status continuation
+dates supporting the coverage file. CSV checkout line endings are pinned to LF.
+
+Signed-in UI collection helpers are `collect_visible_2025.cjs` and the loopback-only
+`visible_checkpoint_server.cjs`. The legacy fresh signed-out HTTP collector stays
+stopped on its historical restriction; it must not be mistaken for the user's
+signed-in browser. No browser profile or authentication state is copied. The four
+recovered response bodies are saved under their exact product/platform raw filenames;
+earlier UI search failures are archived. See [recovery_2026-10-28.json](recovery_2026-10-28.json).
+
+`apply_catalog_variants.cjs` accepts a recognized protected CSV snapshot and checks
+record containment instead of an obsolete byte prefix. The team's current decision
+is to retain flagged listings, so no further variant substitutions are performed.
+[Audit](AUDIT_2025.md) records reviewer feedback, validation and remaining limits.
+The older [Oct 26 QC report](TARGETED_QC_2026-10-26.md) is historical and is superseded
+by the current specification and the successful Oct 28 exact-ID recovery.
+
 Owner: **Albert** · 2025 history due **Sun Oct 25** (Milestone 2) · 2026 history due **Sun Nov 29**
 
 ## The task

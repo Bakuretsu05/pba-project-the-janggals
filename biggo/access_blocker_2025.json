@@ -1,0 +1,12 @@
+{
+  "product_id": "APPL-019",
+  "platform": "momo",
+  "history_id": "tw_pec_momoshop-6198895",
+  "sent_at": "2026-10-25T12:50:03.094Z",
+  "status": 429,
+  "response": {
+    "result": false,
+    "require_login": true
+  },
+  "action": "Historical signed-out HTTP 429 retained. Spec section 3 now permits signed-in BigGo collection (team decision 2026-10-27, main 8827ffa). Use an authorized signed-in team browser; do not retry restricted access in the old signed-out context."
+}

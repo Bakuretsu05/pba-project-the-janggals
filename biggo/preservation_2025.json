@@ -1,0 +1,26 @@
+{
+  "change_authority": "PR #11 reviewer comment 6446598452 and spec section 11 (main 3531549), Sep 1 study start",
+  "previous_commit": "4d3bf906a186fe948d5273b04579c8ecb7da352d",
+  "previous_rows": 2867,
+  "previous_sha256": "b684d8e7ae09294867003c6c67fcce97542452f8acf6b5514d8bbac56a7e46a1",
+  "current_rows": 3908,
+  "current_sha256": "8ee9dfd4a75baedd2d2c74762213457f225e0b819c7dbfb7d493946a633a4e9a",
+  "added_september_or_baseline_rows": 989,
+  "existing_price_records_preserved": 2867,
+  "existing_price_timestamp_platform_or_entry_date_changes": 0,
+  "existing_rows_with_regenerated_notes": 153,
+  "note_change_reason": "September-window baseline warnings and visible same-minute selected-event ordinals regenerated from the same saved evidence. Oct 22 summary comparisons still use the original October window.",
+  "original_rows": 1397,
+  "original_sha256": "6a888791005a1a6818f01753e5bccfdcdf764446f184fb350a9c14cc08851842",
+  "original_is_unchanged_prefix": false,
+  "preservation_rule": "All seven non-note fields and multiplicities retained; prefix bytes are no longer meaningful after September insertion.",
+  "protected_snapshot_sha256": [
+    "6a888791005a1a6818f01753e5bccfdcdf764446f184fb350a9c14cc08851842",
+    "b684d8e7ae09294867003c6c67fcce97542452f8acf6b5514d8bbac56a7e46a1",
+    "8ee9dfd4a75baedd2d2c74762213457f225e0b819c7dbfb7d493946a633a4e9a"
+  ],
+  "added_exact_id_recovery_rows": 52,
+  "accepted_history_count": 334,
+  "tracking_coverage_rows": 286,
+  "original_price_records_preserved": 1397
+}
