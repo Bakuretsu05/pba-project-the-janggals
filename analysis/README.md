@@ -14,6 +14,15 @@ requests to shopping sites:
 
 Open the corresponding Actions run and download its artifact:
 
+For convenient access, the latest analysis CSV is also published automatically
+as [`data/final_analysis.csv`](../data/final_analysis.csv), with its collection
+date in [`data/README.md`](../data/README.md). The same file is updated rather than
+creating one tracked file per run. Only changed data is committed; skipped backups
+create no data commits. Git history preserves earlier versions. Automated data
+commits do not trigger another pipeline build. Raw and per-run outputs remain
+in artifacts. Publication refuses a build whose code/data/config inputs no
+longer match main, and never force-pushes over concurrent changes.
+
 | Artifact | File | Observation |
 |---|---|---|
 | `combined-snapshots` | `combined_snapshots.csv` | product x platform x scraping run, cumulative |
