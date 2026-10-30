@@ -10,6 +10,7 @@ on:
     branches: [main]
     paths:
       - analysis/build_analysis.R
+      - analysis/publish_analysis.py
       - analysis/config/**
       - biggo/price_changes.csv
       - .github/workflows/final-analysis.yml
@@ -27,6 +28,8 @@ jobs:
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    outputs:
+      found: ${{ steps.source.outputs.found }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -64,3 +67,40 @@ jobs:
           path: output/analysis/
           if-no-files-found: error
           retention-days: 90
+
+  publish:
+    needs: build
+    if: needs.build.outputs.found == 'true' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      # Check out current main rather than an older workflow_run revision. The
+      # preparer checks its inputs still match the artifact before staging data.
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: final-analysis
+          path: output/analysis
+      - name: Prepare the latest repository dataset
+        run: python analysis/publish_analysis.py
+      - name: Commit only changed analysis data
+        shell: bash
+        run: |
+          git add -- data/final_analysis.csv data/README.md
+          if git diff --cached --quiet; then
+            echo 'Published data already matches this build; no commit needed.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Update latest analysis dataset [skip ci]'
+          # A concurrent main update causes a safe rejection, never a force push.
+          git push origin HEAD:main

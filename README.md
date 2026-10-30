@@ -39,6 +39,12 @@ Run `Rscript scrapers/momo/scrape_momo.R` from the project root. The default inp
 
 ## Data
 
+**Latest analysis table:** [`data/final_analysis.csv`](data/final_analysis.csv).
+It updates automatically after analysis builds; [`data/README.md`](data/README.md)
+shows its collection date and explains how to read it. Earlier versions are in
+Git history, while individual scraper outputs and combined snapshots remain in
+Actions artifacts.
+
 The **combined snapshots** and **final analysis** Actions workflows automatically
 build cumulative observations and the product-platform-year analysis table after
 scraping. Historical production artifacts are backfilled, and missing evidence is
