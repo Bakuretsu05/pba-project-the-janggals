@@ -25,8 +25,8 @@ The data comes from two sources:
 1. **Scrapers for momo and PChome**: one R script per platform, in that platform's
    folder under `scrapers/`, that writes one row per product per run in the format in section 7.
    **Coupang was dropped from the daily snapshots on 2026-10-20**; its prices come from BigGo
-   history only (section 11). The Coupang scraper in `scrapers/coupang/` is kept for reference
-   and no longer runs (Q7).
+   history only (section 11). The Coupang scraper was removed from the repo on 2026-11-02; it is
+   in git history at commit `4b97f51` (Q7).
 2. **A GitHub Actions workflow** that runs the scrapers on the schedule in section 9, from
    Oct 19 to Nov 25, with extra runs around 11.11.
 3. **BigGo price history collected** into the format in section 11.
@@ -233,8 +233,8 @@ Endpoints:
   as `<platform_item_id>__attempt<n>.html.gz`.
   See `momo/README.md` and `momo/VERIFICATION.md`.
 - **Coupang** (tested 2026-10-15): the product page at `coupang_url`, requested exactly as stored
-  in the product table, from a Coupang page in an everyday Chrome, by the Chrome extension in
-  `scrapers/coupang/extension` (`scrapers/coupang/README.md` explains why). Prices are read from
+  in the product table, from a Coupang page in an everyday Chrome, by the Chrome extension
+  formerly in `scrapers/coupang/extension` (git history, commit `4b97f51`). Prices are read from
   the HTML as served: JSON-LD (`offers.price`, the `StrikethroughPrice`, `availability`) and the
   price block. Akamai answers every plain request (httr2, curl) with 403 whatever the headers,
   and headless Chrome fails its JavaScript check. From a GitHub-hosted runner every page gets
@@ -326,9 +326,10 @@ back-fill a missed run by copying another run's values.
 
 ---
 
-## 11. BigGo price history format: `biggo/price_changes.csv`
+## 11. BigGo price history format: `data/biggo_price_changes.csv`
 
-Record **change points only**, one row per price change. R turns these into daily prices. How
+Record **change points only**, one row per price change. `biggo/scripts/build_biggo_daily.R`
+turns these into daily prices in `data/biggo_daily.csv`. How
 the rows are collected (by hand, a script, browser automation) is up to the owner; `biggo/README.md`
 has what is known about BigGo's history data.
 
@@ -359,7 +360,7 @@ has what is known about BigGo's history data.
   PChome only. A listing with no history gets one direct request by its `history_id`; if that
   fails too, it stays missing, with the reason recorded.
 
-**Tracking coverage: `analysis/config/history_coverage.csv`.** BigGo adds a point only when a
+**Tracking coverage: `biggo/records/history_coverage.csv`.** BigGo adds a point only when a
 price changes, so after a series' last point the analysis cannot tell an unchanged price from a
 listing BigGo stopped tracking, and leaves those days blank. For each momo and PChome listing
 whose series has a point after Nov 25 of that year, add one row: `product_id`, `platform`,
@@ -413,14 +414,13 @@ later point. A series that ends before Nov 25 gets no row.
 
 **BigGo history** (D8, D11) is accepted when:
 
-- [ ] `biggo/price_changes.csv` follows section 11: the columns in order, change points only,
+- [ ] `data/biggo_price_changes.csv` follows section 11: the columns in order, change points only,
       Sep 1 to Nov 25 plus the change before Sep 1.
 - [ ] Every product-table listing with a `biggo_url_<platform>` link has rows, or a recorded
       reason it has none.
-- [ ] `analysis/config/history_coverage.csv` has the rows described in section 11.
+- [ ] `biggo/records/history_coverage.csv` has the rows described in section 11.
 - [ ] About 10% of listings were checked a second time, with the differences noted.
-- [ ] `build_analysis()` in `analysis/build_analysis.R` runs on the file without an error (a
-      snapshot file holding only its header line is enough).
+- [ ] `Rscript biggo/scripts/build_biggo_daily.R` runs on the file without an error.
 - [ ] `biggo/README.md` keeps the lookup notes the next collection needs (shop codes and
       `history_id`, the history request, the token expiry), and nothing in `biggo/` still says
       signed-in collection is outside this spec (section 3 allows it).

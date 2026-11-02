@@ -7,3 +7,4 @@ data/raw/
 .RData
 .Rproj.user/
 .chrome-profile/
+__pycache__/

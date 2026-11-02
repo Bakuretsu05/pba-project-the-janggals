@@ -71,14 +71,16 @@ function checkout(t, populated=false) {
   const prefix=path.join(os.tmpdir(),'biggo-2025-test-');
   const root=fs.mkdtempSync(prefix);
   t.after(()=>{assert.ok(path.resolve(root).startsWith(path.resolve(prefix)));fs.rmSync(root,{recursive:true,force:true});});
-  fs.mkdirSync(path.join(root,'biggo'));fs.mkdirSync(path.join(root,'products'));
-  for(const name of ['collect_2025.cjs','coverage_check_2026-10-22.csv','preservation_2025.json',...(populated?['price_changes.csv','collection_status_2025.csv','verification_2025.csv']:[])])fs.copyFileSync(path.join(__dirname,name),path.join(root,'biggo',name));
-  fs.copyFileSync(path.join(__dirname,'../products/products.csv'),path.join(root,'products/products.csv'));
-  if(!populated)fs.writeFileSync(path.join(root,'biggo/price_changes.csv'),c.HEADER.join(',')+'\n');
+  for(const dir of ['biggo/scripts','biggo/records','data','products'])fs.mkdirSync(path.join(root,dir),{recursive:true});
+  fs.copyFileSync(path.join(__dirname,'collect_2025.cjs'),path.join(root,'biggo/scripts/collect_2025.cjs'));
+  for(const name of ['coverage_check_2026-10-22.csv','preservation_2025.json',...(populated?['collection_status_2025.csv','verification_2025.csv']:[])])fs.copyFileSync(path.join(c.RECORDS,name),path.join(root,'biggo/records',name));
+  fs.copyFileSync(path.join(c.ROOT,'products/products.csv'),path.join(root,'products/products.csv'));
+  if(populated)fs.copyFileSync(c.PRICES,path.join(root,'data/biggo_price_changes.csv'));
+  else fs.writeFileSync(path.join(root,'data/biggo_price_changes.csv'),c.HEADER.join(',')+'\n');
   return root;
 }
-const runRebuild=root=>spawnSync(process.execPath,[path.join(root,'biggo/collect_2025.cjs'),'rebuild'],{encoding:'utf8'});
-const snapshot=root=>['price_changes.csv','collection_status_2025.csv'].map(f=>fs.readFileSync(path.join(root,'biggo',f)));
+const runRebuild=root=>spawnSync(process.execPath,[path.join(root,'biggo/scripts/collect_2025.cjs'),'rebuild'],{encoding:'utf8'});
+const snapshot=root=>['data/biggo_price_changes.csv','biggo/records/collection_status_2025.csv'].map(f=>fs.readFileSync(path.join(root,f)));
 function refusedWithoutChanges(root, before) {
   const result=runRebuild(root);
   assert.equal(result.status,1,result.stdout+result.stderr);
@@ -87,7 +89,7 @@ function refusedWithoutChanges(root, before) {
 }
 function rawFixture(t,legacy=false) {
   const root=checkout(t),ts=c.targets().slice(0,2),raw=path.join(root,'biggo/raw/2025');
-  if(legacy){const file=path.join(root,'biggo/collect_2025.cjs');fs.writeFileSync(file,fs.readFileSync(file,'utf8').replace("const START = Date.parse('2025-09-01", "const START = Date.parse('2025-10-01"));}
+  if(legacy){const file=path.join(root,'biggo/scripts/collect_2025.cjs');fs.writeFileSync(file,fs.readFileSync(file,'utf8').replace("const START = Date.parse('2025-09-01", "const START = Date.parse('2025-10-01"));}
   fs.mkdirSync(raw,{recursive:true});
   const save=(target,points)=>{
     const r=record(points);Object.assign(r.data,{history_id:target.history_id,oid:target.platform_item_id,nindex:target.history_id.slice(0,-target.platform_item_id.length-1),purl:target[target.platform+'_url']});
@@ -157,33 +159,33 @@ test('visible evidence rejects wrong identity, range and calendar dates',()=>{
 test('catalog correction refuses an unprotected snapshot without modifying outputs',t=>{
   const root=checkout(t,true),before=snapshot(root),baseline=path.join(root,'wrong-baseline.csv');
   fs.writeFileSync(baseline,'not the protected original');
-  assert.throws(()=>require('./apply_catalog_variants.cjs').apply(baseline,path.join(root,'biggo')),/Wrong protected CSV snapshot/);
+  assert.throws(()=>require('./apply_catalog_variants.cjs').apply(baseline,root),/Wrong protected CSV snapshot/);
   assert.deepEqual(snapshot(root),before);
 });
 
 test('catalog correction cannot change a listing in the protected original collection',t=>{
   const root=checkout(t,true),before=snapshot(root),baseline=path.join(root,'original.csv');
-  fs.copyFileSync(path.join(__dirname,'price_changes.csv'),baseline);
+  fs.copyFileSync(c.PRICES,baseline);
   const original=c.parseCSV(fs.readFileSync(baseline,'utf8'))[0];
   const target=c.targets().find(t=>t.product_id===original.product_id&&t.platform===original.platform),raw=path.join(root,'biggo/raw/2025');fs.mkdirSync(raw,{recursive:true});
   fs.writeFileSync(path.join(raw,target.product_id+'_'+target.platform+'_catalog_variant.json.gz'),zlib.gzipSync(JSON.stringify({correction:true,catalog_variant:'other',correction_reason:'test'})));
-  assert.throws(()=>require('./apply_catalog_variants.cjs').apply(baseline,path.join(root,'biggo')),/may not change the protected collection/);
+  assert.throws(()=>require('./apply_catalog_variants.cjs').apply(baseline,root),/may not change the protected collection/);
   assert.deepEqual(snapshot(root),before);
 });
 
 test('September migration requires exact old-window evidence and keeps existing price facts',t=>{
   const {root}=rawFixture(t,true),before=snapshot(root);
-  fs.copyFileSync(path.join(__dirname,'collect_2025.cjs'),path.join(root,'biggo/collect_2025.cjs'));
+  fs.copyFileSync(path.join(__dirname,'collect_2025.cjs'),path.join(root,'biggo/scripts/collect_2025.cjs'));
   refusedWithoutChanges(root,before);
-  const result=spawnSync(process.execPath,[path.join(root,'biggo/collect_2025.cjs'),'rebuild','--extend-window'],{encoding:'utf8'});
+  const result=spawnSync(process.execPath,[path.join(root,'biggo/scripts/collect_2025.cjs'),'rebuild','--extend-window'],{encoding:'utf8'});
   assert.equal(result.status,0,result.stderr);
   require('./apply_catalog_variants.cjs').assertProtected(c.parseCSV(before[0].toString()),c.parseCSV(snapshot(root)[0].toString()));
 });
 
 test('September migration cannot bypass missing evidence safeguards',t=>{
   const {root,first}=rawFixture(t,true),before=snapshot(root);
-  fs.copyFileSync(path.join(__dirname,'collect_2025.cjs'),path.join(root,'biggo/collect_2025.cjs'));fs.unlinkSync(first);
-  const result=spawnSync(process.execPath,[path.join(root,'biggo/collect_2025.cjs'),'rebuild','--extend-window'],{encoding:'utf8'});
+  fs.copyFileSync(path.join(__dirname,'collect_2025.cjs'),path.join(root,'biggo/scripts/collect_2025.cjs'));fs.unlinkSync(first);
+  const result=spawnSync(process.execPath,[path.join(root,'biggo/scripts/collect_2025.cjs'),'rebuild','--extend-window'],{encoding:'utf8'});
   assert.equal(result.status,1);assert.deepEqual(snapshot(root),before);
 });
 

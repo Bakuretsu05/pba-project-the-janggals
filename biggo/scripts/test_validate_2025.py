@@ -16,40 +16,45 @@ class ValidationTests(unittest.TestCase):
         self.temp=tempfile.TemporaryDirectory(prefix='biggo-validation-test-')
         self.addCleanup(self.temp.cleanup)
         self.root=Path(self.temp.name)
-        self.base=self.root/'biggo'
-        self.base.mkdir()
-        (self.root/'products').mkdir()
-        for name in ['validate_2025.py','price_changes.csv','collection_status_2025.csv',
-                     'coverage_check_2026-10-22.csv','verification_2025.csv',
-                     'chart_checks_2025.csv','access_blocker_2025.json','validation_2025.json']:
-            shutil.copyfile(validator.BASE/name,self.base/name)
-        shutil.copyfile(validator.BASE.parent/'products/products.csv',self.root/'products/products.csv')
-        (self.root/'analysis/config').mkdir(parents=True)
-        shutil.copyfile(validator.BASE.parent/'analysis/config/history_coverage.csv',self.root/'analysis/config/history_coverage.csv')
+        self.scripts=self.root/'biggo/scripts'
+        self.records=self.root/'biggo/records'
+        self.prices=self.root/'data/biggo_price_changes.csv'
+        for folder in (self.scripts,self.records,self.prices.parent,self.root/'products'):
+            folder.mkdir(parents=True)
+        shutil.copyfile(validator.ROOT/'biggo/scripts/validate_2025.py',self.scripts/'validate_2025.py')
+        for name in ['collection_status_2025.csv','coverage_check_2026-10-22.csv','verification_2025.csv',
+                     'chart_checks_2025.csv','access_blocker_2025.json','validation_2025.json',
+                     'history_coverage.csv']:
+            shutil.copyfile(validator.ROOT/'biggo/records'/name,self.records/name)
+        shutil.copyfile(validator.ROOT/'data/biggo_price_changes.csv',self.prices)
+        shutil.copyfile(validator.ROOT/'products/products.csv',self.root/'products/products.csv')
+
+    def files(self):
+        return {p.relative_to(self.root):p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
 
     def cli(self,*args):
-        return subprocess.run([sys.executable,str(self.base/'validate_2025.py'),*args],capture_output=True,text=True,encoding='utf-8')
+        return subprocess.run([sys.executable,str(self.scripts/'validate_2025.py'),*args],capture_output=True,text=True,encoding='utf-8')
 
     def rewrite(self,change):
-        rows=validator.read(self.base/'price_changes.csv')
+        rows=validator.read(self.prices)
         change(rows)
-        with (self.base/'price_changes.csv').open('w',encoding='utf-8',newline='') as f:
+        with (self.prices).open('w',encoding='utf-8',newline='') as f:
             writer=csv.DictWriter(f,fieldnames=validator.HEADER);writer.writeheader();writer.writerows(rows)
 
     def test_csv_only_fresh_checkout_is_read_only_and_explicit(self):
-        before={p.name:p.read_bytes() for p in self.base.iterdir()}
+        before=self.files()
         result=self.cli()
         self.assertEqual(result.returncode,0,result.stderr)
         report=json.loads(result.stdout)
         self.assertEqual(report['validation_mode'],'csv_only')
         self.assertFalse(report['raw_to_csv_verified'])
-        self.assertEqual(report['price_change_rows'],len(validator.read(self.base/'price_changes.csv')))
+        self.assertEqual(report['price_change_rows'],len(validator.read(self.prices)))
         self.assertEqual(set(report['reported_retrieved_by_category']),{'3C','APPL','BEAU','FOOD','HOME'})
         self.assertEqual(sum(report['reported_retrieved_by_category'].values()),report['reported_retrieved'])
         self.assertTrue(report['login_blocker']['response']['require_login'])
-        self.assertEqual(report['independently_chart_checked'],len(validator.read(self.base/'chart_checks_2025.csv')))
-        self.assertEqual(report['independently_retrieved_twice'],len(validator.read(self.base/'verification_2025.csv')))
-        self.assertEqual({p.name:p.read_bytes() for p in self.base.iterdir()},before)
+        self.assertEqual(report['independently_chart_checked'],len(validator.read(self.records/'chart_checks_2025.csv')))
+        self.assertEqual(report['independently_retrieved_twice'],len(validator.read(self.records/'verification_2025.csv')))
+        self.assertEqual(self.files(),before)
 
     def test_explicit_raw_mode_fails_clearly_without_evidence(self):
         result=self.cli('--raw')
@@ -58,7 +63,7 @@ class ValidationTests(unittest.TestCase):
         self.assertNotIn('Traceback',result.stderr)
 
     def test_raw_mode_does_not_silently_fall_back_for_partial_evidence(self):
-        raw=self.base/'raw/2025';raw.mkdir(parents=True)
+        raw=self.root/'biggo/raw/2025';raw.mkdir(parents=True)
         (raw/'requests.jsonl').write_text('',encoding='utf-8')
         result=self.cli('--raw')
         self.assertEqual(result.returncode,1)
@@ -91,7 +96,7 @@ class ValidationTests(unittest.TestCase):
             validator.item_id('coupang',url.replace('pageKey=123','pageKey=999'),response_url=True)
 
     def test_csv_validation_reports_unresolved_chart_findings(self):
-        path=self.base/'chart_checks_2025.csv'
+        path=self.records/'chart_checks_2025.csv'
         rows=validator.read(path);rows[0]['result']='discrepancy'
         with path.open('w',encoding='utf-8',newline='') as f:
             writer=csv.DictWriter(f,fieldnames=rows[0].keys());writer.writeheader();writer.writerows(rows)
@@ -101,7 +106,7 @@ class ValidationTests(unittest.TestCase):
         self.assertFalse(report['raw_to_csv_verified'])
 
     def test_tracking_coverage_cannot_claim_a_stopped_series(self):
-        path=self.root/'analysis/config/history_coverage.csv'
+        path=self.records/'history_coverage.csv'
         with path.open('a',encoding='utf-8',newline='') as f:
             csv.writer(f).writerow(['3C-004','pchome','2025-09-01','2025-11-25','Stopped series'])
         result=self.cli();self.assertEqual(result.returncode,1)

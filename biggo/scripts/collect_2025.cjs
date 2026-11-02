@@ -4,10 +4,13 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const zlib = require('node:zlib');
-const ROOT = path.resolve(__dirname, '..');
-const DIR = __dirname;
-const RAW = path.join(DIR, 'raw', '2025');
-const BLOCKER = path.join(DIR, 'access_blocker_2025.json');
+// This file lives in biggo/scripts/. The data it writes is data/biggo_price_changes.csv;
+// its collection records are in biggo/records/; raw responses stay local in biggo/raw/ (gitignored).
+const ROOT = path.resolve(__dirname, '..', '..');
+const RECORDS = path.join(ROOT, 'biggo', 'records');
+const RAW = path.join(ROOT, 'biggo', 'raw', '2025');
+const PRICES = path.join(ROOT, 'data', 'biggo_price_changes.csv');
+const BLOCKER = path.join(RECORDS, 'access_blocker_2025.json');
 const HEADER = ['product_id','platform','biggo_url','changed_at','price','entered_by','entered_on','note'];
 const SHOPS = {momo:'tw_pec_momoshop',pchome:'tw_ec_pchome24h',coupang:'tw_pec_coupang'};
 const START = Date.parse('2025-09-01T00:00:00+08:00');
@@ -53,7 +56,7 @@ function itemID(platform, link, responseURL=false) {
 }
 function targets() {
   const products=readCSV(path.join(ROOT,'products/products.csv'));
-  const coverage=readCSV(path.join(DIR,'coverage_check_2026-10-22.csv'));
+  const coverage=readCSV(path.join(RECORDS,'coverage_check_2026-10-22.csv'));
   const seen=new Set(); const out=[];
   for(const p of products) {
     if(seen.has(p.product_id))throw Error('Duplicate product ID');seen.add(p.product_id);
@@ -129,7 +132,7 @@ function extract(t, record, start=START) {
 function rebuild(list, extendWindow=false) {
   if(!fs.existsSync(RAW))throw Error('Refusing rebuild: required raw/2025 evidence is unavailable; existing CSV and status files were not changed.');
   const rows=[], coverage=[], priorRows=[];
-  const chartFile=path.join(DIR,'chart_checks_2025.csv');
+  const chartFile=path.join(RECORDS,'chart_checks_2025.csv');
   const chartReviews=fs.existsSync(chartFile)?readCSV(chartFile):[];
   for(const t of list) {
     let c={product_id:t.product_id,platform:t.platform,history_id:t.history_id,prior_class:t.coverage.class,status:'not_attempted',rows:0,baseline:0,title:t.coverage.title,note:t.coverage.note||'NA'};
@@ -146,7 +149,7 @@ function rebuild(list, extendWindow=false) {
   }
   // Check all prior records before either output is written. Never turn missing,
   // corrupt or truncated evidence into silent data loss (including zero-row series).
-  const csv=path.join(DIR,'price_changes.csv');
+  const csv=PRICES;
   if(fs.existsSync(csv)) {
     const header=fs.readFileSync(csv,'utf8').replace(/^\uFEFF/,'').split(/\r?\n/,1)[0];
     if(header!==HEADER.join(','))throw Error('Refusing rebuild: existing CSV header is invalid; no files changed.');
@@ -167,15 +170,15 @@ function rebuild(list, extendWindow=false) {
       if(available.get(k))available.set(k,available.get(k)-1);else legacy.set(k,legacy.get(k)-1);
     }
   }
-  const statusFile=path.join(DIR,'collection_status_2025.csv');
+  const statusFile=path.join(RECORDS,'collection_status_2025.csv');
   if(fs.existsSync(statusFile))for(const prior of readCSV(statusFile)) {
     if(!['retrieved','empty'].includes(prior.status))continue;
     const current=coverage.find(c=>c.product_id===prior.product_id&&c.platform===prior.platform);
     if(!current||!['retrieved','empty'].includes(current.status))throw Error('Refusing rebuild: raw evidence for previously retrieved listing is unavailable or invalid ('+prior.product_id+' '+prior.platform+'); no files changed.');
   }
   if(!coverage.some(c=>['retrieved','empty'].includes(c.status)))throw Error('Refusing rebuild: no valid raw histories are available; no files changed.');
-  writeCSV(path.join(DIR,'price_changes.csv'),HEADER,rows);
-  writeCSV(path.join(DIR,'collection_status_2025.csv'),['product_id','platform','history_id','prior_class','status','rows','baseline','first_point_tw','last_point_tw','title','note'],coverage);
+  writeCSV(PRICES,HEADER,rows);
+  writeCSV(path.join(RECORDS,'collection_status_2025.csv'),['product_id','platform','history_id','prior_class','status','rows','baseline','first_point_tw','last_point_tw','title','note'],coverage);
   return {target_listings:list.length,retrieved:coverage.filter(c=>c.status==='retrieved').length,with_2025_records:coverage.filter(c=>c.rows>0).length,rows:rows.length};
 }
 function auditSample(list) {
@@ -196,7 +199,7 @@ function verifySaved(list) {
     const same=JSON.stringify(values(a))===JSON.stringify(values(b));
     rows.push({product_id:t.product_id,platform:t.platform,prior_class:t.coverage.class,method:'second signed-out history request',result:same?'match':'DISCREPANCY',first_rows:a.rows.length,second_rows:b.rows.length,note:same?'NA':'Review raw responses before using'});
   }
-  writeCSV(path.join(DIR,'verification_2025.csv'),['product_id','platform','prior_class','method','result','first_rows','second_rows','note'],rows);
+  writeCSV(path.join(RECORDS,'verification_2025.csv'),['product_id','platform','prior_class','method','result','first_rows','second_rows','note'],rows);
   return rows;
 }
 function contact() {
@@ -209,7 +212,7 @@ function contact() {
 async function collect(mode='collect') {
   const list=targets();
   if(mode==='rebuild'){console.log(JSON.stringify(rebuild(list,process.argv.includes('--extend-window'))));verifySaved(list);return;}
-  if(fs.existsSync(BLOCKER))throw Error('Historical signed-out login restriction. Spec section 3 now permits signed-in BigGo collection; use the authorized browser session, not this fresh signed-out collector. See biggo/access_blocker_2025.json.');
+  if(fs.existsSync(BLOCKER))throw Error('Historical signed-out login restriction. Spec section 3 now permits signed-in BigGo collection; use the authorized browser session, not this fresh signed-out collector. See biggo/records/access_blocker_2025.json.');
   // Resolve before browser startup, and keep contact out of saved evidence.
   const userAgent=`PBA-Double11-study (NTHU ISS4066; contact: ${contact()})`;
   let pw;try{pw=require('playwright');}catch(e){if(!process.env.PLAYWRIGHT_MODULE)throw e;pw=require(process.env.PLAYWRIGHT_MODULE);}
@@ -272,4 +275,4 @@ async function collect(mode='collect') {
   } finally {try{rebuild(list);}finally{await browser.close();}}
 }
 if(require.main===module)collect(process.argv[2]||'collect').catch(e=>{console.error(e.message);process.exitCode=1;});
-module.exports={parseCSV,itemID,tw,extract,visibleData,targets,rebuild,auditSample,verifySaved,HEADER,START,END};
+module.exports={ROOT,RECORDS,RAW,PRICES,parseCSV,itemID,tw,extract,visibleData,targets,rebuild,auditSample,verifySaved,HEADER,START,END};
