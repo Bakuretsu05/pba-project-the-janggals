@@ -64,6 +64,8 @@ Things to know:
 - **Failed pages are kept as rows**, with their `fetch_status` and `NA` prices. Filter
   `fetch_status == "ok"` before using prices.
 - A product not sold on a platform has no rows for that platform.
+- The first run (2026-10-19) has 10 rows for listings later dropped from the product table,
+  so they find no match in `products.csv`. An inner join (`merge()` in R) drops them.
 
 ## `biggo_daily.csv`: BigGo's price history (2025)
 
