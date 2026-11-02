@@ -2,8 +2,8 @@
 
 [Download the CSV](final_analysis.csv) or browse it directly on GitHub.
 
-- **Analysis as of (Taiwan date): 2026-11-01**
-- **Latest collected snapshot date: 2026-11-01**
+- **Analysis as of (Taiwan date): 2026-11-02**
+- **Latest collected snapshot date: 2026-11-02**
 - **Rows: 600** (one product x platform x year)
 
 This is the latest cumulative analysis view. The automatic analysis workflow
