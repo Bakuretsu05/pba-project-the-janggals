@@ -1,6 +1,60 @@
-# BigGo price history
+# biggo/
 
-## Current 2025 delivery (updated 2026-10-28)
+**This folder is how we collected the BigGo price history. The data itself is in [`data/`](../data/):**
+
+- [`data/biggo_daily.csv`](../data/biggo_daily.csv): one price per product, platform and day,
+  Sep 1 to Nov 25, 2025. **Use this one.**
+- [`data/biggo_price_changes.csv`](../data/biggo_price_changes.csv): the raw change points
+  `biggo_daily.csv` is built from. Use it to look for short flash sales a once-a-day price misses.
+
+[BigGo](https://biggo.com.tw) is a price-comparison site that keeps a price history for each
+listing it tracks. We started our own momo and PChome snapshots on 2026-10-19, so BigGo is our
+only source of **2025** prices.
+
+## What is in here
+
+| Path | What it is |
+|---|---|
+| [`scripts/`](scripts/) | The code that collected, checked and reshaped the history |
+| [`records/`](records/) | The paper trail: audits, quality checks, collection logs. Read these to judge how far the data can be trusted |
+| `raw/` | The saved BigGo responses. Kept on the collector's laptop, not in git |
+
+### `scripts/`
+
+| File | What it does |
+|---|---|
+| `build_biggo_daily.R` | Turns the change points into `data/biggo_daily.csv` (rules at the top of the file). Runs automatically on GitHub when the change points change |
+| `collect_2025.cjs` | Collector: rebuilds `data/biggo_price_changes.csv` and `records/collection_status_2025.csv` from the saved raw responses |
+| `collect_visible_2025.cjs`, `visible_checkpoint_server.cjs` | Collection helpers for a signed-in browser session |
+| `apply_catalog_variants.cjs` | Applied the corrections where BigGo's default product option was the wrong variant |
+| `summarize_chart_checks_2025.cjs` | Writes `records/chart_checks_2025.csv` from the saved chart reviews |
+| `validate_2025.py` | Checks `data/biggo_price_changes.csv` against the product table and the records |
+| `test_*.cjs`, `test_*.py`, `test_*.R` | Tests for the above (run on GitHub with every change) |
+
+### `records/`
+
+| File | What it is |
+|---|---|
+| `AUDIT_2025.md` | **Start here.** Current results, reviewer fixes and the remaining limits of the 2025 data |
+| `collection_status_2025.csv` | One row per listing: retrieved or not, row count, first and last BigGo point, warnings |
+| `history_coverage.csv` | Which series BigGo kept tracking through Nov 25, 2025. `build_biggo_daily.R` uses it to decide how far a price can be carried forward |
+| `coverage_check_2026-10-22.csv` | The Oct 22 check of every listing's BigGo series, classed OK / SHORT / MISMATCH / UNCERTAIN |
+| `chart_checks_2025.csv` | The 34 independent chart reviews (the team's ~10% second check) |
+| `verification_2025.csv` | Repeat retrievals of the same listing. Empty: the second check was done as chart reviews |
+| `validation_2025.json` | The validator's last saved report |
+| `preservation_2025.json` | Proof that earlier price records survived when September was added |
+| `recovery_2026-10-28.json` | The Oct 28 recovery of four missing histories |
+| `variant_corrections_2025.json` | The variant corrections `apply_catalog_variants.cjs` made |
+| `access_blocker_2025.json` | The HTTP 429 a signed-out collector got on Oct 25 (historical) |
+| `collection_authorization_2025.md` | Where the spec allows signed-in collection |
+| `TARGETED_QC_2026-10-26.md`, `targeted_qc_2026-10-26.json` | The Oct 26 quality check of flagged listings (historical, superseded by the audit) |
+
+## Collection log
+
+Everything below is the record of how the 2025 history was collected, kept as written
+(paths updated to the current layout).
+
+### Current 2025 delivery (updated 2026-10-28)
 
 The dataset contains **3,908 change-point rows** from **331 listings with relevant
 2025 records**. **334 histories are retrieved** across all 335 processed targets:
@@ -19,16 +73,16 @@ No existing price, timestamp, product/platform link or entry date changed. Windo
 baseline wording and same-minute event-order notes changed on 153 existing rows.
 Inserting September rows means the old bytes are no longer a prefix; preservation
 now compares all seven non-note fields and their multiplicities. See
-[preservation_2025.json](preservation_2025.json) for hashes and the correction record.
+[preservation_2025.json](records/preservation_2025.json) for hashes and the correction record.
 
 **286 tracking coverage rows** in
-[history_coverage.csv](../analysis/config/history_coverage.csv) allow the analysis to
+[history_coverage.csv](records/history_coverage.csv) allow the analysis to
 carry unchanged prices through November 25 only for momo/PChome series observed
 past that date. None of the 14 stopped series receives a coverage extension. This
 includes the 13 known stopped series and FOOD-006 momo. Coverage is not a fabricated
 price-change row, and never supplies a price before a listing's first observation.
 
-### Team decisions now recorded in the specification
+#### Team decisions now recorded in the specification
 
 Spec section 3 explicitly permits signed-in BigGo collection using a team member's
 account (`8827ffa`, 2026-10-27). Passwords, cookies and session tokens stay out of Git.
@@ -54,12 +108,12 @@ website checks. Review differences and the team's disposition remain documented.
 FOOD-002 PChome's recovered parent title offers several flavours; its rows carry
 an explicit warning rather than claiming proven original-flavour attribution.
 
-### Reproduce and validate
+#### Reproduce and validate
 
 ```sh
-python biggo/validate_2025.py
-node --test biggo/test_collect_2025.cjs
-python biggo/test_validate_2025.py
+python biggo/scripts/validate_2025.py
+node --test biggo/scripts/test_collect_2025.cjs
+python biggo/scripts/test_validate_2025.py
 ```
 
 Default validation is read-only and explicitly **CSV-only**; it verifies schema,
@@ -68,8 +122,8 @@ files. It does not claim raw reconstruction. Restore `biggo/raw/2025/` from the
 separate evidence bundle for full offline verification or rebuild:
 
 ```sh
-python biggo/validate_2025.py --raw
-node biggo/collect_2025.cjs rebuild
+python biggo/scripts/validate_2025.py --raw
+node biggo/scripts/collect_2025.cjs rebuild
 ```
 
 Missing, incomplete, corrupt or truncated raw evidence cannot delete/change existing
@@ -86,20 +140,21 @@ Signed-in UI collection helpers are `collect_visible_2025.cjs` and the loopback-
 stopped on its historical restriction; it must not be mistaken for the user's
 signed-in browser. No browser profile or authentication state is copied. The four
 recovered response bodies are saved under their exact product/platform raw filenames;
-earlier UI search failures are archived. See [recovery_2026-10-28.json](recovery_2026-10-28.json).
+earlier UI search failures are archived. See [recovery_2026-10-28.json](records/recovery_2026-10-28.json).
 
 `apply_catalog_variants.cjs` accepts a recognized protected CSV snapshot and checks
 record containment instead of an obsolete byte prefix. The team's current decision
 is to retain flagged listings, so no further variant substitutions are performed.
-[Audit](AUDIT_2025.md) records reviewer feedback, validation and remaining limits.
-The older [Oct 26 QC report](TARGETED_QC_2026-10-26.md) is historical and is superseded
+[Audit](records/AUDIT_2025.md) records reviewer feedback, validation and remaining limits.
+The older [Oct 26 QC report](records/TARGETED_QC_2026-10-26.md) is historical and is superseded
 by the current specification and the successful Oct 28 exact-ID recovery.
 
-Owner: **Albert** · 2025 history due **Sun Oct 25** (Milestone 2) · 2026 history due **Sun Nov 29**
 
-## The task
+### The task
 
-Fill **`biggo/price_changes.csv`** (this folder) with the price history of every product on every
+Due: 2025 history **Sun Oct 25** (Milestone 2, delivered) · 2026 history **Sun Nov 29**.
+
+Fill **`data/biggo_price_changes.csv`** with the price history of every product on every
 platform it has a BigGo link for, in the format of section 11 of
 [`scrapers/data-collection-spec.md`](../scrapers/data-collection-spec.md). The file is already here
 with its header line. How the rows are collected is up to Albert: by hand, a script, or browser
@@ -107,14 +162,14 @@ automation.
 
 - One row per **price change**. Sep 1 to Nov 25, in 2025 and in 2026, plus the last change before
   Sep 1 so the first day's price is known.
-- Also fill `analysis/config/history_coverage.csv` (spec section 11). What makes the history
+- Also fill `biggo/records/history_coverage.csv` (spec section 11). What makes the history
   accepted is in spec section 13.
 - `entered_by` is `Albert`; `entered_on` is the day the row was collected.
 - Collect about 10% of listings a second time, or check them against BigGo's chart, and note any
   differences in `note`.
-- Scripts that fill the file go in this folder.
+- Scripts that fill the file go in `biggo/scripts/`.
 
-## What BigGo's history contains (checked 2026-10-22, Marvin)
+### What BigGo's history contains (checked 2026-10-22, Marvin)
 
 Looked at on one momo and one PChome product.
 
@@ -135,7 +190,7 @@ Looked at on one momo and one PChome product.
   490 / 590 / 490 / 590 on consecutive days in Aug 2026). Keep every change as BigGo shows it;
   the analysis decides what to do with it.
 
-## `biggo_url_*` in the product table is a search page, not a listing
+### `biggo_url_*` in the product table is a search page, not a listing
 
 `products/products.csv` links to a BigGo **search** (`biggo.com.tw/s/<query>/?m=cp&c[]=<shop>`).
 That page can show several listings: for 3C-003 on momo it showed three, and the first result was
@@ -168,10 +223,10 @@ Marvin's, signed in to BigGo; whether a signed-out browser gets the same data is
 token expired after about 35 minutes (401 "Jwt is expired"); reloading biggo.com.tw fixed it, so
 a long run has to reload the page now and then.
 
-## Known gaps (coverage check, 2026-10-22)
+### Known gaps (coverage check, 2026-10-22)
 
 A subagent looked up all 335 listings by ID (150 momo, 150 PChome, 35 Coupang). Full table:
-[`coverage_check_2026-10-22.csv`](coverage_check_2026-10-22.csv), with a class and a note per
+[`coverage_check_2026-10-22.csv`](records/coverage_check_2026-10-22.csv), with a class and a note per
 listing. Every listing returned a series except Coupang under the wrong id format (above). Titles
 were matched to the product table by hand and by a digit check, so treat MISMATCH and UNCERTAIN
 as flags to look at, not verdicts.
@@ -202,7 +257,7 @@ as flags to look at, not verdicts.
 Spec 6.4 says every product needs BigGo history back to October 2025. Decided 2026-10-27: no
 SHORT, MISMATCH or UNCERTAIN product is replaced or dropped (spec section 11, "Flagged listings").
 
-## Conduct
+### Conduct
 
 - `robots.txt` checked 2026-10-22: it allows everything except paths under `/r/`.
 - BigGo's terms of use were not read (team decision, 2026-10-22).

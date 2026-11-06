@@ -9,7 +9,7 @@ on:
   push:
     branches: [main]
     paths:
-      - analysis/collect_snapshots.py
+      - scrapers/combine/**
       - products/products.csv
       - .github/workflows/combined-snapshots.yml
 
@@ -25,6 +25,8 @@ jobs:
   combine:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    outputs:
+      collect: ${{ steps.gate.outputs.collect }}
     steps:
       - uses: actions/checkout@v5
         with:
@@ -55,7 +57,7 @@ jobs:
         run: |
           args=()
           if [ -n "$SOURCE_RUN" ]; then args+=(--required-run "$SOURCE_RUN"); fi
-          python analysis/collect_snapshots.py --repo "$GITHUB_REPOSITORY" "${args[@]}"
+          python scrapers/combine/collect_snapshots.py --repo "$GITHUB_REPOSITORY" "${args[@]}"
       - name: Summarize coverage
         if: steps.gate.outputs.collect == 'true'
         shell: bash
@@ -69,3 +71,41 @@ jobs:
           path: output/combined/
           if-no-files-found: error
           retention-days: 90
+
+  # Publish the cumulative snapshots into data/ on the branch that ran this
+  # workflow (main for automatic runs). Only changed data is committed; a push
+  # rejected by a concurrent update is retried once after a rebase, never forced.
+  publish:
+    needs: combine
+    if: needs.combine.outputs.collect == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: combined-snapshots
+          path: output/combined
+      - name: Write data/snapshots.csv and data/products.csv
+        run: python scrapers/combine/publish_snapshots.py
+      - name: Commit only changed data
+        shell: bash
+        run: |
+          git add -- data/snapshots.csv data/products.csv data/README.md
+          if git diff --cached --quiet; then
+            echo 'Published data already matches this build; no commit needed.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Update data/snapshots.csv [skip ci]'
+          git push origin "HEAD:${GITHUB_REF_NAME}" || {
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}"
+          }

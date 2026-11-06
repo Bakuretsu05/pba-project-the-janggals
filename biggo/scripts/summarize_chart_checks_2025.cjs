@@ -1,14 +1,14 @@
 const fs=require('node:fs'),zlib=require('node:zlib');
-const c=require('./collect_2025.cjs'),dir=__dirname;
+const c=require('./collect_2025.cjs');
 // These saved website checks were performed for the original October window.
 const REVIEW_START=Date.parse('2025-10-01T00:00:00+08:00');
 const read=f=>JSON.parse(zlib.gunzipSync(fs.readFileSync(f)));
 const path=require('node:path');
-const file=path.join(dir,'chart_checks_2025.csv');
+const file=path.join(c.RECORDS,'chart_checks_2025.csv');
 const rows=c.parseCSV(fs.readFileSync(file,'utf8')).filter(r=>r.product_id==='3C-003'&&r.platform==='momo');
 rows[0].note='Earlier signed-out visible-table check: all eight exported timestamps/prices matched.';
 for(const t of c.targets()) {
- const base=path.join(dir,'raw/2025',t.product_id+'_'+t.platform);
+ const base=path.join(c.RAW,t.product_id+'_'+t.platform);
  const candidate=fs.existsSync(base+'_catalog_variant.json.gz')?read(base+'_catalog_variant.json.gz'):null;
  const check=candidate?.verification?candidate:fs.existsSync(base+'_chart_verify.json.gz')?read(base+'_chart_verify.json.gz'):null;
  if(!check)continue;

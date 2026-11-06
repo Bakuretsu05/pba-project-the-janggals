@@ -3,15 +3,16 @@
 // compares record fields, not a byte prefix; window-dependent notes may differ.
 const fs=require('node:fs'),path=require('node:path'),zlib=require('node:zlib'),crypto=require('node:crypto');
 const c=require('./collect_2025.cjs');
-function apply(protectedFile,dir=__dirname) {
+function apply(protectedFile,root=c.ROOT) {
+  const records=path.join(root,'biggo/records');
   const protectedBytes=fs.readFileSync(protectedFile);
   const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-  const preservation=JSON.parse(fs.readFileSync(path.join(dir,'preservation_2025.json'),'utf8'));
+  const preservation=JSON.parse(fs.readFileSync(path.join(records,'preservation_2025.json'),'utf8'));
   if(!preservation.protected_snapshot_sha256.includes(hash(protectedBytes)))throw Error('Wrong protected CSV snapshot');
-  const file=path.join(dir,'price_changes.csv'),before=fs.readFileSync(file);
+  const file=path.join(root,'data/biggo_price_changes.csv'),before=fs.readFileSync(file);
   const rows=c.parseCSV(before.toString('utf8')),protectedRows=c.parseCSV(protectedBytes.toString('utf8'));
   assertProtected(protectedRows,rows);
-  const raw=path.join(dir,'raw/2025'),list=c.targets(),changes=[],replacements=new Map();
+  const raw=path.join(root,'biggo/raw/2025'),list=c.targets(),changes=[],replacements=new Map();
   const read=f=>JSON.parse(zlib.gunzipSync(fs.readFileSync(f)).toString('utf8'));
   for(const target of list) {
     const key=target.product_id+'_'+target.platform,candidate=path.join(raw,key+'_catalog_variant.json.gz');
@@ -37,7 +38,7 @@ function apply(protectedFile,dir=__dirname) {
   fs.writeFileSync(file+'.tmp',bytes);fs.renameSync(file+'.tmp',file);
   // An explicit catalog exclusion also withdraws the prior retrieved claim.
   // Ordinary rebuild cannot make this decision or remove any existing records.
-  const statusFile=path.join(dir,'collection_status_2025.csv');
+  const statusFile=path.join(records,'collection_status_2025.csv');
   if(changes.some(r=>r.excluded)) {
     const status=c.parseCSV(fs.readFileSync(statusFile,'utf8'));
     for(const row of status)if(changes.some(r=>r.excluded&&r.product_id===row.product_id&&r.platform===row.platform)){row.status='failed';row.rows='0';row.note=changes.find(r=>r.product_id===row.product_id&&r.platform===row.platform).reason;}
@@ -45,7 +46,7 @@ function apply(protectedFile,dir=__dirname) {
     fs.writeFileSync(statusFile,columns.join(',')+'\n'+status.map(r=>columns.map(k=>quote(r[k])).join(',')).join('\n')+'\n');
   }
   c.rebuild(list);
-  const report=path.join(dir,'variant_corrections_2025.json');
+  const report=path.join(records,'variant_corrections_2025.json');
   const previous=fs.existsSync(report)?JSON.parse(fs.readFileSync(report,'utf8')):[];
   fs.writeFileSync(report,JSON.stringify([...previous,...changes],null,2)+'\n');
   return changes;

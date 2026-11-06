@@ -1,13 +1,13 @@
 // Local-only checkpoint form for public price-table evidence from the authorized browser.
 const http=require('node:http'),fs=require('node:fs'),path=require('node:path'),zlib=require('node:zlib');
-const root=path.resolve(__dirname,'..');
-const c=require(path.join(root,'biggo/collect_2025.cjs'));
+const root=path.resolve(__dirname,'..','..');
+const c=require('./collect_2025.cjs');
 const list=c.targets(),raw=path.join(root,'biggo/raw/2025');
 let saved=0;
 const canonical=t=>path.join(raw,t.product_id+'_'+t.platform+'.json.gz');
 const load=file=>JSON.parse(zlib.gunzipSync(fs.readFileSync(file)).toString('utf8'));
 function reviewPlan() {
-  const checked=new Set(c.parseCSV(fs.readFileSync(path.join(root,'biggo/chart_checks_2025.csv'),'utf8')).map(r=>r.product_id+'_'+r.platform));
+  const checked=new Set(c.parseCSV(fs.readFileSync(path.join(c.RECORDS,'chart_checks_2025.csv'),'utf8')).map(r=>r.product_id+'_'+r.platform));
   if(checked.size>=34)return [];
   const changed=list.filter(t=>fs.existsSync(canonical(t))&&load(canonical(t)).source!=='biggo_visible_error'&&c.extract(t,load(canonical(t))).note.includes('differs from prior coverage summary'));
   const ranked=[...changed,...c.auditSample(list),...list];

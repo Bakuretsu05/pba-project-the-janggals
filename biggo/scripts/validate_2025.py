@@ -10,7 +10,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from urllib.parse import urlparse, parse_qs, urljoin
 
-BASE = Path(__file__).resolve().parent
+ROOT = Path(__file__).resolve().parents[2]  # repository root (this file is biggo/scripts/)
 TW = timezone(timedelta(hours=8))
 START = datetime(2025, 9, 1, tzinfo=TW)
 PRIOR_START = datetime(2025, 10, 1, tzinfo=TW)
@@ -38,13 +38,16 @@ def item_id(platform, link, response_url=False):
         return ident
     return re.search(r'/products/(\d+)', u.path)[1]
 
-def audit(base=BASE, raw=False):
-    BASE=Path(base)
-    products = read(BASE.parent / 'products/products.csv')
-    old = {(r['product_id'],r['platform']): r for r in read(BASE/'coverage_check_2026-10-22.csv')}
-    rows = read(BASE/'price_changes.csv')
-    status=read(BASE/'collection_status_2025.csv')
-    with (BASE/'price_changes.csv').open(encoding='utf-8', newline='') as f:
+def audit(root=ROOT, raw=False):
+    root=Path(root)
+    REC=root/'biggo/records'
+    RAW=root/'biggo/raw/2025'
+    PRICES=root/'data/biggo_price_changes.csv'
+    products = read(root/'products/products.csv')
+    old = {(r['product_id'],r['platform']): r for r in read(REC/'coverage_check_2026-10-22.csv')}
+    rows = read(PRICES)
+    status=read(REC/'collection_status_2025.csv')
+    with (PRICES).open(encoding='utf-8', newline='') as f:
         assert next(csv.reader(f)) == HEADER, 'Exact section 11 header'
     assert len({tuple(r[c] for c in HEADER) for r in rows}) == len(rows), 'Duplicate complete records'
     targets={}
@@ -82,7 +85,7 @@ def audit(base=BASE, raw=False):
     assert len(declared)==len(status) and set(declared)==set(targets), 'Status inventory differs from targets'
     for k,r in declared.items():
         assert int(r['rows'])==len(grouped[k]), f'Status/CSV row count differs: {k}'
-    coverage=read(BASE.parent/'analysis/config/history_coverage.csv')
+    coverage=read(REC/'history_coverage.csv')
     eligible={k for k,r in declared.items() if k[1] in ('momo','pchome') and r['status']=='retrieved' and r['last_point_tw']>'2025-11-25 23:59'}
     current=[r for r in coverage if r['coverage_start'].startswith('2025-')]
     keys=[(r['product_id'],r['platform']) for r in current]
@@ -91,13 +94,13 @@ def audit(base=BASE, raw=False):
         k=(r['product_id'],r['platform'])
         assert r['coverage_start']=='2025-09-01' and r['coverage_end']=='2025-11-25', 'Tracking coverage window'
         assert declared[k]['last_point_tw'] in r['note'], 'Tracking coverage lacks source continuation date'
-    verification=read(BASE/'verification_2025.csv') if (BASE/'verification_2025.csv').exists() else []
-    chart_checks=read(BASE/'chart_checks_2025.csv') if (BASE/'chart_checks_2025.csv').exists() else []
+    verification=read(REC/'verification_2025.csv') if (REC/'verification_2025.csv').exists() else []
+    chart_checks=read(REC/'chart_checks_2025.csv') if (REC/'chart_checks_2025.csv').exists() else []
     allowed={'match','corrected_variant_match','baseline_window_clip','discrepancy','catalog_variant_unavailable'}
     assert all(r['result'] in allowed for r in chart_checks), 'Unknown chart review result'
     assert not any(r['result']!='match' for r in verification), 'Unresolved repeat discrepancy'
     categories={category:sum(r['status']=='retrieved' and targets[k][0]['category']==category for k,r in declared.items()) for category in ['3C','APPL','BEAU','FOOD','HOME']}
-    blocker=json.loads((BASE/'access_blocker_2025.json').read_text(encoding='utf-8')) if (BASE/'access_blocker_2025.json').exists() else None
+    blocker=json.loads((REC/'access_blocker_2025.json').read_text(encoding='utf-8')) if (REC/'access_blocker_2025.json').exists() else None
     common={'target_listings':len(targets),'price_change_rows':len(rows),
             'attempted_listings':sum(r['status']!='not_attempted' for r in status),
             'all_listings_attempted':all(r['status']!='not_attempted' for r in status),
@@ -117,14 +120,14 @@ def audit(base=BASE, raw=False):
                 'tests':'PASS (CSV schema, identifiers, chronology, prices, metadata, duplicates, date window, UTF-8 and inventory consistency)',
                 'not_verified':'Source history completeness, UTC timestamp conversion, actual collection dates and request pacing require --raw and local evidence.'}
     required={k for k,r in declared.items() if r['status'] in ('retrieved','empty') or grouped[k]}
-    absent=[k for k in required if not (BASE/'raw/2025'/('_'.join(k)+'.json.gz')).is_file()]
+    absent=[k for k in required if not (RAW/('_'.join(k)+'.json.gz')).is_file()]
     assert not absent, f'Full raw verification unavailable: missing evidence for {len(absent)} collected listings. Use CSV-only validation or restore the evidence bundle.'
-    assert (BASE/'raw/2025/requests.jsonl').is_file(), 'Full raw verification unavailable: missing requests.jsonl. Use CSV-only validation or restore the evidence bundle.'
+    assert (RAW/'requests.jsonl').is_file(), 'Full raw verification unavailable: missing requests.jsonl. Use CSV-only validation or restore the evidence bundle.'
     # Failed searches/excluded variants need attempt evidence too, without
     # turning their displayed prices into accepted history records.
     for k,r in declared.items():
         if r['status']!='failed':continue
-        file=BASE/'raw/2025'/('_'.join(k)+'.json.gz')
+        file=RAW/('_'.join(k)+'.json.gz')
         assert file.is_file(), f'Missing failed-attempt evidence: {k}'
         with gzip.open(file,'rt',encoding='utf-8') as f: failed=json.load(f)
         assert failed['source']=='biggo_visible_error' and failed['error']
@@ -132,7 +135,7 @@ def audit(base=BASE, raw=False):
         assert failed['history_id']==SHOPS[k[1]]+'-'+targets[k][1]
     checked=0; expected_rows=0; missing=[]; issues=[]; counts=Counter(); prior_differences=[]; sources=Counter()
     for k,(p,ident) in targets.items():
-        file=BASE/'raw/2025'/('_'.join(k)+'.json.gz')
+        file=RAW/('_'.join(k)+'.json.gz')
         if k not in required: missing.append(k); continue
         with gzip.open(file,'rt',encoding='utf-8') as f: record=json.load(f)
         visible=record.get('source')=='biggo_visible_table'
@@ -194,9 +197,9 @@ def audit(base=BASE, raw=False):
         if old[k]['class'] in ('MISMATCH','UNCERTAIN'): issues.append(k)
         expected_rows+=len(selected);checked+=1
     assert expected_rows==len(rows), 'All rows accounted for'
-    logs=[json.loads(line) for line in (BASE/'raw/2025/requests.jsonl').read_text().splitlines()]
-    if (BASE/'raw/2025/browser_actions.jsonl').exists():
-        logs += [json.loads(line) for line in (BASE/'raw/2025/browser_actions.jsonl').read_text().splitlines()]
+    logs=[json.loads(line) for line in (RAW/'requests.jsonl').read_text().splitlines()]
+    if (RAW/'browser_actions.jsonl').exists():
+        logs += [json.loads(line) for line in (RAW/'browser_actions.jsonl').read_text().splitlines()]
         logs.sort(key=lambda r:r['sent_at'])
     sent=[datetime.fromisoformat(r['sent_at'].replace('Z','+00:00')).timestamp() for r in logs]
     gaps=[b-a for a,b in zip(sent,sent[1:])]
@@ -228,6 +231,6 @@ if __name__=='__main__':
     display={**result}
     if 'missing' in display:
         display['missing_count']=len(display['missing'])
-        if len(display['missing'])>=10: display['missing']='See collection_status_2025.csv'
+        if len(display['missing'])>=10: display['missing']='See biggo/records/collection_status_2025.csv'
     print(json.dumps(display,ensure_ascii=False,indent=2))
     if args.output:args.output.write_text(json.dumps(result,ensure_ascii=False,indent=2)+'\n',encoding='utf-8')

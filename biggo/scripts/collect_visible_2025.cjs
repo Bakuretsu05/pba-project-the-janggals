@@ -1,5 +1,5 @@
 // UI collector used with the user's manually authenticated browser session.
-// Start: node biggo/visible_checkpoint_server.cjs
+// Start: node biggo/scripts/visible_checkpoint_server.cjs
 // In the browser automation REPL, bind the signed-in BigGo tab and a second tab
 // at http://127.0.0.1:8766/, then use this factory. No credentials are exported.
 function createVisibleCollector(tab, checkpoint) {

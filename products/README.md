@@ -1,5 +1,8 @@
 # Products
 
+> For analysis, load the copy in [`data/products.csv`](../data/products.csv). This folder keeps
+> the original the scrapers read and the notes on how the products were chosen.
+
 Owners: **Alicia, Audrey** · Due **Saturday, Oct 17**
 
 ## The task
