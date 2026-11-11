@@ -4,7 +4,7 @@
 code and notes that produced these files, so you never have to look there to start working.
 
 <!-- status:start -->
-- `snapshots.csv`: **7,690 rows** from **26 scrape runs**, latest collection **2026-11-10** (Taiwan date)
+- `snapshots.csv`: **7,990 rows** from **27 scrape runs**, latest collection **2026-11-11** (Taiwan date)
 <!-- status:end -->
 
 | File | One row is | Rows | How it updates |
