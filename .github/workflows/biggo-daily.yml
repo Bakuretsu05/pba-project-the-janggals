@@ -1,12 +1,13 @@
 name: biggo daily
 
-# Rebuilds data/biggo_daily.csv whenever the BigGo change points, the tracking
-# coverage or the builder change on main, and commits it only if it changed.
+# Rebuilds data/biggo.csv whenever the BigGo change points, the tracking coverage,
+# the product table or the builder change on main, and commits it only if it changed.
 on:
   push:
     branches: [main]
     paths:
-      - data/biggo_price_changes.csv
+      - data/source/biggo_price_changes.csv
+      - products/products.csv
       - biggo/records/history_coverage.csv
       - biggo/scripts/build_biggo_daily.R
       - .github/workflows/biggo-daily.yml
@@ -30,19 +31,19 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           r-version: '4.6.1'
-      - name: Build data/biggo_daily.csv
+      - name: Build data/biggo.csv
         run: Rscript biggo/scripts/build_biggo_daily.R
       - name: Commit only changed data
         shell: bash
         run: |
-          git add -- data/biggo_daily.csv
+          git add -- data/biggo.csv
           if git diff --cached --quiet; then
-            echo 'data/biggo_daily.csv already matches; no commit needed.'
+            echo 'data/biggo.csv already matches; no commit needed.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'Update data/biggo_daily.csv [skip ci]'
+          git commit -m 'Update data/biggo.csv [skip ci]'
           git push origin "HEAD:${GITHUB_REF_NAME}" || {
             git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}"
           }

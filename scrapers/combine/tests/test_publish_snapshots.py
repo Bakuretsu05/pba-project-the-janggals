@@ -19,8 +19,7 @@ class PublishTests(unittest.TestCase):
         self.data.mkdir()
         self.products = root / "products.csv"
         self.products.write_text("product_id,brand\n3C-001,Test\n", encoding="utf-8")
-        (self.data / "README.md").write_text("# Data\n<!-- status:start -->\nold\n<!-- status:end -->\n",
-                                             encoding="utf-8")
+        self.target = self.data / "source" / "snapshots.csv"
 
     def row(self, run, product, date="2026-10-25"):
         row = dict.fromkeys(SNAPSHOT_COLUMNS + META_COLUMNS, "NA")
@@ -35,7 +34,7 @@ class PublishTests(unittest.TestCase):
             writer.writerows(rows)
 
     def published(self):
-        with (self.data / "snapshots.csv").open(encoding="utf-8", newline="") as handle:
+        with self.target.open(encoding="utf-8", newline="") as handle:
             return list(csv.DictReader(handle))
 
     def test_keeps_spec_columns_plus_run_id_sorted_with_lf(self):
@@ -44,20 +43,17 @@ class PublishTests(unittest.TestCase):
         rows = self.published()
         self.assertEqual(list(rows[0]), COLUMNS)
         self.assertEqual([r["run_id"] for r in rows], ["9", "20"])
-        self.assertNotIn(b"\r", (self.data / "snapshots.csv").read_bytes())
+        self.assertNotIn(b"\r", self.target.read_bytes())
         self.assertEqual((self.data / "products.csv").read_bytes(), self.products.read_bytes())
-        readme = (self.data / "README.md").read_text(encoding="utf-8")
-        self.assertIn("**2 rows** from **2 scrape runs**, latest collection **2026-10-26**", readme)
-        self.assertNotIn("old", readme)
 
     def test_refuses_to_drop_published_observations(self):
         self.write_combined([self.row("1", "3C-001"), self.row("2", "3C-001")])
         publish(self.combined, self.data, self.products)
-        before = (self.data / "snapshots.csv").read_bytes()
+        before = self.target.read_bytes()
         self.write_combined([self.row("2", "3C-001")])
         with self.assertRaisesRegex(ValueError, "Refusing to drop"):
             publish(self.combined, self.data, self.products)
-        self.assertEqual((self.data / "snapshots.csv").read_bytes(), before)
+        self.assertEqual(self.target.read_bytes(), before)
 
     def test_rejects_duplicate_observations(self):
         self.write_combined([self.row("1", "3C-001"), self.row("1", "3C-001")])

@@ -4,12 +4,12 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const zlib = require('node:zlib');
-// This file lives in biggo/scripts/. The data it writes is data/biggo_price_changes.csv;
+// This file lives in biggo/scripts/. The data it writes is data/source/biggo_price_changes.csv;
 // its collection records are in biggo/records/; raw responses stay local in biggo/raw/ (gitignored).
 const ROOT = path.resolve(__dirname, '..', '..');
 const RECORDS = path.join(ROOT, 'biggo', 'records');
 const RAW = path.join(ROOT, 'biggo', 'raw', '2025');
-const PRICES = path.join(ROOT, 'data', 'biggo_price_changes.csv');
+const PRICES = path.join(ROOT, 'data', 'source', 'biggo_price_changes.csv');
 const BLOCKER = path.join(RECORDS, 'access_blocker_2025.json');
 const HEADER = ['product_id','platform','biggo_url','changed_at','price','entered_by','entered_on','note'];
 const SHOPS = {momo:'tw_pec_momoshop',pchome:'tw_ec_pchome24h',coupang:'tw_pec_coupang'};

@@ -1,4 +1,4 @@
-# Builds data/biggo_daily.csv from data/biggo_price_changes.csv.
+# Builds data/biggo.csv from data/source/biggo_price_changes.csv.
 #
 # BigGo records only the moments a price changed. This turns those change points
 # into one row per product x platform x day, holding the price in effect at
@@ -12,7 +12,9 @@
 # A series that simply stops recording gets no rows after its last change.
 #
 # Coupang is excluded from the analysis (spec section 11), so only momo and
-# PChome are built. Run from the repository root:
+# PChome are built. brand, model and category are copied from products/products.csv so
+# analysts need no join. The file is UTF-8 with a BOM (Excel shows the Chinese brand
+# names) and LF line endings, the same as data/scrapes.csv. Run from the repository root:
 #   Rscript biggo/scripts/build_biggo_daily.R
 
 if (.Platform$OS.type == "windows") invisible(Sys.setlocale("LC_CTYPE", "English_United States.utf8"))
@@ -44,12 +46,13 @@ daily_series <- function(s, coverage, days) {
              stringsAsFactors = FALSE)
 }
 
-build_biggo_daily <- function(changes_path = "data/biggo_price_changes.csv",
+build_biggo_daily <- function(changes_path = "data/source/biggo_price_changes.csv",
                               coverage_path = "biggo/records/history_coverage.csv",
-                              output_path = "data/biggo_daily.csv",
+                              output_path = "data/biggo.csv",
                               first_day = as.Date("2025-09-01"),
                               last_day = as.Date("2025-11-25"),
-                              platforms = c("momo", "pchome")) {
+                              platforms = c("momo", "pchome"),
+                              products_path = "products/products.csv") {
   changes <- read_text_csv(changes_path)
   coverage <- read_text_csv(coverage_path)
   changes <- changes[changes$platform %in% platforms, , drop = FALSE]
@@ -68,17 +71,28 @@ build_biggo_daily <- function(changes_path = "data/biggo_price_changes.csv",
     daily_series(s, coverage, days)
   })
   daily <- do.call(rbind, pieces)
+
+  products <- read_text_csv(products_path)[c("product_id", "brand", "model", "category")]
+  unknown <- setdiff(daily$product_id, products$product_id)
+  if (length(unknown)) stop("BigGo products missing from ", products_path, ": ", paste(head(unknown, 5), collapse = ", "))
+  daily <- merge(daily, products, by = "product_id", sort = FALSE)
+  daily <- daily[order(daily$product_id, daily$platform, daily$date),
+                 c("date", "platform", "product_id", "brand", "model", "category", "price", "price_set_at")]
   rownames(daily) <- NULL
 
-  # LF line endings on every OS, so a Windows rebuild matches the Linux one byte for byte.
+  # BOM + LF line endings on every OS, so a Windows rebuild matches the Linux one byte for byte.
+  # Text columns are quoted only where a value needs it (a comma or a quote in a model name).
   con <- file(output_path, open = "wb")
   on.exit(close(con))
-  write.csv(daily, con, row.names = FALSE, quote = FALSE)
+  writeBin(as.raw(c(0xEF, 0xBB, 0xBF)), con)
+  needs_quotes <- which(vapply(daily, function(x) is.character(x) && any(grepl("[,\"]", x)), logical(1)))
+  write.csv(daily, con, row.names = FALSE, quote = if (length(needs_quotes)) unname(needs_quotes) else FALSE,
+            fileEncoding = "UTF-8")
   invisible(daily)
 }
 
 if (sys.nframe() == 0L) {
   daily <- build_biggo_daily()
-  cat(sprintf("Wrote data/biggo_daily.csv: %d rows, %d listings, %s to %s\n", nrow(daily),
+  cat(sprintf("Wrote data/biggo.csv: %d rows, %d listings, %s to %s\n", nrow(daily),
               nrow(unique(daily[c("product_id", "platform")])), min(daily$date), max(daily$date)))
 }

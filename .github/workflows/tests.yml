@@ -8,7 +8,7 @@ on:
     paths:
       - scrapers/combine/**
       - biggo/**
-      - data/biggo_price_changes.csv
+      - data/source/biggo_price_changes.csv
       - products/products.csv
       - .github/workflows/tests.yml
 

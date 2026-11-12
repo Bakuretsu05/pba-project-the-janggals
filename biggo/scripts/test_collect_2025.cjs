@@ -71,16 +71,16 @@ function checkout(t, populated=false) {
   const prefix=path.join(os.tmpdir(),'biggo-2025-test-');
   const root=fs.mkdtempSync(prefix);
   t.after(()=>{assert.ok(path.resolve(root).startsWith(path.resolve(prefix)));fs.rmSync(root,{recursive:true,force:true});});
-  for(const dir of ['biggo/scripts','biggo/records','data','products'])fs.mkdirSync(path.join(root,dir),{recursive:true});
+  for(const dir of ['biggo/scripts','biggo/records','data/source','products'])fs.mkdirSync(path.join(root,dir),{recursive:true});
   fs.copyFileSync(path.join(__dirname,'collect_2025.cjs'),path.join(root,'biggo/scripts/collect_2025.cjs'));
   for(const name of ['coverage_check_2026-10-22.csv','preservation_2025.json',...(populated?['collection_status_2025.csv','verification_2025.csv']:[])])fs.copyFileSync(path.join(c.RECORDS,name),path.join(root,'biggo/records',name));
   fs.copyFileSync(path.join(c.ROOT,'products/products.csv'),path.join(root,'products/products.csv'));
-  if(populated)fs.copyFileSync(c.PRICES,path.join(root,'data/biggo_price_changes.csv'));
-  else fs.writeFileSync(path.join(root,'data/biggo_price_changes.csv'),c.HEADER.join(',')+'\n');
+  if(populated)fs.copyFileSync(c.PRICES,path.join(root,'data/source/biggo_price_changes.csv'));
+  else fs.writeFileSync(path.join(root,'data/source/biggo_price_changes.csv'),c.HEADER.join(',')+'\n');
   return root;
 }
 const runRebuild=root=>spawnSync(process.execPath,[path.join(root,'biggo/scripts/collect_2025.cjs'),'rebuild'],{encoding:'utf8'});
-const snapshot=root=>['data/biggo_price_changes.csv','biggo/records/collection_status_2025.csv'].map(f=>fs.readFileSync(path.join(root,f)));
+const snapshot=root=>['data/source/biggo_price_changes.csv','biggo/records/collection_status_2025.csv'].map(f=>fs.readFileSync(path.join(root,f)));
 function refusedWithoutChanges(root, before) {
   const result=runRebuild(root);
   assert.equal(result.status,1,result.stdout+result.stderr);

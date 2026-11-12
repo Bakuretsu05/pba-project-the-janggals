@@ -2,10 +2,10 @@
 
 **This folder is how we collected the BigGo price history. The data itself is in [`data/`](../data/):**
 
-- [`data/biggo_daily.csv`](../data/biggo_daily.csv): one price per product, platform and day,
+- [`data/biggo.csv`](../data/biggo.csv): one price per product, platform and day,
   Sep 1 to Nov 25, 2025. **Use this one.**
-- [`data/biggo_price_changes.csv`](../data/biggo_price_changes.csv): the raw change points
-  `biggo_daily.csv` is built from. Use it to look for short flash sales a once-a-day price misses.
+- [`data/source/biggo_price_changes.csv`](../data/source/biggo_price_changes.csv): the raw change points
+  `biggo.csv` is built from. Use it to look for short flash sales a once-a-day price misses.
 
 [BigGo](https://biggo.com.tw) is a price-comparison site that keeps a price history for each
 listing it tracks. We started our own momo and PChome snapshots on 2026-10-19, so BigGo is our
@@ -23,12 +23,12 @@ only source of **2025** prices.
 
 | File | What it does |
 |---|---|
-| `build_biggo_daily.R` | Turns the change points into `data/biggo_daily.csv` (rules at the top of the file). Runs automatically on GitHub when the change points change |
-| `collect_2025.cjs` | Collector: rebuilds `data/biggo_price_changes.csv` and `records/collection_status_2025.csv` from the saved raw responses |
+| `build_biggo_daily.R` | Turns the change points into `data/biggo.csv` (rules at the top of the file). Runs automatically on GitHub when the change points or the product table change |
+| `collect_2025.cjs` | Collector: rebuilds `data/source/biggo_price_changes.csv` and `records/collection_status_2025.csv` from the saved raw responses |
 | `collect_visible_2025.cjs`, `visible_checkpoint_server.cjs` | Collection helpers for a signed-in browser session |
 | `apply_catalog_variants.cjs` | Applied the corrections where BigGo's default product option was the wrong variant |
 | `summarize_chart_checks_2025.cjs` | Writes `records/chart_checks_2025.csv` from the saved chart reviews |
-| `validate_2025.py` | Checks `data/biggo_price_changes.csv` against the product table and the records |
+| `validate_2025.py` | Checks `data/source/biggo_price_changes.csv` against the product table and the records |
 | `test_*.cjs`, `test_*.py`, `test_*.R` | Tests for the above (run on GitHub with every change) |
 
 ### `records/`
@@ -154,7 +154,7 @@ by the current specification and the successful Oct 28 exact-ID recovery.
 
 Due: 2025 history **Sun Oct 25** (Milestone 2, delivered) · 2026 history **Sun Nov 29**.
 
-Fill **`data/biggo_price_changes.csv`** with the price history of every product on every
+Fill **`data/source/biggo_price_changes.csv`** with the price history of every product on every
 platform it has a BigGo link for, in the format of section 11 of
 [`scrapers/data-collection-spec.md`](../scrapers/data-collection-spec.md). The file is already here
 with its header line. How the rows are collected is up to Albert: by hand, a script, or browser

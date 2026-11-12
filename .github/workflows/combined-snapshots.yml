@@ -72,8 +72,9 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
-  # Publish the cumulative snapshots into data/ on the branch that ran this
-  # workflow (main for automatic runs). Only changed data is committed; a push
+  # Archive the cumulative snapshots in data/source/ and rebuild the analysis files
+  # (data/scrapes.csv, data/grids/) on the branch that ran this workflow (main for
+  # automatic runs). Only changed data is committed; a push
   # rejected by a concurrent update is retried once after a rebase, never forced.
   publish:
     needs: combine
@@ -93,19 +94,21 @@ jobs:
         with:
           name: combined-snapshots
           path: output/combined
-      - name: Write data/snapshots.csv and data/products.csv
+      - name: Write data/source/snapshots.csv and data/products.csv
         run: python scrapers/combine/publish_snapshots.py
+      - name: Build data/scrapes.csv and data/grids/
+        run: python scrapers/combine/build_clean_data.py
       - name: Commit only changed data
         shell: bash
         run: |
-          git add -- data/snapshots.csv data/products.csv data/README.md
+          git add -- data/source/snapshots.csv data/products.csv data/README.md data/scrapes.csv data/grids
           if git diff --cached --quiet; then
             echo 'Published data already matches this build; no commit needed.'
             exit 0
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m 'Update data/snapshots.csv [skip ci]'
+          git commit -m 'Update data/scrapes.csv [skip ci]'
           git push origin "HEAD:${GITHUB_REF_NAME}" || {
             git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}"
           }
