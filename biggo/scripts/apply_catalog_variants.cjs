@@ -9,7 +9,7 @@ function apply(protectedFile,root=c.ROOT) {
   const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
   const preservation=JSON.parse(fs.readFileSync(path.join(records,'preservation_2025.json'),'utf8'));
   if(!preservation.protected_snapshot_sha256.includes(hash(protectedBytes)))throw Error('Wrong protected CSV snapshot');
-  const file=path.join(root,'data/biggo_price_changes.csv'),before=fs.readFileSync(file);
+  const file=path.join(root,'data/source/biggo_price_changes.csv'),before=fs.readFileSync(file);
   const rows=c.parseCSV(before.toString('utf8')),protectedRows=c.parseCSV(protectedBytes.toString('utf8'));
   assertProtected(protectedRows,rows);
   const raw=path.join(root,'biggo/raw/2025'),list=c.targets(),changes=[],replacements=new Map();

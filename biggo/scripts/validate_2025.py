@@ -42,7 +42,7 @@ def audit(root=ROOT, raw=False):
     root=Path(root)
     REC=root/'biggo/records'
     RAW=root/'biggo/raw/2025'
-    PRICES=root/'data/biggo_price_changes.csv'
+    PRICES=root/'data/source/biggo_price_changes.csv'
     products = read(root/'products/products.csv')
     old = {(r['product_id'],r['platform']): r for r in read(REC/'coverage_check_2026-10-22.csv')}
     rows = read(PRICES)

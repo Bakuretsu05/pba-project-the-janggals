@@ -18,7 +18,7 @@ class ValidationTests(unittest.TestCase):
         self.root=Path(self.temp.name)
         self.scripts=self.root/'biggo/scripts'
         self.records=self.root/'biggo/records'
-        self.prices=self.root/'data/biggo_price_changes.csv'
+        self.prices=self.root/'data/source/biggo_price_changes.csv'
         for folder in (self.scripts,self.records,self.prices.parent,self.root/'products'):
             folder.mkdir(parents=True)
         shutil.copyfile(validator.ROOT/'biggo/scripts/validate_2025.py',self.scripts/'validate_2025.py')
@@ -26,7 +26,7 @@ class ValidationTests(unittest.TestCase):
                      'chart_checks_2025.csv','access_blocker_2025.json','validation_2025.json',
                      'history_coverage.csv']:
             shutil.copyfile(validator.ROOT/'biggo/records'/name,self.records/name)
-        shutil.copyfile(validator.ROOT/'data/biggo_price_changes.csv',self.prices)
+        shutil.copyfile(validator.ROOT/'data/source/biggo_price_changes.csv',self.prices)
         shutil.copyfile(validator.ROOT/'products/products.csv',self.root/'products/products.csv')
 
     def files(self):

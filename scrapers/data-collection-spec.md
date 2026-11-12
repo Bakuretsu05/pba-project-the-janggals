@@ -326,10 +326,10 @@ back-fill a missed run by copying another run's values.
 
 ---
 
-## 11. BigGo price history format: `data/biggo_price_changes.csv`
+## 11. BigGo price history format: `data/source/biggo_price_changes.csv`
 
 Record **change points only**, one row per price change. `biggo/scripts/build_biggo_daily.R`
-turns these into daily prices in `data/biggo_daily.csv`. How
+turns these into daily prices in `data/biggo.csv`. How
 the rows are collected (by hand, a script, browser automation) is up to the owner; `biggo/README.md`
 has what is known about BigGo's history data.
 
@@ -414,7 +414,7 @@ later point. A series that ends before Nov 25 gets no row.
 
 **BigGo history** (D8, D11) is accepted when:
 
-- [ ] `data/biggo_price_changes.csv` follows section 11: the columns in order, change points only,
+- [ ] `data/source/biggo_price_changes.csv` follows section 11: the columns in order, change points only,
       Sep 1 to Nov 25 plus the change before Sep 1.
 - [ ] Every product-table listing with a `biggo_url_<platform>` link has rows, or a recorded
       reason it has none.
