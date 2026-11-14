@@ -26,6 +26,7 @@ that produced the data.
 | Folder | What it is |
 |---|---|
 | [`data/`](data/) | Everything the analysis needs: products, our 2026 scrapes, BigGo's 2025 history, and the untouched originals |
+| [`analysis/`](analysis/) | The analysis code: R and Quarto files that turn `data/` into figures and results |
 | [`scrapers/`](scrapers/) | The momo and PChome scrapers, the data collection spec, and the step that builds `data/scrapes.csv` |
 | [`biggo/`](biggo/) | How the BigGo price history was collected and checked |
 | [`products/`](products/) | How the 150 products were chosen; `products/products.csv` is the table the scrapers read |
