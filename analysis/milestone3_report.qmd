@@ -1,0 +1,323 @@
+---
+title: "Are Double 11 Discounts Real?"
+subtitle: "PBA Milestone 3: First Visualization"
+author:
+  - "The Janggals: Marvin Chandra, Jordan Tjiang, Alicia Joely,"
+  - "Audrey Priscilla Wijaya, Nicholas Albert Aklin"
+date: "2026-11-15"
+format:
+  pdf:
+    geometry:
+      - margin=1in
+    fig-pos: "H"
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+# Run from the analysis/ folder: the data is in ../data/
+scrapes <- read_csv("../data/scrapes.csv", show_col_types = FALSE)
+
+event_day <- as.Date("2026-11-11")
+
+# One price per listing per day: keep only the scheduled 15:07 run
+daily <- scrapes |>
+  filter(slot == "15:07")
+
+# "30-day" window. Our scraping started Oct 19, so it holds at most 23 days.
+before_30d <- daily |>
+  filter(date >= event_day - 30, date < event_day) |>
+  group_by(platform, product_id) |>
+  summarize(
+    prev_min = min(lowest_shown_price, na.rm = TRUE),       # EU rule
+    prev_median = median(lowest_shown_price, na.rm = TRUE), # typical price
+    max_sale = max(sale_price, na.rm = TRUE),               # highest price charged
+    days_seen = n(),
+    .groups = "drop"
+  )
+
+# 7-day window (robustness check only)
+before_7d <- daily |>
+  filter(date >= event_day - 7, date < event_day) |>
+  group_by(platform, product_id) |>
+  summarize(
+    min_7d = min(lowest_shown_price, na.rm = TRUE),
+    avg_7d = mean(lowest_shown_price, na.rm = TRUE),
+    days_seen_7d = n(),
+    .groups = "drop"
+  )
+
+nov11 <- daily |>
+  filter(date == event_day) |>
+  inner_join(before_30d, by = c("platform", "product_id")) |>
+  left_join(before_7d, by = c("platform", "product_id"))
+
+# Advertised discounts: a crossed-out price above the sale price
+advertised <- nov11 |>
+  filter(!is.na(original_price), sale_price < original_price) |>
+  mutate(claimed_discount = 1 - sale_price / original_price)
+
+# Numbers used in the text
+n_listings  <- nrow(nov11)
+n_no_orig   <- sum(is.na(nov11$original_price))
+n_no_claim  <- sum(!is.na(nov11$original_price) &
+                     nov11$sale_price >= nov11$original_price)
+n_adv       <- nrow(advertised)
+n_adv_momo  <- sum(advertised$platform == "momo")
+n_adv_pc    <- sum(advertised$platform == "pchome")
+min_days    <- min(nov11$days_seen)
+max_days    <- max(nov11$days_seen)
+min_days_7d <- min(nov11$days_seen_7d)
+mean_claim  <- mean(advertised$claimed_discount)
+max_claim   <- max(advertised$claimed_discount)
+
+pct <- function(x) scales::percent(x, accuracy = 0.1)
+pct0 <- function(x) scales::percent(x, accuracy = 1)
+```
+
+```{r}
+#| label: fig1-data
+#| include: false
+
+fig1_data <- advertised |>
+  select(platform, product_id, claimed_discount, lowest_shown_price,
+         prev_min, prev_median) |>
+  pivot_longer(
+    cols = c(prev_min, prev_median),
+    names_to = "benchmark",
+    values_to = "benchmark_price"
+  ) |>
+  mutate(
+    real_discount = 1 - lowest_shown_price / benchmark_price,
+    status = if_else(lowest_shown_price < benchmark_price,
+                     "Lower than before (real discount)",
+                     if_else(lowest_shown_price == benchmark_price,
+                             "Same as before",
+                             "Higher than before")),
+    status = factor(status, levels = c("Lower than before (real discount)",
+                                       "Same as before",
+                                       "Higher than before")),
+    benchmark_label = if_else(benchmark == "prev_min",
+                              "A. vs lowest earlier price (EU rule)",
+                              "B. vs median earlier price")
+  )
+
+# Verify: 2 rows per advertised listing, no NA
+nrow(fig1_data)
+fig1_data |> filter(is.na(real_discount))
+
+status_count <- fig1_data |>
+  count(benchmark, status)
+
+get_n <- function(bench, stat) {
+  status_count |>
+    filter(benchmark == bench, status == stat) |>
+    pull(n)
+}
+
+min_lower  <- get_n("prev_min", "Lower than before (real discount)")
+min_same   <- get_n("prev_min", "Same as before")
+min_higher <- get_n("prev_min", "Higher than before")
+med_lower  <- get_n("prev_median", "Lower than before (real discount)")
+
+# Dots on or above the dashed line (real discount at least as big as claimed)
+n_on_line <- fig1_data |>
+  filter(benchmark == "prev_median", real_discount >= claimed_discount) |>
+  nrow()
+
+real_med_mean <- fig1_data |>
+  filter(benchmark == "prev_median") |>
+  summarize(m = mean(real_discount)) |>
+  pull(m)
+```
+
+```{r}
+#| label: rule-data
+#| include: false
+
+rule_checks <- advertised |>
+  mutate(
+    pass_eu_min   = lowest_shown_price < prev_min,
+    pass_median   = lowest_shown_price < prev_median,
+    pass_charged  = max_sale >= original_price,
+    pass_min_7d   = lowest_shown_price < min_7d,
+    pass_avg_7d   = lowest_shown_price < avg_7d
+  )
+
+rule_labels <- tibble(
+  rule = c("eu_min", "median", "charged", "min_7d", "avg_7d"),
+  rule_label = c("Below lowest earlier price (EU)",
+                 "Below median earlier price",
+                 "Crossed-out price charged before (US)",
+                 "Below lowest price, last 7 days",
+                 "Below average price, last 7 days"),
+  rule_type = c("Main benchmark", "Main benchmark", "Other rule",
+                "Robustness check", "Robustness check")
+)
+
+rule_share <- rule_checks |>
+  summarize(across(starts_with("pass_"), ~ mean(.x, na.rm = TRUE))) |>
+  pivot_longer(cols = everything(),
+               names_to = "rule",
+               values_to = "share_real",
+               names_prefix = "pass_") |>
+  left_join(rule_labels, by = "rule")
+
+# Verify: 5 rules, no NA
+rule_share
+
+share_of <- function(r) rule_share |> filter(rule == r) |> pull(share_real)
+n_charged <- sum(rule_checks$pass_charged)
+
+rule_by_platform <- rule_checks |>
+  group_by(platform) |>
+  summarize(
+    n = n(),
+    claimed = mean(claimed_discount),
+    across(starts_with("pass_"), ~ mean(.x, na.rm = TRUE)),
+    .groups = "drop"
+  )
+
+med_momo <- rule_by_platform |> filter(platform == "momo") |> pull(pass_median)
+med_pc   <- rule_by_platform |> filter(platform == "pchome") |> pull(pass_median)
+```
+
+**Key finding.** On Double 11, 2026, `r n_adv` listings on momo and PChome advertised an average discount of `r pct(mean_claim)`. Yet only `r pct(share_of("eu_min"))` of them were cheaper than their lowest price in the weeks before, and even against the usual (median) price only `r pct(share_of("median"))` were. The crossed-out "original price" that the discount is measured from was charged on almost none of these listings (`r n_charged` of `r n_adv`) during our window.
+
+# Question and data
+
+Shops on momo and PChome show a crossed-out "original price" next to the Double 11 price, which makes the deal look big. Our question is whether that discount is **real**: was the Nov 11 price actually lower than what the same listing cost before the event?
+
+We use our own 2026 scrapes (`data/scrapes.csv`) of 150 products on momo and PChome. We keep one price per listing per day (the scheduled 15:07 run), as the data README says. `r n_listings` listings were observed on Nov 11 and have a price history before it. We drop `r n_no_orig` that show no crossed-out price and `r n_no_claim` (all PChome) whose crossed-out price equals the sale price, because they do not claim any discount. That leaves **`r n_adv` advertised discounts** (`r n_adv_momo` on momo, `r n_adv_pc` on PChome). Their average claimed discount is **`r pct(mean_claim)`**, and the largest is `r pct0(max_claim)`.
+
+We measure each discount in two ways:
+
+- **Claimed discount** = 1 - sale price / crossed-out price. This is what the store tells the buyer.
+- **Real discount** = 1 - Nov 11 lowest shown price / benchmark price. The benchmark comes from the listing's own prices before Nov 11. We use `lowest_shown_price` (as the data README recommends) so that a member or time-limited price also counts as a real discount.
+
+A real discount above 0 means the Nov 11 price was lower than the benchmark. Exactly 0 means the price was the **same** as before, which we keep apart from "higher than before".
+
+# Which rules decide if a discount is real?
+
+There is no single definition, so we compare several rules (@tbl-rules). The first two are our main benchmarks, as agreed in the team; the last two are robustness checks.
+
+| Rule | Where it comes from | What it asks |
+|:--------------------------|:----------------------------------------|:-----------------------------|
+| Lowest price before Nov 11 | EU Price Indication Directive 98/6/EC, Art. 6a (lowest price in the previous 30 days) | Is Nov 11 a **new low**? |
+| Median price before Nov 11 | Our own softer benchmark | Is Nov 11 cheaper than the **usual** price? |
+| Crossed-out price was charged before | US FTC Guides, 16 CFR 233.1; California B&P Code §17501 | Is the "original price" a price anyone **actually paid**? |
+| Lowest / average price in the last 7 days | Robustness check | Does a short window change the answer? |
+
+: The rules we compare. {#tbl-rules}
+
+Taiwan's Fair Trade Act (Art. 21) bans misleading advertising in general, but we have not found a specific rule on how to show an "original price". That makes the comparison with other countries useful for us.
+
+Our scraping started on Oct 19, so the "30-day" window has only `r min_days` to `r max_days` days of prices for each listing, and the 7-day window has `r min_days_7d` to 7. The FTC and California rules look further back (California uses three months), so our check only covers the days we observed.
+
+# What the store claims vs. what the price history shows
+
+```{r}
+#| label: fig-claim-real
+#| fig-cap: "Each dot is one advertised discount on Nov 11, 2026. The x-axis is the discount the store claims; the y-axis is how much cheaper the price really was than before Nov 11. Dots on the dashed line would mean the claim is true. Dots on the 0% line mean the price was the same as before."
+#| fig-width: 7.5
+#| fig-height: 4.4
+
+ggplot(fig1_data, aes(x = claimed_discount, y = real_discount)) +
+  geom_hline(yintercept = 0, color = "gray") +
+  geom_abline(intercept = 0, slope = 1, linetype = 2) +
+  geom_point(mapping = aes(color = status), alpha = 0.6, size = 2) +
+  annotate("text", x = 0.22, y = 0.47,
+           label = "If the claim were real,\ndots would sit on this line",
+           size = 2.8) +
+  facet_wrap(~ benchmark_label, nrow = 1) +
+  scale_x_continuous(labels = scales::percent) +
+  scale_y_continuous(labels = scales::percent) +
+  scale_color_manual(values = c("Lower than before (real discount)" = "steelblue",
+                                "Same as before" = "gray50",
+                                "Higher than before" = "indianred")) +
+  labs(x = "Claimed discount (% off the crossed-out price)",
+       y = "Real discount (% off the price before Nov 11)",
+       color = "Nov 11 price was",
+       title = "Store claims vs. real price drops on Double 11",
+       subtitle = "207 advertised discounts on momo and PChome, Nov 11, 2026",
+       caption = "Source: The Janggals scrapes, 15:07 run, Oct 19 to Nov 11, 2026")
+```
+
+**How to read it.** Move right and the store claims a bigger discount. Move up and the price really fell compared with before Nov 11. If the crossed-out prices were honest, the dots would follow the dashed 45-degree line. Instead, almost all of them lie flat along the 0% line, far below it.
+
+**What stands out.**
+
+- **Panel A (EU rule).** Claimed discounts run from a few percent to `r pct0(max_claim)`, but only `r min_lower` of `r n_adv` listings (`r pct(min_lower / n_adv)`) were cheaper than their lowest earlier price. `r min_same` were exactly the same as their earlier low (the gray row on 0%), and `r min_higher` were even **more expensive** (red dots below 0%). A buyer who saw "30% off" could usually have paid the same price on some earlier day in our window.
+- **Panel B (median price).** Against the usual price, more listings look real: `r med_lower` of `r n_adv` (`r pct(med_lower / n_adv)`) are blue. But most real discounts are much smaller than claimed: on average `r pct(real_med_mean)` against the median, compared with a claimed `r pct(mean_claim)`. Only `r n_on_line` of `r n_adv` dots reach the dashed line.
+
+**Why it matters.** The vertical distance between a dot and the dashed line is the "fake" part of the discount. This gap is the outcome we plan to study in the next milestone, for example by asking whether it is bigger on one platform or in one product category.
+
+# How the answer changes with the rule
+
+```{r}
+#| label: fig-rules
+#| fig-cap: "Share of the 207 advertised discounts that count as real under each rule. Blue bars are our two main benchmarks, the purple bar is the US rule on former prices, and gray bars are robustness checks with a 7-day window."
+#| fig-width: 7.5
+#| fig-height: 3.6
+
+ggplot(rule_share, aes(x = share_real,
+                       y = fct_reorder(rule_label, share_real))) +
+  geom_col(mapping = aes(fill = rule_type)) +
+  geom_text(aes(label = scales::percent(share_real, accuracy = 1)),
+            hjust = -0.2, size = 3.5) +
+  scale_x_continuous(labels = scales::percent, limits = c(0, 1)) +
+  scale_fill_manual(values = c("Main benchmark" = "steelblue",
+                               "Other rule" = "#5f2167",
+                               "Robustness check" = "gray60")) +
+  labs(x = "Share of the 207 advertised discounts that count as real",
+       y = NULL,
+       fill = "Type of rule",
+       title = "How many discounts are real? It depends on the rule",
+       subtitle = "Every listing here showed a crossed-out price on Nov 11, 2026",
+       caption = "Source: The Janggals scrapes, 15:07 run, Oct 19 to Nov 11, 2026")
+```
+
+Every one of these listings claims a discount, so the store's own answer would be 100%. No rule comes close:
+
+- **Strict rules agree with each other.** The EU rule (`r pct(share_of("eu_min"))`), the 7-day low (`r pct(share_of("min_7d"))`) and the US former-price rule (`r pct(share_of("charged"))`) all say that about **1 in 20** discounts is real. The US rule is the most direct test of the crossed-out price: only `r n_charged` of `r n_adv` listings were ever priced at their crossed-out price during our window.
+- **Soft rules are more generous, but still far from 100%.** Against the 7-day average, `r pct(share_of("avg_7d"))` count as real, and against the median price `r pct(share_of("median"))`. So even under the kindest rule we tried, about **7 in 10** advertised discounts were not cheaper than the usual price.
+- **The window length matters less than the type of benchmark.** Moving from the full window (up to 23 days) to 7 days hardly changes the strict result (`r pct(share_of("eu_min"))` vs `r pct(share_of("min_7d"))`). What changes the answer is whether we compare with the **lowest** price or a **typical** price.
+
+The platforms differ too (@tbl-platform). Against the median price, `r pct(med_momo)` of momo discounts are real compared with `r pct(med_pc)` on PChome, while under the strict rules both platforms are below 6%. Part of this gap may come from measurement: PChome often writes its discounts as conditions that `lowest_shown_price` does not always capture (see below).
+
+```{r}
+#| label: tbl-platform
+#| tbl-cap: "Average claimed discount and share of advertised discounts that count as real, by platform and rule."
+
+rule_by_platform |>
+  mutate(platform = if_else(platform == "momo", "momo", "PChome"),
+         across(claimed:pass_avg_7d, pct)) |>
+  select(platform, n, claimed, pass_eu_min, pass_median, pass_charged,
+         pass_min_7d, pass_avg_7d) |>
+  knitr::kable(
+    col.names = c("Platform", "n", "Avg. claimed", "EU low", "Median",
+                  "Charged before", "7-day low", "7-day avg."),
+    align = c("l", "r", "r", "r", "r", "r", "r", "r")
+  )
+```
+
+# What this sets up next
+
+1. **Model the gap.** Use the claimed minus real discount as the outcome and see how it differs by platform and category (a regression, as in Lectures 7 and 8).
+2. **Add 2025 and a longer window.** BigGo's 2026 price history (due Nov 29) gives a full 30-day window and a longer look-back, so we can redo the EU and California rules more properly and compare 2025 with 2026.
+3. **Check PChome's conditional prices.** PChome often writes discounts as conditions (for example "any one item at 95% of the price"), which our `lowest_shown_price` may miss.
+
+# Limitations
+
+- The price history before Nov 11 is `r min_days` to `r max_days` days, not a full 30 days, and much shorter than California's three months.
+- We see one price a day (15:07), so a short flash sale between runs is missed.
+- The 150 products are our own choice, not a random sample, so the shares describe these listings only.
+- A price that is the "same as before" does not prove a shop raised its price on purpose; it only shows the discount was not new.
+- These are descriptive comparisons. They do not say whether any shop broke a law.
