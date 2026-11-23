@@ -4,7 +4,7 @@
 code and notes that produced these files, so you never have to look there to start working.
 
 <!-- status:start -->
-- `scrapes.csv`: **12,048 rows** from **43 scrape runs** (3 off-schedule), latest scheduled run **2026-11-22 15:07** (Taiwan time)
+- `scrapes.csv`: **12,321 rows** from **44 scrape runs** (3 off-schedule), latest scheduled run **2026-11-23 15:07** (Taiwan time)
 <!-- status:end -->
 
 ```
