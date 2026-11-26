@@ -9,6 +9,7 @@ on:
       - scrapers/combine/**
       - biggo/**
       - data/source/biggo_price_changes.csv
+      - data/source/biggo_price_changes_2026.csv
       - products/products.csv
       - .github/workflows/tests.yml
 
@@ -32,7 +33,7 @@ jobs:
       - name: Snapshot combiner and publisher
         run: python -m unittest discover -s scrapers/combine/tests -p 'test_*.py' -v
       - name: BigGo collector
-        run: node --test biggo/scripts/test_collect_2025.cjs
+        run: node --test biggo/scripts/test_collect_2025.cjs biggo/scripts/test_collect_2026.cjs
       - name: BigGo validator
         run: |
           python -m unittest discover -s biggo/scripts -p 'test_*.py' -v

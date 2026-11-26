@@ -1,4 +1,7 @@
-# Builds data/biggo.csv from data/source/biggo_price_changes.csv.
+# Builds data/biggo.csv from the BigGo change points of each year:
+#   2025: data/source/biggo_price_changes.csv       -> Sep 1 to Nov 25, 2025
+#   2026: data/source/biggo_price_changes_2026.csv  -> Sep 1 to Nov 25, 2026
+# Each year is built from its own file only, so a 2026 point never extends a 2025 series.
 #
 # BigGo records only the moments a price changed. This turns those change points
 # into one row per product x platform x day, holding the price in effect at
@@ -46,23 +49,15 @@ daily_series <- function(s, coverage, days) {
              stringsAsFactors = FALSE)
 }
 
-build_biggo_daily <- function(changes_path = "data/source/biggo_price_changes.csv",
-                              coverage_path = "biggo/records/history_coverage.csv",
-                              output_path = "data/biggo.csv",
-                              first_day = as.Date("2025-09-01"),
-                              last_day = as.Date("2025-11-25"),
-                              platforms = c("momo", "pchome"),
-                              products_path = "products/products.csv") {
+build_window <- function(changes_path, coverage, first_day, last_day, platforms) {
   changes <- read_text_csv(changes_path)
-  coverage <- read_text_csv(coverage_path)
   changes <- changes[changes$platform %in% platforms, , drop = FALSE]
   changes$time <- as.POSIXct(changes$changed_at, tz = "Asia/Taipei", format = "%Y-%m-%d %H:%M")
   changes$price <- suppressWarnings(as.numeric(changes$price))
   bad <- is.na(changes$time) | is.na(changes$price) | changes$price <= 0 | changes$price %% 1 != 0
-  if (any(bad)) stop("Invalid BigGo timestamp or price in row(s): ", paste(head(which(bad) + 1, 5), collapse = ", "))
+  if (any(bad)) stop("Invalid BigGo timestamp or price in ", changes_path, " row(s): ",
+                     paste(head(which(bad) + 1, 5), collapse = ", "))
   changes$price <- as.integer(changes$price)
-  if (anyNA(as.Date(coverage$coverage_start)) || anyNA(as.Date(coverage$coverage_end)) ||
-      any(as.Date(coverage$coverage_start) > as.Date(coverage$coverage_end))) stop("Invalid coverage interval")
 
   days <- seq(first_day, last_day, by = "day")
   keys <- unique(changes[order(changes$product_id, changes$platform), c("product_id", "platform")])
@@ -70,7 +65,23 @@ build_biggo_daily <- function(changes_path = "data/source/biggo_price_changes.cs
     s <- changes[changes$product_id == keys$product_id[i] & changes$platform == keys$platform[i], , drop = FALSE]
     daily_series(s, coverage, days)
   })
-  daily <- do.call(rbind, pieces)
+  do.call(rbind, pieces)
+}
+
+build_biggo_daily <- function(changes_path = c("data/source/biggo_price_changes.csv",
+                                               "data/source/biggo_price_changes_2026.csv"),
+                              coverage_path = "biggo/records/history_coverage.csv",
+                              output_path = "data/biggo.csv",
+                              first_day = as.Date(c("2025-09-01", "2026-09-01")),
+                              last_day = as.Date(c("2025-11-25", "2026-11-25")),
+                              platforms = c("momo", "pchome"),
+                              products_path = "products/products.csv") {
+  stopifnot(length(changes_path) == length(first_day), length(first_day) == length(last_day))
+  coverage <- read_text_csv(coverage_path)
+  if (anyNA(as.Date(coverage$coverage_start)) || anyNA(as.Date(coverage$coverage_end)) ||
+      any(as.Date(coverage$coverage_start) > as.Date(coverage$coverage_end))) stop("Invalid coverage interval")
+  daily <- do.call(rbind, lapply(seq_along(changes_path), function(i)
+    build_window(changes_path[i], coverage, first_day[i], last_day[i], platforms)))
 
   products <- read_text_csv(products_path)[c("product_id", "brand", "model", "category")]
   unknown <- setdiff(daily$product_id, products$product_id)
@@ -93,6 +104,9 @@ build_biggo_daily <- function(changes_path = "data/source/biggo_price_changes.cs
 
 if (sys.nframe() == 0L) {
   daily <- build_biggo_daily()
-  cat(sprintf("Wrote data/biggo.csv: %d rows, %d listings, %s to %s\n", nrow(daily),
-              nrow(unique(daily[c("product_id", "platform")])), min(daily$date), max(daily$date)))
+  for (year in sort(unique(substr(daily$date, 1, 4)))) {
+    y <- daily[substr(daily$date, 1, 4) == year, ]
+    cat(sprintf("Wrote data/biggo.csv, %s: %d rows, %d listings, %s to %s\n", year, nrow(y),
+                nrow(unique(y[c("product_id", "platform")])), min(y$date), max(y$date)))
+  }
 }

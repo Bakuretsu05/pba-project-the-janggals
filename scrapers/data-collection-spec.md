@@ -347,6 +347,9 @@ has what is known about BigGo's history data.
 - **Period:** Sep 1 to Nov 25, in 2025 and in 2026. 2025 is collected now; 2026 after collection
   ends on Nov 25. (Changed 2026-10-27 from Oct 1: the 30-day low before a sale that starts in
   October reaches back into September.)
+- **2026 goes in its own file**, `data/source/biggo_price_changes_2026.csv`, with the same columns
+  (decided 2026-11-26), so the checked 2025 file and its validator stay as they are.
+  `build_biggo_daily.R` builds each year from its own file.
 - Include the last change **before** the period starts, so the first day's price is known.
 - Each history is the one BigGo keeps for the product-table listing, looked up by the shop code
   plus the platform's item ID (`biggo/README.md`), never by taking the first search result. When
@@ -367,6 +370,13 @@ whose series has a point after Nov 25 of that year, add one row: `product_id`, `
 `coverage_start` Sep 1 and `coverage_end` Nov 25 of that year, and in `note` the date of that
 later point. A series that ends before Nov 25 gets no row.
 
+**2026 only** (decided 2026-11-26): the history was collected on Nov 26, too soon for most series
+to have a point after Nov 25. A series that ends earlier also gets a row when our own scrapes
+confirm its price: every successful 15:07 scrape in `data/scrapes.csv` after BigGo's last point
+shows that point's price as `lowest_shown_price`. One different or `NA` price means no row. The
+row starts Sep 1 when BigGo has a point inside the 2026 window, otherwise on the first confirming
+scrape, and ends on the last one; `note` gives the evidence.
+
 ---
 
 ## 12. Deliverables and deadlines
@@ -383,7 +393,7 @@ later point. A series that ends before Nov 25 gets no row.
 | D8 | 2025 BigGo history | Albert | Sun Oct 25 (Milestone 2) |
 | D9 | Extra runs on Nov 10 to 12 | all | Thu Nov 12 |
 | D10 | Collection stops; workflow disabled; every run's output saved to the Q6 location | all | Wed Nov 25 |
-| D11 | 2026 BigGo history | Albert | Sun Nov 29 |
+| D11 | 2026 BigGo history | Marvin (was Albert) | Sun Nov 29 (collected Nov 26) |
 
 ## 13. Acceptance criteria
 
@@ -414,7 +424,8 @@ later point. A series that ends before Nov 25 gets no row.
 
 **BigGo history** (D8, D11) is accepted when:
 
-- [ ] `data/source/biggo_price_changes.csv` follows section 11: the columns in order, change points only,
+- [ ] `data/source/biggo_price_changes.csv` (2025) and `data/source/biggo_price_changes_2026.csv` (2026)
+      follow section 11: the columns in order, change points only,
       Sep 1 to Nov 25 plus the change before Sep 1.
 - [ ] Every product-table listing with a `biggo_url_<platform>` link has rows, or a recorded
       reason it has none.

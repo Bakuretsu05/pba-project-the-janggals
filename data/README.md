@@ -11,7 +11,7 @@ code and notes that produced these files, so you never have to look there to sta
 data/
   products.csv          the 150 products
   scrapes.csv           our momo + PChome scrapes, 2026      ─┐ analyse these
-  biggo.csv             BigGo's daily price history, 2025    ─┘
+  biggo.csv             BigGo's daily price history, 2025 + 2026 ─┘
   grids/                one wide price table per platform, for browsing in Excel
   source/               the untouched originals the files above are built from
 ```
@@ -20,10 +20,10 @@ data/
 |---|---|---|
 | [`products.csv`](products.csv) | a product we track (150) | Copy of `products/products.csv`, refreshed automatically |
 | [`scrapes.csv`](scrapes.csv) | one listing (product on a platform) in one scrape run, Oct 19 to Nov 25, 2026 | Rebuilt after every scrape |
-| [`biggo.csv`](biggo.csv) | one listing on one day, Sep 1 to Nov 25, **2025**, from BigGo | Rebuilt when the BigGo history changes |
+| [`biggo.csv`](biggo.csv) | one listing on one day, Sep 1 to Nov 25, **2025 and 2026**, from BigGo | Rebuilt when the BigGo history changes |
 | [`grids/momo_price_grid.csv`](grids/momo_price_grid.csv), [`grids/pchome_price_grid.csv`](grids/pchome_price_grid.csv) | a product; one column per date | Rebuilt after every scrape |
 | [`source/snapshots.csv`](source/snapshots.csv) | every page our scrapers requested, failures included | After every scrape |
-| [`source/biggo_price_changes.csv`](source/biggo_price_changes.csv) | one price change BigGo recorded | By the BigGo collection in [`biggo/`](../biggo/) |
+| [`source/biggo_price_changes.csv`](source/biggo_price_changes.csv), [`source/biggo_price_changes_2026.csv`](source/biggo_price_changes_2026.csv) | one price change BigGo recorded (2025, 2026) | By the BigGo collection in [`biggo/`](../biggo/) |
 
 All files are generated: don't edit them by hand. They join on `product_id`, plus `platform` where
 they have it. Prices are whole NT$. `NA` means "not shown" or "unknown", never zero.
@@ -96,11 +96,11 @@ Things to know:
   (the same on every successful row), `fetch_status` and `http_status`, `scraped_at`,
   `platform_item_id` and `run_id`.
 
-## `biggo.csv`: BigGo's price history (2025)
+## `biggo.csv`: BigGo's price history (2025 and 2026)
 
 | Column | Content |
 |---|---|
-| `date` | The day, 2025-09-01 to 2025-11-25 |
+| `date` | The day, 2025-09-01 to 2025-11-25 and 2026-09-01 to 2026-11-25. Pick a year with `format(date, "%Y")` |
 | `platform` | `momo` or `pchome` |
 | `product_id`, `brand`, `model`, `category` | As in `scrapes.csv` |
 | `price` | The price in effect at **15:07 Taiwan time** that day, the same time our scrapers run |
@@ -115,7 +115,10 @@ How it is built (full rules at the top of [`build_biggo_daily.R`](../biggo/scrip
   never with `sale_price`. On Oct 22, 45 of the 46 momo listings that showed an `extra_price`
   matched BigGo on it.
 - Coupang is excluded (team decision, Oct 27). Its history is still in `source/biggo_price_changes.csv`.
-- 2026 BigGo history is due Nov 29 and will be added in the same shape.
+- **2026 was collected on Nov 26, 2026**, so few series had a BigGo point after Nov 25 yet. A 2026
+  series that stops earlier is carried to Nov 25 only where our own 15:07 scrapes show BigGo's last
+  price on every day after it (spec section 11); otherwise its later days are missing.
+- Each year is built from its own change points, so a 2026 point never fills a 2025 day.
 
 ## `grids/`: for browsing only
 
@@ -128,7 +131,7 @@ price per cell, with no crossed-out price and no BigGo, so do the analysis from 
 - `snapshots.csv`: every scrape exactly as the scrapers wrote it (the 17 columns of
   [spec section 7.1](../scrapers/data-collection-spec.md#71-columns-exact-names-this-order) plus
   `run_id`), failed pages included.
-- `biggo_price_changes.csv`: one row per BigGo price change, in the format of
+- `biggo_price_changes.csv` (2025) and `biggo_price_changes_2026.csv` (2026): one row per BigGo price change, in the format of
   [spec section 11](../scrapers/data-collection-spec.md#11-biggo-price-history-format-datasourcebiggo_price_changescsv).
   Use it when once a day is not enough, for example to find a flash sale that started after
   15:07 and ended before 15:07 the next day. Its `note` column flags listings whose BigGo title
@@ -151,7 +154,8 @@ nov11 <- daily |> filter(date == day) |> inner_join(benchmark, by = c("platform"
 ```
 
 Our 2026 scrapes start Oct 19, so a 30-day window before Nov 11 has at most 23 days; keep
-`days_seen` in view. 2025 works the same way on `biggo.csv` with `price`.
+`days_seen` in view. BigGo works the same way on `biggo.csv` with `price`, for either year:
+filter to one year first, and compare 2026 BigGo with `lowest_shown_price`.
 
 ## What used to be here
 
