@@ -3,9 +3,10 @@
 **This folder is how we collected the BigGo price history. The data itself is in [`data/`](../data/):**
 
 - [`data/biggo.csv`](../data/biggo.csv): one price per product, platform and day,
-  Sep 1 to Nov 25, 2025. **Use this one.**
-- [`data/source/biggo_price_changes.csv`](../data/source/biggo_price_changes.csv): the raw change points
-  `biggo.csv` is built from. Use it to look for short flash sales a once-a-day price misses.
+  Sep 1 to Nov 25, 2025 and 2026. **Use this one.**
+- [`data/source/biggo_price_changes.csv`](../data/source/biggo_price_changes.csv) (2025) and
+  [`data/source/biggo_price_changes_2026.csv`](../data/source/biggo_price_changes_2026.csv) (2026): the raw
+  change points `biggo.csv` is built from. Use them to look for short flash sales a once-a-day price misses.
 
 [BigGo](https://biggo.com.tw) is a price-comparison site that keeps a price history for each
 listing it tracks. We started our own momo and PChome snapshots on 2026-10-19, so BigGo is our
@@ -24,6 +25,8 @@ only source of **2025** prices.
 | File | What it does |
 |---|---|
 | `build_biggo_daily.R` | Turns the change points into `data/biggo.csv` (rules at the top of the file). Runs automatically on GitHub when the change points or the product table change |
+| `collect_2026.cjs` | 2026 collector: lists the lookups, imports the browser export into `raw/2026/`, and rebuilds the 2026 change points, status, coverage and second-check records |
+| `browser_runner_2026.js` | Runs in a signed-in biggo.com.tw tab: requests each history 5.2 s apart, keeps the responses in the tab's IndexedDB and exports them as one file |
 | `collect_2025.cjs` | Collector: rebuilds `data/source/biggo_price_changes.csv` and `records/collection_status_2025.csv` from the saved raw responses |
 | `collect_visible_2025.cjs`, `visible_checkpoint_server.cjs` | Collection helpers for a signed-in browser session |
 | `apply_catalog_variants.cjs` | Applied the corrections where BigGo's default product option was the wrong variant |
@@ -37,7 +40,9 @@ only source of **2025** prices.
 |---|---|
 | `AUDIT_2025.md` | **Start here.** Current results, reviewer fixes and the remaining limits of the 2025 data |
 | `collection_status_2025.csv` | One row per listing: retrieved or not, row count, first and last BigGo point, warnings |
-| `history_coverage.csv` | Which series BigGo kept tracking through Nov 25, 2025. `build_biggo_daily.R` uses it to decide how far a price can be carried forward |
+| `collection_status_2026.csv` | The same for 2026, plus BigGo's current price on Nov 26; Coupang rows give the reason they were not collected |
+| `history_coverage.csv` | Which series BigGo kept tracking through Nov 25, for each year. `build_biggo_daily.R` uses it to decide how far a price can be carried forward |
+| `verification_2026.csv` | The 2026 second check: 30 listings requested a second time and compared |
 | `coverage_check_2026-10-22.csv` | The Oct 22 check of every listing's BigGo series, classed OK / SHORT / MISMATCH / UNCERTAIN |
 | `chart_checks_2025.csv` | The 34 independent chart reviews (the team's ~10% second check) |
 | `verification_2025.csv` | Repeat retrievals of the same listing. Empty: the second check was done as chart reviews |
@@ -48,6 +53,49 @@ only source of **2025** prices.
 | `access_blocker_2025.json` | The HTTP 429 a signed-out collector got on Oct 25 (historical) |
 | `collection_authorization_2025.md` | Where the spec allows signed-in collection |
 | `TARGETED_QC_2026-10-26.md`, `targeted_qc_2026-10-26.json` | The Oct 26 quality check of flagged listings (historical, superseded by the audit) |
+
+## 2026 collection (D11, collected 2026-11-26)
+
+Collected by Marvin in his signed-in Chrome, with the same history request as 2025 (below).
+
+- **300 momo and PChome listings requested, 300 answered HTTP 200**, one request every 5.2 s, no
+  429 and no token expiry. Coupang was not collected (excluded from the analysis); its 35 listings
+  are in `collection_status_2026.csv` with that reason.
+- **277 histories** give **2,816 change points** in
+  [`data/source/biggo_price_changes_2026.csv`](../data/source/biggo_price_changes_2026.csv): Sep 1 to Nov 25, 2026,
+  plus the last change before Sep 1. 76 of them have no change inside the window, so their only row
+  is that earlier change. Two series start inside the window (no earlier price); for seven, the
+  earliest price is the edge of BigGo's 2-year window, not a real change time (both are in `note`).
+- **23 listings have no history** (17 momo, 6 PChome). BigGo answered `{"result":true}` and nothing
+  else, again on a second request for four of them. All 23 are listings our scrapers stopped reading
+  partway through the period (every later run failed), so they were most likely taken off sale and
+  BigGo dropped them. Following spec section 11, they stay missing, with the reason in the status file.
+  Their Sep to Oct 2026 points are probably still in the 2025 raw responses (collected Oct 21 to 28),
+  which are on the 2025 collector's laptop.
+- **Coverage: 262 rows for 2026** in `records/history_coverage.csv`. 28 have a BigGo point after Nov 25.
+  234 are confirmed by our scrapes (the 2026 rule in spec section 11). For 68 of these, BigGo recorded nothing inside
+  the window, so they start on the first confirming scrape. Ten series stop early without confirmation;
+  their later days are missing. `data/biggo.csv` has 20,175 rows for 2026 (276 listings) and 269
+  listings priced on Nov 11, 2026.
+- **Second check:** 32 listings (15 momo, 17 PChome) were requested a second time and all 32 match
+  ([`verification_2026.csv`](records/verification_2026.csv)). A window-edge first point moves with
+  the request time, so it is compared by price only.
+- **Against our own scrapes:** on days BigGo itself tracked (before its last point), BigGo's 15:07
+  price equals our `lowest_shown_price` on 98.6% of momo days and 77.5% of PChome days (87.4% when
+  `single_item_price` also counts). On 283 of the 307 PChome days that still differ, BigGo is lower
+  and our row has a price or coupon note: a 折 or coupon offer our scraper couldn't turn into a price.
+- Signed out, the history request answers 429 `{"code":"ph_token_missing","require_login":true}`.
+
+To redo it:
+
+```sh
+node biggo/scripts/collect_2026.cjs targets > targets.json
+# In a signed-in biggo.com.tw tab, run browser_runner_2026.js, then
+#   await bigGo2026.run(<targets.json contents>); await bigGo2026.exportBundle()
+node biggo/scripts/collect_2026.cjs import <Downloads>/biggo_2026_bundle.json   # saved under biggo/raw/2026/
+node biggo/scripts/collect_2026.cjs rebuild
+Rscript biggo/scripts/build_biggo_daily.R
+```
 
 ## Collection log
 

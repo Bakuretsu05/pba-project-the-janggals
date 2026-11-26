@@ -47,6 +47,24 @@ back <- read.csv(output_path, fileEncoding = "UTF-8", colClasses = "character")
 stopifnot(names(back)[1] == "date", back$brand[back$product_id == "T-1"][1] == "雪芙蘭",
           back$model[back$product_id == "T-1"][1] == "Cream, 50g")
 
+# Two years, each from its own file: a 2026 point must not extend a 2025 series.
+changes_2026_path <- file.path(dir, "changes_2026.csv")
+write_changes(c("T-2,pchome,u,2025-09-04 09:00,50,A,2026-10-25,NA",
+                "T-2,pchome,u,2025-09-06 09:00,55,A,2026-10-25,NA"))
+writeLines(c(header,
+             "T-2,pchome,u,2025-09-06 09:00,55,M,2026-11-26,NA",   # 2026 baseline, set in 2025
+             "T-2,pchome,u,2026-09-03 09:00,60,M,2026-11-26,NA",
+             "T-2,pchome,u,2026-09-08 09:00,65,M,2026-11-26,NA"), changes_2026_path)
+two <- build_biggo_daily(c(changes_path, changes_2026_path), coverage_path, output_path,
+                         as.Date(c("2025-09-01", "2026-09-01")), as.Date(c("2025-09-10", "2026-09-10")),
+                         products_path = products_path)
+stopifnot(
+  identical(two$date, c("2025-09-04", "2025-09-05", paste0("2026-09-0", 1:7))),
+  two$price[two$date == "2026-09-01"] == 55,
+  two$price[two$date == "2026-09-03"] == 60,
+  two$price_set_at[two$date == "2026-09-07"] == "2026-09-03 09:00"
+)
+
 write_changes(c("T-9,momo,u,2025-09-03 12:00,90,A,2026-10-25,NA",   # not in the product table
                 "T-9,momo,u,2025-09-06 12:00,80,A,2026-10-25,NA"))
 stopifnot(inherits(try(build(), silent = TRUE), "try-error"))

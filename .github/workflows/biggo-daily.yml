@@ -7,6 +7,7 @@ on:
     branches: [main]
     paths:
       - data/source/biggo_price_changes.csv
+      - data/source/biggo_price_changes_2026.csv
       - products/products.csv
       - biggo/records/history_coverage.csv
       - biggo/scripts/build_biggo_daily.R
